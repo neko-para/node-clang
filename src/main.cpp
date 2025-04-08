@@ -80,7 +80,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
                 getLib(info.Env())
                     ->call_clang_func(clang_getTranslationUnitCursor, info[0].As<Napi::External<Deref<CXTranslationUnit>::type>>().Data());
 
-            return wrapCursor(info.Env(), cursor);
+            return wrap(info.Env(), cursor);
         },
         "nodeClang.getTranslationUnitCursor");
 
@@ -98,13 +98,13 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
             auto result = getLib(info.Env())
                               ->call_clang_func(
                                   clang_visitChildren,
-                                  unwrapCursor(info[0]),
+                                  unwrap<CXCursor>(info[0]),
                                   [](CXCursor cursor, CXCursor parent, CXClientData client_data) -> CXChildVisitResult {
                                       VisitChildrenContext* ctx = reinterpret_cast<VisitChildrenContext*>(client_data);
                                       auto result = ctx->func.Call(
                                           {
-                                              wrapCursor(ctx->env, cursor),
-                                              wrapCursor(ctx->env, parent),
+                                              wrap(ctx->env, cursor),
+                                              wrap(ctx->env, parent),
                                           });
                                       auto action = result.As<Napi::String>().Utf8Value();
                                       if (action == "break") {
@@ -128,7 +128,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     exports["equalCursors"] = Napi::Function::New(
         env,
         [](const Napi::CallbackInfo& info) -> Napi::Value {
-            auto result = getLib(info.Env())->call_clang_func(clang_equalCursors, unwrapCursor(info[0]), unwrapCursor(info[1]));
+            auto result = getLib(info.Env())->call_clang_func(clang_equalCursors, unwrap<CXCursor>(info[0]), unwrap<CXCursor>(info[1]));
             return Napi::Boolean::New(info.Env(), !!result);
         },
         "nodeClang.equalCursors");
@@ -136,7 +136,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     exports["getCursorSpelling"] = Napi::Function::New(
         env,
         [](const Napi::CallbackInfo& info) -> Napi::Value {
-            auto result = getLib(info.Env())->call_clang_func(clang_getCursorSpelling, unwrapCursor(info[0]));
+            auto result = getLib(info.Env())->call_clang_func(clang_getCursorSpelling, unwrap<CXCursor>(info[0]));
             auto ret = Napi::String::New(info.Env(), getLib(info.Env())->call_clang_func(clang_getCString, result));
             getLib(info.Env())->call_clang_func(clang_disposeString, result);
             return ret;
@@ -146,7 +146,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     exports["getCursorKind"] = Napi::Function::New(
         env,
         [](const Napi::CallbackInfo& info) -> Napi::Value {
-            auto result = getLib(info.Env())->call_clang_func(clang_getCursorKind, unwrapCursor(info[0]));
+            auto result = getLib(info.Env())->call_clang_func(clang_getCursorKind, unwrap<CXCursor>(info[0]));
             return Napi::Number::New(info.Env(), result);
         },
         "nodeClang.getCursorKind");

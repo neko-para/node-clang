@@ -6,6 +6,7 @@ import {
     CXGlobalOptFlags,
     CXIndex,
     CXIndexOptions,
+    CXSourceLocation,
     CXTranslationUnit,
     CXUnsavedFile
 } from './types'
@@ -21,6 +22,17 @@ export function CXIndex_getGlobalOptions(index: CXIndex): CXGlobalOptFlags
 export function isFileMultipleIncludeGuarded(tu: CXTranslationUnit, file: CXFile): boolean
 export function getFile(tu: CXTranslationUnit, file_name: string): CXFile | null
 export function getFileContents(tu: CXTranslationUnit, file: CXFile): string | null
+export function getLocation(
+    tu: CXTranslationUnit,
+    file: CXFile,
+    line: unsigned,
+    column: unsigned
+): CXSourceLocation
+export function getLocationForOffset(
+    tu: CXTranslationUnit,
+    file: CXFile,
+    offset: unsigned
+): CXSourceLocation
 //
 
 export function parseTranslationUnit(

@@ -26,12 +26,14 @@ inline void setLib(Napi::Env env, nc::Library* lib)
     env.SetInstanceData(lib);
 }
 
-inline Napi::External<CXCursor> wrapCursor(Napi::Env env, CXCursor cursor)
+template <typename Type>
+inline Napi::External<Type> wrap(Napi::Env env, Type val)
 {
-    return Napi::External<CXCursor>::New(env, new CXCursor(cursor), [](Napi::Env env, CXCursor* data) { delete data; });
+    return Napi::External<Type>::New(env, new Type(val), [](Napi::Env env, Type* data) { delete data; });
 }
 
-inline CXCursor unwrapCursor(Napi::Value cursor)
+template <typename Type>
+inline Type unwrap(Napi::Value val)
 {
-    return *cursor.As<Napi::External<CXCursor>>().Data();
+    return *val.As<Napi::External<Type>>().Data();
 }
