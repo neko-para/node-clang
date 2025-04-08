@@ -15,8 +15,8 @@ void implTu(Napi::Object exports)
             auto result = getLib(info.Env())
                               ->call_clang_func(
                                   clang_isFileMultipleIncludeGuarded,
-                                  info[0].As<Napi::External<Deref<CXTranslationUnit>::type>>().Data(),
-                                  info[1].As<Napi::External<CXFile>>().Data());
+                                  unwrapPtr<CXTranslationUnit>(info[0]),
+                                  unwrapPtr<CXFile>(info[1]));
             return Napi::Boolean::New(info.Env(), !!result);
         },
         "nodeClang.isFileMultipleIncludeGuarded");
@@ -24,16 +24,12 @@ void implTu(Napi::Object exports)
     exports["getFile"] = Napi::Function::New(
         env,
         [](const Napi::CallbackInfo& info) -> Napi::Value {
-            auto file = getLib(info.Env())
-                            ->call_clang_func(
-                                clang_getFile,
-                                info[0].As<Napi::External<Deref<CXTranslationUnit>::type>>().Data(),
-                                info[1].As<Napi::String>().Utf8Value().c_str());
+            auto file = getLib(info.Env())->call_clang_func(clang_getFile, unwrapPtr<CXTranslationUnit>(info[0]), toStr(info[1]).c_str());
             if (!file) {
                 return info.Env().Null();
             }
             else {
-                return Napi::External<Deref<CXFile>::type>::New(info.Env(), file);
+                return wrapPtr(info.Env(), file);
             }
         },
         "nodeClang.getFile");
@@ -42,12 +38,9 @@ void implTu(Napi::Object exports)
         env,
         [](const Napi::CallbackInfo& info) -> Napi::Value {
             size_t size = 0;
-            auto content = getLib(info.Env())
-                               ->call_clang_func(
-                                   clang_getFileContents,
-                                   info[0].As<Napi::External<Deref<CXTranslationUnit>::type>>().Data(),
-                                   info[1].As<Napi::External<Deref<CXFile>::type>>().Data(),
-                                   &size);
+            auto content =
+                getLib(info.Env())
+                    ->call_clang_func(clang_getFileContents, unwrapPtr<CXTranslationUnit>(info[0]), unwrapPtr<CXFile>(info[1]), &size);
             if (content) {
                 return info.Env().Null();
             }
@@ -63,10 +56,10 @@ void implTu(Napi::Object exports)
             auto location = getLib(info.Env())
                                 ->call_clang_func(
                                     clang_getLocation,
-                                    info[0].As<Napi::External<Deref<CXTranslationUnit>::type>>().Data(),
-                                    info[1].As<Napi::External<Deref<CXFile>::type>>().Data(),
-                                    info[2].As<Napi::Number>().Uint32Value(),
-                                    info[3].As<Napi::Number>().Uint32Value());
+                                    unwrapPtr<CXTranslationUnit>(info[0]),
+                                    unwrapPtr<CXFile>(info[1]),
+                                    toU32(info[2]),
+                                    toU32(info[3]));
             return wrap<CXSourceLocation>(info.Env(), location);
         },
         "nodeClang.getLocation");
@@ -77,9 +70,9 @@ void implTu(Napi::Object exports)
             auto location = getLib(info.Env())
                                 ->call_clang_func(
                                     clang_getLocationForOffset,
-                                    info[0].As<Napi::External<Deref<CXTranslationUnit>::type>>().Data(),
-                                    info[1].As<Napi::External<Deref<CXFile>::type>>().Data(),
-                                    info[2].As<Napi::Number>().Uint32Value());
+                                    unwrapPtr<CXTranslationUnit>(info[0]),
+                                    unwrapPtr<CXFile>(info[1]),
+                                    toU32(info[2]));
             return wrap<CXSourceLocation>(info.Env(), location);
         },
         "nodeClang.getLocationForOffset");

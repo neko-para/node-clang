@@ -1,6 +1,7 @@
 #pragma once
 
 #include <clang-c/Index.h>
+#include <cstdint>
 #include <napi.h>
 
 #include "loader.h"
@@ -33,7 +34,63 @@ inline Napi::External<Type> wrap(Napi::Env env, Type val)
 }
 
 template <typename Type>
+inline Napi::External<typename Deref<Type>::type> wrapPtr(Napi::Env env, Type val)
+{
+    return Napi::External<typename Deref<Type>::type>::New(env, val);
+}
+
+inline Napi::External<Deref<CXIndex>::type> wrapIndex(Napi::Env env, CXIndex index)
+{
+    return Napi::External<Deref<CXIndex>::type>::New(env, index, [](Napi::Env env, CXIndex data) {
+        getLib(env)->call_clang_func(clang_disposeIndex, data);
+    });
+}
+
+inline Napi::External<Deref<CXTranslationUnit>::type> wrapTu(Napi::Env env, CXTranslationUnit tu)
+{
+    return Napi::External<Deref<CXTranslationUnit>::type>::New(env, tu, [](Napi::Env env, CXTranslationUnit data) {
+        getLib(env)->call_clang_func(clang_disposeTranslationUnit, data);
+    });
+}
+
+template <typename Type>
 inline Type unwrap(Napi::Value val)
 {
     return *val.As<Napi::External<Type>>().Data();
+}
+
+template <typename Type>
+inline Type unwrapPtr(Napi::Value val)
+{
+    return val.As<Napi::External<typename Deref<Type>::type>>().Data();
+}
+
+inline std::string toStr(Napi::Value val)
+{
+    return val.As<Napi::String>().Utf8Value();
+}
+
+inline bool toBool(Napi::Value val)
+{
+    return val.As<Napi::Boolean>().Value();
+}
+
+inline Napi::Number toNum(Napi::Value val)
+{
+    return val.As<Napi::Number>();
+}
+
+inline unsigned toU32(Napi::Value val)
+{
+    return toNum(val).Uint32Value();
+}
+
+inline int toI32(Napi::Value val)
+{
+    return toNum(val).Int32Value();
+}
+
+inline uint8_t toU8(Napi::Value val)
+{
+    return toNum(val).Uint32Value();
 }

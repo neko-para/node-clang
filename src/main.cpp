@@ -21,7 +21,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
             auto result = Napi::Object::New(info.Env());
 
             try {
-                auto library = new nc::Library(info[0].As<Napi::String>().Utf8Value().c_str());
+                auto library = new nc::Library(toStr(info[0]).c_str());
                 setLib(info.Env(), library);
             }
             catch (const char* err) {
@@ -48,27 +48,27 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
             std::vector<const char*> command_line_args;
             auto command_line_args_arr = info[2].As<Napi::Array>();
             for (uint32_t i = 0; i < command_line_args_arr.Length(); i++) {
-                command_line_args_data.push_back(Napi::Value(command_line_args_arr[i]).As<Napi::String>().Utf8Value());
+                command_line_args_data.push_back(toStr(command_line_args_arr[i]));
                 command_line_args.push_back(command_line_args_data.back().c_str());
             }
+
+            // TODO: unsave file
 
             auto tu = getLib(info.Env())
                           ->call_clang_func(
                               clang_parseTranslationUnit,
-                              info[0].As<Napi::External<Deref<CXIndex>::type>>().Data(),
-                              info[1].As<Napi::String>().Utf8Value().c_str(),
+                              unwrapPtr<CXIndex>(info[0]),
+                              toStr(info[1]).c_str(),
                               command_line_args.empty() ? nullptr : command_line_args.data(),
                               command_line_args.size(),
                               nullptr,
                               0,
-                              info[4].As<Napi::Number>().Uint32Value());
+                              toU32(info[4]));
             if (!tu) {
                 return info.Env().Null();
             }
             else {
-                return Napi::External<Deref<CXTranslationUnit>::type>::New(info.Env(), tu, [](Napi::Env env, CXTranslationUnit data) {
-                    getLib(env)->call_clang_func(clang_disposeTranslationUnit, data);
-                });
+                return wrapTu(info.Env(), tu);
             }
         },
         "nodeClang.parseTranslationUnit");
@@ -76,9 +76,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     exports["getTranslationUnitCursor"] = Napi::Function::New(
         env,
         [](const Napi::CallbackInfo& info) -> Napi::Value {
-            auto cursor =
-                getLib(info.Env())
-                    ->call_clang_func(clang_getTranslationUnitCursor, info[0].As<Napi::External<Deref<CXTranslationUnit>::type>>().Data());
+            auto cursor = getLib(info.Env())->call_clang_func(clang_getTranslationUnitCursor, unwrapPtr<CXTranslationUnit>(info[0]));
 
             return wrap(info.Env(), cursor);
         },
@@ -106,7 +104,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
                                               wrap(ctx->env, cursor),
                                               wrap(ctx->env, parent),
                                           });
-                                      auto action = result.As<Napi::String>().Utf8Value();
+                                      auto action = toStr(result);
                                       if (action == "break") {
                                           return CXChildVisit_Break;
                                       }
