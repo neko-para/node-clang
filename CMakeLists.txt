@@ -47,7 +47,13 @@ if(WIN32
     endif()
 endif()
 
-add_library(NodeClang SHARED ${CMAKE_JS_SRC} src/main.cpp)
+set(NodeClang_src
+    src/main.cpp
+    src/enums/enums.cpp
+    src/enums/CXCursorKind.cpp
+)
+
+add_library(NodeClang SHARED ${CMAKE_JS_SRC} ${NodeClang_src})
 set_target_properties(NodeClang PROPERTIES PREFIX "" SUFFIX ".node")
 target_compile_definitions(NodeClang PRIVATE NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS)
 target_include_directories(NodeClang PRIVATE ${CMAKE_JS_INC} third_party)
