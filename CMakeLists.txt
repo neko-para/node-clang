@@ -49,6 +49,8 @@ endif()
 
 set(NodeClang_src
     src/main.cpp
+    src/api/index.cpp
+    src/api/tu.cpp
     src/enums/enums.cpp
     src/enums/CXCursorKind.cpp
 )

@@ -3,39 +3,10 @@
 #include <clang-c/Index.h>
 #include <napi.h>
 
+#include "api/api.h"
 #include "enums/enums.h"
 #include "loader.h"
-
-template <typename T>
-struct Deref
-{
-};
-
-template <typename T>
-struct Deref<T*>
-{
-    using type = T;
-};
-
-nc::Library* getLib(Napi::Env env)
-{
-    return env.GetInstanceData<nc::Library>();
-}
-
-void setLib(Napi::Env env, nc::Library* lib)
-{
-    env.SetInstanceData(lib);
-}
-
-Napi::External<CXCursor> wrapCursor(Napi::Env env, CXCursor cursor)
-{
-    return Napi::External<CXCursor>::New(env, new CXCursor(cursor), [](Napi::Env env, CXCursor* data) { delete data; });
-}
-
-CXCursor unwrapCursor(Napi::Value cursor)
-{
-    return *cursor.As<Napi::External<CXCursor>>().Data();
-}
+#include "utils.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
@@ -67,21 +38,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
         [](const Napi::CallbackInfo& info) -> Napi::Value { return Napi::Boolean::New(info.Env(), !!getLib(info.Env())); },
         "nodeClang.loaded");
 
-    exports["createIndex"] = Napi::Function::New(
-        env,
-        [](const Napi::CallbackInfo& info) -> Napi::Value {
-            auto index = getLib(info.Env())
-                             ->call_clang_func(clang_createIndex, info[0].As<Napi::Boolean>().Value(), info[1].As<Napi::Boolean>().Value());
-            if (!index) {
-                return info.Env().Null();
-            }
-            else {
-                return Napi::External<Deref<CXIndex>::type>::New(info.Env(), index, [](Napi::Env env, CXIndex data) {
-                    getLib(env)->call_clang_func(clang_disposeIndex, data);
-                });
-            }
-        },
-        "nodeClang.createIndex");
+    implIndex(exports);
+    implTu(exports);
 
     exports["parseTranslationUnit"] = Napi::Function::New(
         env,
