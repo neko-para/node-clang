@@ -4,6 +4,7 @@
 #include "clang-c/CXFile.h"
 #include "clang-c/CXSourceLocation.h"
 #include "clang-c/Index.h"
+#include <cstdint>
 
 void implTu(Napi::Object exports)
 {
@@ -76,6 +77,39 @@ void implTu(Napi::Object exports)
             return wrap<CXSourceLocation>(info.Env(), location);
         },
         "nodeClang.getLocationForOffset");
+
+    exports["getSkippedRanges"] = Napi::Function::New(
+        env,
+        [](const Napi::CallbackInfo& info) -> Napi::Value {
+            auto ranges = getLib(info.Env())
+                              ->call_clang_func(clang_getSkippedRanges, unwrapPtr<CXTranslationUnit>(info[0]), unwrapPtr<CXFile>(info[1]));
+            if (!ranges) {
+                return info.Env().Null();
+            }
+            auto result = Napi::Array::New(info.Env(), ranges->count);
+            for (uint32_t i = 0; i < ranges->count; i++) {
+                result[i] = wrap(info.Env(), ranges->ranges[i]);
+            }
+            getLib(info.Env())->call_clang_func(clang_disposeSourceRangeList, ranges);
+            return result;
+        },
+        "nodeClang.getSkippedRanges");
+
+    exports["getAllSkippedRanges"] = Napi::Function::New(
+        env,
+        [](const Napi::CallbackInfo& info) -> Napi::Value {
+            auto ranges = getLib(info.Env())->call_clang_func(clang_getAllSkippedRanges, unwrapPtr<CXTranslationUnit>(info[0]));
+            if (!ranges) {
+                return info.Env().Null();
+            }
+            auto result = Napi::Array::New(info.Env(), ranges->count);
+            for (uint32_t i = 0; i < ranges->count; i++) {
+                result[i] = wrap(info.Env(), ranges->ranges[i]);
+            }
+            getLib(info.Env())->call_clang_func(clang_disposeSourceRangeList, ranges);
+            return result;
+        },
+        "nodeClang.getAllSkippedRanges");
 
     //
 }

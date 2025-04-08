@@ -7,6 +7,7 @@ import {
     CXIndex,
     CXIndexOptions,
     CXSourceLocation,
+    CXSourceRange,
     CXTranslationUnit,
     CXUnsavedFile
 } from './types'
@@ -33,6 +34,9 @@ export function getLocationForOffset(
     file: CXFile,
     offset: unsigned
 ): CXSourceLocation
+export function getSkippedRanges(tu: CXTranslationUnit, file: CXFile): CXSourceRange[] | null
+export function getAllSkippedRanges(tu: CXTranslationUnit): CXSourceRange[] | null
+
 //
 
 export function parseTranslationUnit(
