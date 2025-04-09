@@ -5,6 +5,7 @@
 #include <napi.h>
 
 #include "loader.h"
+#include "clang-c/CXDiagnostic.h"
 
 template <typename T>
 struct Deref
@@ -50,6 +51,20 @@ inline Napi::External<Deref<CXTranslationUnit>::type> wrapTu(Napi::Env env, CXTr
 {
     return Napi::External<Deref<CXTranslationUnit>::type>::New(env, tu, [](Napi::Env env, CXTranslationUnit data) {
         getLib(env)->call_clang_func(clang_disposeTranslationUnit, data);
+    });
+}
+
+inline Napi::External<Deref<CXDiagnostic>::type> wrapDiag(Napi::Env env, CXDiagnostic diag)
+{
+    return Napi::External<Deref<CXDiagnostic>::type>::New(env, diag, [](Napi::Env env, CXDiagnostic data) {
+        getLib(env)->call_clang_func(clang_disposeDiagnostic, data);
+    });
+}
+
+inline Napi::External<Deref<CXDiagnosticSet>::type> wrapDiagSet(Napi::Env env, CXDiagnosticSet diags)
+{
+    return Napi::External<Deref<CXDiagnosticSet>::type>::New(env, diags, [](Napi::Env env, CXDiagnosticSet data) {
+        getLib(env)->call_clang_func(clang_disposeDiagnosticSet, data);
     });
 }
 

@@ -37,3 +37,8 @@ export type CXFile = { __brand: 'CXFile' }
 
 export type CXSourceLocation = { __brand: 'CXSourceLocation' }
 export type CXSourceRange = { __brand: 'CXSourceRange' }
+
+// CXDiagnostic.h
+
+export type CXDiagnostic = { __brand: 'CXDiagnostic' }
+export type CXDiagnosticSet = { __brand: 'CXDiagnosticSet' }

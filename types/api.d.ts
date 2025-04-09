@@ -2,6 +2,8 @@ import { unsigned } from './base'
 import { CXChildVisitResult, CXCursorKind } from './enum'
 import {
     CXCursor,
+    CXDiagnostic,
+    CXDiagnosticSet,
     CXFile,
     CXIndex,
     CXIndexOptions,
@@ -36,7 +38,9 @@ export function getLocationForOffset(
 ): CXSourceLocation
 export function getSkippedRanges(tu: CXTranslationUnit, file: CXFile): CXSourceRange[] | null
 export function getAllSkippedRanges(tu: CXTranslationUnit): CXSourceRange[] | null
-
+export function getNumDiagnostics(Unit: CXTranslationUnit): unsigned
+export function getDiagnostic(Unit: CXTranslationUnit, Index: unsigned): CXDiagnostic | null
+export function getDiagnosticSetFromTU(Unit: CXTranslationUnit): CXDiagnosticSet | null
 //
 
 export function equalCursors(cursorA: CXCursor, cursorB: CXCursor): boolean

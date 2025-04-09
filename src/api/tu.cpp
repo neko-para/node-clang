@@ -107,5 +107,39 @@ void implTu(Napi::Object exports)
         },
         "nodeClang.getAllSkippedRanges");
 
+    exports["getNumDiagnostics"] = Napi::Function::New(
+        env,
+        [](const Napi::CallbackInfo& info) -> Napi::Value {
+            auto result = getLib(info.Env())->call_clang_func(clang_getNumDiagnostics, unwrapPtr<CXTranslationUnit>(info[0]));
+            return Napi::Number::New(info.Env(), result);
+        },
+        "nodeClang.getNumDiagnostics");
+
+    exports["getDiagnostic"] = Napi::Function::New(
+        env,
+        [](const Napi::CallbackInfo& info) -> Napi::Value {
+            auto diag = getLib(info.Env())->call_clang_func(clang_getDiagnostic, unwrapPtr<CXTranslationUnit>(info[0]), toU32(info[1]));
+            if (!diag) {
+                return info.Env().Null();
+            }
+            else {
+                return wrapDiag(info.Env(), diag);
+            }
+        },
+        "nodeClang.getDiagnostic");
+
+    exports["getDiagnosticSetFromTU"] = Napi::Function::New(
+        env,
+        [](const Napi::CallbackInfo& info) -> Napi::Value {
+            auto diags = getLib(info.Env())->call_clang_func(clang_getDiagnosticSetFromTU, unwrapPtr<CXTranslationUnit>(info[0]));
+            if (!diags) {
+                return info.Env().Null();
+            }
+            else {
+                return wrapDiagSet(info.Env(), diags);
+            }
+        },
+        "nodeClang.getDiagnosticSetFromTU");
+
     //
 }

@@ -1,7 +1,7 @@
-import { TranslationUnit } from './CTranslationUnit'
+import { CTranslationUnit } from './CTranslationUnit'
 import { clang } from './native'
 
-export class Index {
+export class CIndex {
     __index: clang.CXIndex
 
     constructor(idx: clang.CXIndex) {
@@ -10,12 +10,12 @@ export class Index {
 
     static createIndex(excludeDeclarationsFromPCH: boolean, displayDiagnostics: boolean) {
         const idx = clang.createIndex(excludeDeclarationsFromPCH, displayDiagnostics)
-        return idx ? new Index(idx) : null
+        return idx ? new CIndex(idx) : null
     }
 
     static createIndexWithOption(option: clang.CXIndexOptions) {
         const idx = clang.createIndexWithOptions(option)
-        return idx ? new Index(idx) : null
+        return idx ? new CIndex(idx) : null
     }
 
     parseTranslationUnit(
@@ -31,6 +31,6 @@ export class Index {
             unsaved_files,
             options
         )
-        return tu ? new TranslationUnit(tu) : null
+        return tu ? new CTranslationUnit(tu) : null
     }
 }

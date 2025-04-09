@@ -1,19 +1,19 @@
-import { Type } from './CType'
+import { CType } from './CType'
 import { clang } from './native'
 
-export class Cursor {
+export class CCursor {
     __cursor: clang.CXCursor
 
     constructor(cursor: clang.CXCursor) {
         this.__cursor = cursor
     }
 
-    equal(cursor: Cursor) {
+    equal(cursor: CCursor) {
         return clang.equalCursors(this.__cursor, cursor.__cursor)
     }
 
     get type() {
-        return new Type(clang.getCursorType(this.__cursor))
+        return new CType(clang.getCursorType(this.__cursor))
     }
 
     get enumConstantDeclValue() {
@@ -28,9 +28,9 @@ export class Cursor {
         return clang.getCursorKind(this.__cursor)
     }
 
-    visitChildren(func: (cursor: Cursor, parent: Cursor) => clang.CXChildVisitResult) {
+    visitChildren(func: (cursor: CCursor, parent: CCursor) => clang.CXChildVisitResult) {
         return clang.visitChildren(this.__cursor, (cursor, parent) =>
-            func(new Cursor(cursor), new Cursor(parent))
+            func(new CCursor(cursor), new CCursor(parent))
         )
     }
 }

@@ -1,6 +1,6 @@
 import { clang } from './native'
 
-export class Type {
+export class CType {
     __type: clang.CXType
 
     constructor(type: clang.CXType) {
