@@ -7,42 +7,11 @@ export type CXUnsavedFile = {
     Filename: string
     Contents: string
 }
-export const enum CXAvailabilityKind {
-    Available,
-    Deprecated,
-    NotAvailable,
-    NotAccessible
-}
 export type CXVersion = {
     major: int
     minor: int
     subminor: int
 }
-export const enum CXCursor_ExceptionSpecificationKind {
-    None,
-    DynamicNone,
-    Dynamic,
-    MSAny,
-    BasicNoexcept,
-    ComputedNoexcept,
-    Unevaluated,
-    Uninstantiated,
-    Unparsed,
-    NoThrow
-}
-export const enum CXChoice {
-    Default = 0,
-    Enabled = 1,
-    Disabled = 2
-}
-export const enum CXGlobalOpt {
-    None = 0x0,
-    ThreadBackgroundPriorityForIndexing = 0x1,
-    ThreadBackgroundPriorityForEditing = 0x2,
-    ThreadBackgroundPriorityForAll = ThreadBackgroundPriorityForIndexing |
-        ThreadBackgroundPriorityForEditing
-}
-export type CXGlobalOptFlags = unsigned
 export type CXIndexOptions = {
     Size: unsigned
     ThreadBackgroundPriorityForIndexing: uchar
@@ -54,9 +23,11 @@ export type CXIndexOptions = {
     PreambleStoragePath: string
     InvocationEmissionPath: string
 }
+
 //
 
 export type CXCursor = { __brand: 'CXCursor' }
+export type CXType = { __brand: 'CXType' }
 
 // CXFile.h
 

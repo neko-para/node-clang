@@ -1,14 +1,14 @@
-import { CXCursorKind } from './CXCursorKind'
 import { unsigned } from './base'
+import { CXChildVisitResult, CXCursorKind } from './enum'
 import {
     CXCursor,
     CXFile,
-    CXGlobalOptFlags,
     CXIndex,
     CXIndexOptions,
     CXSourceLocation,
     CXSourceRange,
     CXTranslationUnit,
+    CXType,
     CXUnsavedFile
 } from './types'
 
@@ -18,7 +18,7 @@ export function createIndex(
 ): CXIndex | null
 export function createIndexWithOptions(options: CXIndexOptions): CXIndex | null
 // deprecated CXIndex_setGlobalOptions
-export function CXIndex_getGlobalOptions(index: CXIndex): CXGlobalOptFlags
+export function CXIndex_getGlobalOptions(index: CXIndex): unsigned
 // deprecated CXIndex_setInvocationEmissionPathOption
 export function isFileMultipleIncludeGuarded(tu: CXTranslationUnit, file: CXFile): boolean
 export function getFile(tu: CXTranslationUnit, file_name: string): CXFile | null
@@ -39,6 +39,15 @@ export function getAllSkippedRanges(tu: CXTranslationUnit): CXSourceRange[] | nu
 
 //
 
+export function equalCursors(cursorA: CXCursor, cursorB: CXCursor): boolean
+export function getCursorType(C: CXCursor): CXType
+export function getTypeSpelling(CT: CXType): string
+export function getEnumConstantDeclValue(C: CXCursor): bigint
+export function getCursorSpelling(cursor: CXCursor): string
+export function getCursorKind(cursor: CXCursor): CXCursorKind
+
+//
+
 export function parseTranslationUnit(
     CIdx: CXIndex,
     source_filename: string,
@@ -49,8 +58,5 @@ export function parseTranslationUnit(
 export function getTranslationUnitCursor(tu: CXTranslationUnit): CXCursor
 export function visitChildren(
     parent: CXCursor,
-    visitor: (cursor: CXCursor, parent: CXCursor) => 'break' | 'continue' | 'recurse'
+    visitor: (cursor: CXCursor, parent: CXCursor) => CXChildVisitResult
 ): boolean
-export function equalCursors(cursorA: CXCursor, cursorB: CXCursor): boolean
-export function getCursorSpelling(cursor: CXCursor): string
-export function getCursorKind(cursor: CXCursor): CXCursorKind

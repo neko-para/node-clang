@@ -4,7 +4,7 @@
 #include <napi.h>
 
 #include "api/api.h"
-#include "enums/enums.h"
+#include "api/enum.h"
 #include "loader.h"
 #include "utils.h"
 
@@ -40,6 +40,10 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 
     implIndex(exports);
     implTu(exports);
+    implCursor(exports);
+    implType(exports);
+
+    implEnum(exports);
 
     exports["parseTranslationUnit"] = Napi::Function::New(
         env,
@@ -104,54 +108,13 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
                                               wrap(ctx->env, cursor),
                                               wrap(ctx->env, parent),
                                           });
-                                      auto action = toStr(result);
-                                      if (action == "break") {
-                                          return CXChildVisit_Break;
-                                      }
-                                      else if (action == "continue") {
-                                          return CXChildVisit_Continue;
-                                      }
-                                      else if (action == "recurse") {
-                                          return CXChildVisit_Recurse;
-                                      }
-                                      else {
-                                          return CXChildVisit_Break;
-                                      }
+                                      auto action = toI32(result);
+                                      return static_cast<CXChildVisitResult>(action);
                                   },
                                   &ctx);
             return Napi::Boolean::New(info.Env(), !!result);
         },
         "nodeClang.visitChildren");
-
-    exports["equalCursors"] = Napi::Function::New(
-        env,
-        [](const Napi::CallbackInfo& info) -> Napi::Value {
-            auto result = getLib(info.Env())->call_clang_func(clang_equalCursors, unwrap<CXCursor>(info[0]), unwrap<CXCursor>(info[1]));
-            return Napi::Boolean::New(info.Env(), !!result);
-        },
-        "nodeClang.equalCursors");
-
-    exports["getCursorSpelling"] = Napi::Function::New(
-        env,
-        [](const Napi::CallbackInfo& info) -> Napi::Value {
-            auto result = getLib(info.Env())->call_clang_func(clang_getCursorSpelling, unwrap<CXCursor>(info[0]));
-            auto ret = Napi::String::New(info.Env(), getLib(info.Env())->call_clang_func(clang_getCString, result));
-            getLib(info.Env())->call_clang_func(clang_disposeString, result);
-            return ret;
-        },
-        "nodeClang.getCursorSpelling");
-
-    exports["getCursorKind"] = Napi::Function::New(
-        env,
-        [](const Napi::CallbackInfo& info) -> Napi::Value {
-            auto result = getLib(info.Env())->call_clang_func(clang_getCursorKind, unwrap<CXCursor>(info[0]));
-            return Napi::Number::New(info.Env(), result);
-        },
-        "nodeClang.getCursorKind");
-
-    auto [CXCursorKind_str_to_num, CXCursorKind_num_to_str] = processEnum(env, makeCXCursorKindEnum());
-    exports["__CXCursorKind_StrNum"] = CXCursorKind_str_to_num;
-    exports["__CXCursorKind_NumStr"] = CXCursorKind_num_to_str;
 
     return exports;
 }

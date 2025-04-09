@@ -1,10 +1,6 @@
 #include "api.h"
 
 #include "../utils.h"
-#include "clang-c/CXFile.h"
-#include "clang-c/CXSourceLocation.h"
-#include "clang-c/Index.h"
-#include <cstdint>
 
 void implTu(Napi::Object exports)
 {

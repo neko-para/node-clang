@@ -1,4 +1,3 @@
-#include "clang-c/Index.h"
 #include "api.h"
 
 #include "../utils.h"

@@ -51,8 +51,9 @@ set(NodeClang_src
     src/main.cpp
     src/api/index.cpp
     src/api/tu.cpp
-    src/enums/enums.cpp
-    src/enums/CXCursorKind.cpp
+    src/api/cursor.cpp
+    src/api/type.cpp
+    src/api/enum.cpp
 )
 
 add_library(NodeClang SHARED ${CMAKE_JS_SRC} ${NodeClang_src})
