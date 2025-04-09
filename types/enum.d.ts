@@ -425,6 +425,7 @@ export const enum CXCursorKind {
     LastExtraDecl = 604,
     OverloadCandidate = 700,
 }
+export declare const CXCursorKind_str: Record<CXCursorKind, string>
 
 export const enum CXLinkageKind {
     Invalid = 0,
@@ -584,6 +585,7 @@ export const enum CXTypeKind {
     HLSLResource = 179,
     HLSLAttributedResource = 180,
 }
+export declare const CXTypeKind_str: Record<CXTypeKind, string>
 
 export const enum CXCallingConv {
     Default = 0,

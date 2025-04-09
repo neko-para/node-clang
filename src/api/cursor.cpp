@@ -26,7 +26,12 @@ void implCursor(Napi::Object exports)
         env,
         [](const Napi::CallbackInfo& info) -> Napi::Value {
             auto result = getLib(info.Env())->call_clang_func(clang_getEnumConstantDeclValue, unwrap<CXCursor>(info[0]));
-            return Napi::BigInt::New(info.Env(), result);
+            if (result < -((1ll << 53) - 1) || result > ((1ll << 53) - 1)) {
+                return Napi::BigInt::New(info.Env(), result);
+            }
+            else {
+                return Napi::Number::New(info.Env(), result);
+            }
         },
         "nodeClang.getEnumConstantDeclValue");
 

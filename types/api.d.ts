@@ -42,7 +42,7 @@ export function getAllSkippedRanges(tu: CXTranslationUnit): CXSourceRange[] | nu
 export function equalCursors(cursorA: CXCursor, cursorB: CXCursor): boolean
 export function getCursorType(C: CXCursor): CXType
 export function getTypeSpelling(CT: CXType): string
-export function getEnumConstantDeclValue(C: CXCursor): bigint
+export function getEnumConstantDeclValue(C: CXCursor): number | bigint
 export function getCursorSpelling(cursor: CXCursor): string
 export function getCursorKind(cursor: CXCursor): CXCursorKind
 

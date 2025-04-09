@@ -36,8 +36,8 @@ function generateEnum(tu: TranslationUnit) {
         return curr
     }
 
-    const enums: Record<string, [string, bigint][]> = {}
-    let enumKeys: [string, bigint][] = []
+    const enums: Record<string, [string, number][]> = {}
+    let enumKeys: [string, number][] = []
 
     const root = tu.cursor
     const cursors: Cursor[] = [root]
@@ -60,7 +60,12 @@ function generateEnum(tu: TranslationUnit) {
             }
         } else if (cursors.length === 3) {
             if (cursor.kind === clang.CXCursorKind.EnumConstantDecl) {
-                enumKeys.push([cursor.spelling, cursor.enumConstantDeclValue])
+                const value = cursor.enumConstantDeclValue
+                if (typeof value === 'bigint') {
+                    console.error('Bigint enum not supported:', cursor.spelling, value)
+                } else {
+                    enumKeys.push([cursor.spelling, value])
+                }
             }
             return clang.CXChildVisitResult.Continue
         } else {
@@ -92,7 +97,27 @@ function generateEnum(tu: TranslationUnit) {
             dtsSrc.push(`    ${val.replace(prefix, '')} = ${num},`)
         }
         cppSrc.push(`    exports["${key}"] = ${key}_obj;`)
-        dtsSrc.push('}', '')
+        dtsSrc.push('}')
+
+        if (key === 'CXCursorKind' || key === 'CXTypeKind') {
+            const backward: Record<number, string[]> = {}
+            for (const [val, num] of vals) {
+                const name = val.replace(prefix, '')
+                if (name.startsWith('First') || name.startsWith('Last')) {
+                    continue
+                }
+                backward[num] = backward[num] ?? []
+                backward[num].push(name)
+            }
+            cppSrc.push(`    auto ${key}_strObj = Napi::Object::New(exports.Env());`)
+            for (const [num, vals] of Object.entries(backward)) {
+                cppSrc.push(`    ${key}_strObj["${num}"] = "${vals.join('/')}";`)
+            }
+            cppSrc.push(`    exports["${key}_str"] = ${key}_strObj;`)
+            dtsSrc.push(`export declare const ${key}_str: Record<${key}, string>`)
+        }
+
+        dtsSrc.push('')
     }
 
     cppSrc.push('}', '')
