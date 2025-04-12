@@ -1,5 +1,5 @@
 import { unsigned } from './base'
-import { CXChildVisitResult, CXCursorKind } from './enum'
+import { CXChildVisitResult, CXCursorKind, CXLoadDiag_Error } from './enum'
 import {
     CXCursor,
     CXDiagnostic,
@@ -49,6 +49,21 @@ export function getTypeSpelling(CT: CXType): string
 export function getEnumConstantDeclValue(C: CXCursor): number | bigint
 export function getCursorSpelling(cursor: CXCursor): string
 export function getCursorKind(cursor: CXCursor): CXCursorKind
+
+//
+
+// CXDiagnostic.h
+
+export function getNumDiagnosticsInSet(Diags: CXDiagnosticSet): number
+export function getDiagnosticInSet(Diags: CXDiagnosticSet, Index: unsigned): CXDiagnostic
+export function loadDiagnostics(
+    file: string
+): [result: CXDiagnosticSet, error: CXLoadDiag_Error, errorString: string] | null
+export function getChildDiagnostics(D: CXDiagnostic): CXDiagnosticSet
+/** @param Options: CXDiagnosticDisplayOptions */
+export function formatDiagnostic(Diagnostic: CXDiagnostic, Options: unsigned): string
+/** @returns CXDiagnosticDisplayOptions */
+export function defaultDiagnosticDisplayOptions(): unsigned
 
 //
 

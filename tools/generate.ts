@@ -1,21 +1,33 @@
 import { writeFileSync } from 'fs'
 
-import { Cursor, Index, TranslationUnit, clang } from '../wrapper'
+import { CCursor, CIndex, CTranslationUnit, clang } from '../wrapper'
 
+let includes: string[] = []
 if (process.platform === 'darwin') {
     clang.load('/usr/local/Cellar/llvm/20.1.1/lib/libclang.dylib')
+    includes = [
+        '/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include',
+        '/Library/Developer/CommandLineTools/SDKs/MacOSX14.5.sdk/usr/include/c++/v1'
+    ]
+} else if (process.platform === 'win32') {
+    clang.load('C:/Program Files/LLVM/bin/libclang.dll')
+    includes = [
+        'C:/Program Files/LLVM/lib/clang/20/include',
+        'C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.43.34808/include',
+        'C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.43.34808/atlmfc/include',
+        'C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/ucrt',
+        'C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/shared',
+        'C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/um',
+        'C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/winrt',
+        'C:/Program Files (x86)/Windows Kits/10/Include/10.0.22000.0/cppwinrt'
+    ]
 }
 
-function load(): [Index, TranslationUnit] {
-    const index = Index.createIndex(false, true)!
+function load(): [CIndex, CTranslationUnit] {
+    const index = CIndex.createIndex(false, true)!
     const tu = index.parseTranslationUnit(
         'third_party/clang-c/Index.h',
-        [
-            '-xc++',
-            '-I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include',
-            '-I/Library/Developer/CommandLineTools/SDKs/MacOSX14.5.sdk/usr/include/c++/v1',
-            '-Ithird_party'
-        ],
+        ['-xc++', `-I${process.cwd()}/third_party`].concat(includes.map(x => `-I${x}`)),
         [],
         0
     )
@@ -25,7 +37,7 @@ function load(): [Index, TranslationUnit] {
     return [index, tu]
 }
 
-function generateEnum(tu: TranslationUnit) {
+function generateEnum(tu: CTranslationUnit) {
     const findPrefix = (strs: string[]) => {
         let curr = strs[0]
         for (const next of strs.slice(1)) {
@@ -40,7 +52,7 @@ function generateEnum(tu: TranslationUnit) {
     let enumKeys: [string, number][] = []
 
     const root = tu.cursor
-    const cursors: Cursor[] = [root]
+    const cursors: CCursor[] = [root]
     root.visitChildren((cursor, parent) => {
         while (!cursors[0].equal(parent)) {
             cursors.shift()

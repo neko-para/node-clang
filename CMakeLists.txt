@@ -53,6 +53,7 @@ set(NodeClang_src
     src/api/tu.cpp
     src/api/cursor.cpp
     src/api/type.cpp
+    src/api/diag.cpp
     src/api/enum.cpp
 )
 

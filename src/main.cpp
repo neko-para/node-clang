@@ -42,6 +42,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     implTu(exports);
     implCursor(exports);
     implType(exports);
+    implDiag(exports);
 
     implEnum(exports);
 
