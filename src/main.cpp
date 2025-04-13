@@ -1,28 +1,30 @@
-#include <cstdint>
-
 #include <clang-c/Index.h>
 #include <napi.h>
 
-#include "api/api.h"
 #include "api/enum.h"
-#include "loader.h"
-#include "utils.h"
+#include "class/cursor.h"
+#include "class/index.h"
+#include "class/instance.h"
+#include "loader/clang.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
+    Instance::init(env);
+
     exports["load"] = Napi::Function::New(
         env,
         [](const Napi::CallbackInfo& info) -> Napi::Value {
-            if (getLib(info.Env())) {
-                delete getLib(info.Env());
-                setLib(info.Env(), nullptr);
+            auto& inst = Instance::get(info.Env());
+            if (inst.library) {
+                delete inst.library;
+                inst.library = nullptr;
             }
 
             auto result = Napi::Object::New(info.Env());
 
             try {
-                auto library = new nc::Library(toStr(info[0]).c_str());
-                setLib(info.Env(), library);
+                auto library = new Library(info[0].As<Napi::String>().Utf8Value().c_str());
+                inst.library = library;
             }
             catch (const char* err) {
                 Napi::Error::New(info.Env(), err).ThrowAsJavaScriptException();
@@ -35,17 +37,15 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
 
     exports["loaded"] = Napi::Function::New(
         env,
-        [](const Napi::CallbackInfo& info) -> Napi::Value { return Napi::Boolean::New(info.Env(), !!getLib(info.Env())); },
+        [](const Napi::CallbackInfo& info) -> Napi::Value { return Napi::Boolean::New(info.Env(), !!Instance::get(info.Env()).library); },
         "nodeClang.loaded");
-
-    implIndex(exports);
-    implTu(exports);
-    implCursor(exports);
-    implType(exports);
-    implDiag(exports);
 
     implEnum(exports);
 
+    exports["CIndex"] = Index::Init(env);
+    exports["CCursor"] = Cursor::Init(env);
+
+    /*
     exports["parseTranslationUnit"] = Napi::Function::New(
         env,
         [](const Napi::CallbackInfo& info) -> Napi::Value {
@@ -116,6 +116,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
             return Napi::Boolean::New(info.Env(), !!result);
         },
         "nodeClang.visitChildren");
+*/
 
     return exports;
 }

@@ -5,7 +5,6 @@
 #include <Windows.h>
 
 using lib_t = HMODULE;
-using lib_func_t = void (*)();
 
 inline lib_t lib_open(const char* path)
 {
@@ -17,15 +16,15 @@ inline void lib_close(lib_t lib)
     CloseHandle(lib);
 }
 
-inline lib_func_t lib_get_func(lib_t lib, const char* name)
+template <typename prototype>
+inline prototype lib_get_func(lib_t lib, const char* name)
 {
-    return reinterpret_cast<lib_func_t>(GetProcAddress(lib, name));
+    return reinterpret_cast<prototype>(GetProcAddress(lib, name));
 }
 #else
 #include <dlfcn.h>
 
 using lib_t = void*;
-using lib_func_t = void (*)();
 
 inline lib_t lib_open(const char* path)
 {
@@ -37,8 +36,9 @@ inline void lib_close(lib_t lib)
     dlclose(lib);
 }
 
-inline lib_func_t lib_get_func(lib_t lib, const char* name)
+template <typename prototype>
+inline prototype lib_get_func(lib_t lib, const char* name)
 {
-    return reinterpret_cast<lib_func_t>(dlsym(lib, name));
+    return reinterpret_cast<prototype>(dlsym(lib, name));
 }
 #endif

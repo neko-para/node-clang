@@ -138,9 +138,59 @@ function generateEnum(tu: CTranslationUnit) {
     writeFileSync('types/enum.d.ts', dtsSrc.join('\n'))
 }
 
+function generateFunc(tu: CTranslationUnit) {
+    const cppSrc: string[] = [
+        '#pragma once',
+        '',
+        '#include "loader.h"',
+        '',
+        'struct Library : public LibraryBase',
+        '{'
+    ]
+
+    const funcs: string[] = []
+
+    const root = tu.cursor
+    const cursors: CCursor[] = [root]
+    root.visitChildren((cursor, parent) => {
+        while (!cursors[0].equal(parent)) {
+            cursors.shift()
+        }
+        cursors.unshift(cursor)
+        if (cursors.length < 2) {
+            return clang.CXChildVisitResult.Recurse
+        }
+
+        if (cursors.length === 2 && cursor.kind === clang.CXCursorKind.FunctionDecl) {
+            if (cursor.spelling.startsWith('clang_')) {
+                funcs.push(cursor.spelling)
+            }
+        }
+        return clang.CXChildVisitResult.Continue
+    })
+
+    for (const func of funcs) {
+        cppSrc.push(`    decltype(${func})* ${func.replace('clang_', '')};`)
+    }
+
+    cppSrc.push('', '    Library(const char* path) : LibraryBase(path)', '    {')
+
+    for (const func of funcs) {
+        cppSrc.push(
+            `        ${func.replace('clang_', '')} = lib_get_func<decltype(${func})*>(library_, "${func}");`
+        )
+    }
+
+    cppSrc.push('    }', '};', '')
+
+    writeFileSync('src/loader/clang.h', cppSrc.join('\n'))
+}
+
 function main() {
     const [index, tu] = load()
     generateEnum(tu)
+
+    generateFunc(tu)
 }
 
 main()

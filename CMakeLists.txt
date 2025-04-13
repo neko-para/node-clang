@@ -49,12 +49,9 @@ endif()
 
 set(NodeClang_src
     src/main.cpp
-    src/api/index.cpp
-    src/api/tu.cpp
-    src/api/cursor.cpp
-    src/api/type.cpp
-    src/api/diag.cpp
     src/api/enum.cpp
+    src/class/cursor.cpp
+    src/class/index.cpp
 )
 
 add_library(NodeClang SHARED ${CMAKE_JS_SRC} ${NodeClang_src})

@@ -1,1 +1,1 @@
-module.exports = require('../build/NodeClang.node')
+module.exports = require('../build/Debug/NodeClang.node')
