@@ -43,6 +43,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     implEnum(exports);
 
     exports["CIndex"] = Index::Init(env);
+    exports["CIndexOptions"] = IndexOptions::Init(env);
     exports["CCursor"] = Cursor::Init(env);
 
     /*

@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "type": "lldb-dap",
+            "request": "launch",
+            "name": "Launch",
+            "program": "node",
+            "args": ["test.js"],
+            "env": [],
+            "cwd": "${workspaceRoot}"
+        }
+    ]
+}

@@ -1,12 +1,14 @@
 #pragma once
 
-#include <exception>
 #include <format>
 #include <optional>
 #include <tuple>
 #include <utility>
 
 #include <napi.h>
+#include <variant>
+
+#include "./convert.h"
 
 template <typename Self, typename Func>
 struct FuncTraits
@@ -50,103 +52,6 @@ struct StaticFuncTraits<Ret (*)(Napi::Env, Args...)>
     static constexpr bool has_env = true;
 };
 
-struct ConvertFailed : public std::exception
-{
-    std::string error;
-
-    ConvertFailed(std::string err)
-        : error(err)
-    {
-    }
-
-    virtual const char* what() const noexcept override { return error.c_str(); }
-};
-
-template <typename Type>
-struct Convert
-{
-    static Napi::Value to_value(Napi::Env env, Type value) = delete;
-    static Type from_value(Napi::Value value) = delete;
-};
-
-inline std::string valueType(Napi::Value value)
-{
-    switch (value.Type()) {
-    case napi_undefined:
-        return "undefined";
-    case napi_null:
-        return "null";
-    case napi_boolean:
-        return "boolean";
-    case napi_number:
-        return "number";
-    case napi_string:
-        return "string";
-    case napi_symbol:
-        return "symbol";
-    case napi_object:
-        return "object";
-    case napi_function:
-        return "function";
-    case napi_external:
-        return "external";
-    case napi_bigint:
-        return "bigint";
-    }
-    return "unknown";
-}
-
-template <>
-struct Convert<bool>
-{
-    static constexpr const char* name = "boolean";
-
-    static Napi::Value to_value(Napi::Env env, bool value) { return Napi::Boolean::New(env, value); }
-
-    template <size_t I>
-    static bool from_value(Napi::Value value)
-    {
-        if (!value.IsBoolean()) {
-            throw ConvertFailed { std::format("Type mismatch at {}, expect boolean, got {}", I, valueType(value)) };
-        }
-        return value.As<Napi::Boolean>().Value();
-    }
-};
-
-template <>
-struct Convert<unsigned>
-{
-    static constexpr const char* name = "unsigned";
-
-    static Napi::Value to_value(Napi::Env env, unsigned value) { return Napi::Number::New(env, value); }
-
-    template <size_t I>
-    static unsigned from_value(Napi::Value value)
-    {
-        if (!value.IsNumber()) {
-            throw ConvertFailed { std::format("Type mismatch at {}, expect number(unsigned), got {}", I, valueType(value)) };
-        }
-        return value.As<Napi::Number>().Uint32Value();
-    }
-};
-
-template <>
-struct Convert<std::string>
-{
-    static constexpr const char* name = "string";
-
-    static Napi::Value to_value(Napi::Env env, std::string value) { return Napi::String::New(env, value); }
-
-    template <size_t I>
-    static std::string from_value(Napi::Value value)
-    {
-        if (!value.IsString()) {
-            throw ConvertFailed { std::format("Type mismatch at {}, expect string, got {}", I, valueType(value)) };
-        }
-        return value.As<Napi::String>().Utf8Value();
-    }
-};
-
 template <typename Self, auto func, auto... rest>
 consteval inline auto wrap()
 {
@@ -187,7 +92,7 @@ consteval inline auto wrap()
         catch (ConvertFailed err) {
             std::string decl;
             [&]<size_t... Is>(std::index_sequence<Is...>) {
-                ((decl += Convert<std::tuple_element_t<Is, args_t>>::name, decl += ", "), ...);
+                ((decl += Convert<std::tuple_element_t<Is, args_t>>::name(), decl += ", "), ...);
             }(std::make_index_sequence<std::tuple_size_v<args_t>>());
             if (decl.length() > 1) {
                 decl.pop_back();
@@ -200,7 +105,47 @@ consteval inline auto wrap()
             return std::nullopt;
         }
         else {
-            return wrap<Self, rest...>()(self, info, trace);
+            constexpr auto next = wrap<Self, rest...>();
+            return next(self, info, trace);
+        }
+    };
+}
+
+template <typename Self, auto func, auto... rest>
+consteval inline auto wrapSetter()
+{
+    using Func = decltype(func);
+    return +[](Self& self,
+               const Napi::CallbackInfo& info,
+               const Napi::Value& value,
+               std::vector<std::string>& trace) -> std::optional<std::monostate> {
+        using traits = FuncTraits<Self, Func>;
+        using args_t = traits::args_t;
+        try {
+            do {
+                if (info.Length() != 1) {
+                    throw ConvertFailed { std::format("Count mismatch, expect 1, got {}", info.Length()) };
+                }
+                args_t args;
+                std::get<0>(args) = Convert<std::tuple_element_t<0, args_t>>::template from_value<0>(value);
+                if constexpr (traits::has_self) {
+                    std::apply(func, std::tuple_cat(std::make_tuple<Self&>(self), args));
+                }
+                else {
+                    std::apply(func, args);
+                }
+                return std::monostate {};
+            } while (false);
+        }
+        catch (ConvertFailed err) {
+            trace.push_back(std::format("    Tried ({}) failed: {}", Convert<std::tuple_element_t<0, args_t>>::name(), err.what()));
+        }
+        if constexpr (sizeof...(rest) == 0) {
+            return std::nullopt;
+        }
+        else {
+            constexpr auto next = wrapSetter<Self, rest...>();
+            return next(self, info, value, trace);
         }
     };
 }
@@ -245,7 +190,7 @@ consteval inline auto wrapStatic()
         catch (ConvertFailed err) {
             std::string decl;
             [&]<size_t... Is>(std::index_sequence<Is...>) {
-                ((decl += Convert<std::tuple_element_t<Is, args_t>>::name, decl += ", "), ...);
+                ((decl += Convert<std::tuple_element_t<Is, args_t>>::name(), decl += ", "), ...);
             }(std::make_index_sequence<std::tuple_size_v<args_t>>());
             if (decl.length() > 1) {
                 decl.pop_back();
@@ -258,7 +203,8 @@ consteval inline auto wrapStatic()
             return std::nullopt;
         }
         else {
-            return wrapStatic<rest...>()(info, trace);
+            constexpr auto next = wrapStatic<rest...>();
+            return next(info, trace);
         }
     };
 }
