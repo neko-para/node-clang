@@ -1,12 +1,15 @@
 #pragma once
 
-#include <clang-c/Index.h>
 #include <memory>
-#include <napi.h>
 #include <string>
+
+#include <clang-c/Index.h>
+#include <napi.h>
 
 #include "convert.h"
 #include "instance.h"
+#include "translation_unit.h"
+#include "types.h"
 
 struct IndexOptions : public WrapBase<IndexOptions>
 {
@@ -39,12 +42,18 @@ public:
     std::optional<std::string> getInvocationEmissionPath();
     void setInvocationEmissionPath(std::optional<std::string> value);
 
+    void __flush_pointer()
+    {
+        data.PreambleStoragePath = __PreambleStoragePath ? __PreambleStoragePath->c_str() : nullptr;
+        data.InvocationEmissionPath = __InvocationEmissionPath ? __InvocationEmissionPath->c_str() : nullptr;
+    }
+
     CXIndexOptions data;
     std::optional<std::string> __PreambleStoragePath;
     std::optional<std::string> __InvocationEmissionPath;
 };
 
-class Index : public WrapBase<Index>
+struct Index : public WrapBase<Index>
 {
 public:
     static Napi::Function Init(Napi::Env env);
@@ -54,6 +63,12 @@ public:
     bool create(bool excludeDeclarationsFromPCH, bool displayDiagnostics);
     bool createIndexWithOptions(ConvertRef<IndexOptions> options);
     unsigned getGlobalOptions();
+
+    std::optional<ConvertReturn<TranslationUnit>> createTranslationUnitFromSourceFile(
+        std::string source_filename,
+        std::vector<std::string> clang_command_line_args,
+        std::vector<UnsavedFile> unsaved_files);
+
     std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
 private:

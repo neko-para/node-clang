@@ -1,8 +1,16 @@
-import type { unsigned } from './base'
+import type { ulong, unsigned } from './base'
+
+export type CUnsavedFile = [Filename: string, Contents: string, Length: ulong]
 
 export class CIndex {
     create(excludeDeclarationsFromPCH: boolean, displayDiagnostics: boolean): boolean
+    create(options: CIndexOptions): boolean
     get globalOptions(): unsigned
+    createTranslationUnitFromSourceFile(
+        source_filename: string,
+        clang_command_line_args: string[],
+        unsaved_files: CUnsavedFile[]
+    ): CTranslationUnit | null
 }
 
 export class CIndexOptions {
@@ -24,6 +32,6 @@ export class CIndexOptions {
     set InvocationEmissionPath(value: string | null): void
 }
 
-export class CCursor {
-    constructor()
-}
+export class CTranslationUnit {}
+
+export class CCursor {}

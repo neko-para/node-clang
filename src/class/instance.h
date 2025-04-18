@@ -14,6 +14,7 @@ struct Instance
     Library* library {};
     Napi::FunctionReference indexOptionsConstructor;
     Napi::FunctionReference indexConstructor;
+    Napi::FunctionReference translationUnitConstructor;
     Napi::FunctionReference cursorConstructor;
 
     static void init(Napi::Env env) { env.SetInstanceData<Instance>(new Instance); }

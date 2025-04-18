@@ -2,6 +2,7 @@
 
 #include "../loader/clang.h"
 #include "instance.h"
+#include "translation_unit.h"
 #include "clang-c/Index.h"
 #include <cstdint>
 #include <iostream>
@@ -101,7 +102,6 @@ std::optional<std::string> IndexOptions::getPreambleStoragePath()
 void IndexOptions::setPreambleStoragePath(std::optional<std::string> value)
 {
     __PreambleStoragePath = value;
-    data.PreambleStoragePath = __PreambleStoragePath ? __PreambleStoragePath.value().c_str() : nullptr;
 }
 
 std::optional<std::string> IndexOptions::getInvocationEmissionPath()
@@ -112,7 +112,6 @@ std::optional<std::string> IndexOptions::getInvocationEmissionPath()
 void IndexOptions::setInvocationEmissionPath(std::optional<std::string> value)
 {
     __InvocationEmissionPath = value;
-    data.InvocationEmissionPath = __InvocationEmissionPath ? __InvocationEmissionPath.value().c_str() : nullptr;
 }
 
 Napi::Function Index::Init(Napi::Env env)
@@ -123,6 +122,9 @@ Napi::Function Index::Init(Napi::Env env)
         {
             InstanceMethod("create", &Index::dispatcher<"create", &Index::create, &Index::createIndexWithOptions>),
             InstanceAccessor("globalOptions", &Index::dispatcher<"get globalOptions", &Index::getGlobalOptions>, nullptr),
+            InstanceMethod(
+                "createTranslationUnitFromSourceFile",
+                &Index::dispatcher<"createTranslationUnitFromSourceFile", &Index::createTranslationUnitFromSourceFile>),
 
             InstanceMethod(
                 Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
@@ -146,6 +148,7 @@ bool Index::create(bool excludeDeclarationsFromPCH, bool displayDiagnostics)
 
 bool Index::createIndexWithOptions(ConvertRef<IndexOptions> options)
 {
+    options.data->__flush_pointer();
     state->data = library()->createIndexWithOptions(&options.data->data);
     return !!state->data;
 }
@@ -155,13 +158,50 @@ unsigned Index::getGlobalOptions()
     return library()->CXIndex_getGlobalOptions(state->data);
 }
 
+std::optional<ConvertReturn<TranslationUnit>> Index::createTranslationUnitFromSourceFile(
+    std::string source_filename,
+    std::vector<std::string> clang_command_line_args,
+    std::vector<UnsavedFile> unsaved_files)
+{
+    std::vector<const char*> args;
+    std::vector<CXUnsavedFile> unsaves;
+
+    for (const auto& arg : clang_command_line_args) {
+        args.push_back(arg.c_str());
+    }
+
+    for (const auto& unsave : unsaved_files) {
+        unsaves.push_back(
+            {
+                std::get<0>(unsave).c_str(),
+                std::get<1>(unsave).c_str(),
+                std::get<2>(unsave),
+            });
+    }
+
+    auto tu = library()->createTranslationUnitFromSourceFile(
+        state->data,
+        source_filename.c_str(),
+        args.size(),
+        args.data(),
+        unsaves.size(),
+        unsaves.data());
+    if (!tu) {
+        return std::nullopt;
+    }
+
+    auto obj = instance().translationUnitConstructor.New({});
+    Napi::ObjectWrap<TranslationUnit>::Unwrap(obj)->__change(tu);
+    return ConvertReturn<TranslationUnit> { obj };
+}
+
 std::string Index::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect)
 {
     if (state->data) {
-        return std::format("CXIndex {{ {:#018x} }}", reinterpret_cast<uintptr_t>(state->data));
+        return std::format("CIndex {{ {:#018x} }}", reinterpret_cast<uintptr_t>(state->data));
     }
     else {
-        return "CXIndex { nullptr }";
+        return "CIndex { nullptr }";
     }
 }
 

@@ -6,6 +6,7 @@
 
 #include <clang-c/Index.h>
 #include <napi.h>
+#include <tuple>
 
 struct ConvertFailed : public std::exception
 {
@@ -27,6 +28,12 @@ template <typename Type>
 struct ConvertRef
 {
     Type* data;
+};
+
+template <typename Type>
+struct ConvertReturn
+{
+    Napi::Value data;
 };
 
 inline std::string valueType(Napi::Value value)
@@ -129,6 +136,37 @@ struct Convert<unsigned>
 };
 
 template <>
+struct Convert<unsigned long>
+{
+    static std::string name() { return "number(u64)"; }
+
+    static Napi::Value to_value(Napi::Env env, unsigned long value)
+    {
+        if (value > ((1ull << 53) - 1)) {
+            return Napi::BigInt::New(env, static_cast<uint64_t>(value));
+        }
+        else {
+            return Napi::Number::New(env, value);
+        }
+    }
+
+    template <size_t I>
+    static unsigned long from_value(Napi::Value value)
+    {
+        if (!value.IsNumber() && !value.IsBigInt()) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        if (value.IsNumber()) {
+            return value.As<Napi::Number>().Int64Value();
+        }
+        else {
+            bool suc;
+            return value.As<Napi::BigInt>().Uint64Value(&suc);
+        }
+    }
+};
+
+template <>
 struct Convert<std::string>
 {
     static std::string name() { return "string"; }
@@ -173,6 +211,82 @@ struct Convert<std::optional<Type>>
 };
 
 template <typename Type>
+struct Convert<std::vector<Type>>
+{
+    static std::string name() { return std::format("({})[]", Convert<Type>::name()); }
+
+    static Napi::Value to_value(Napi::Env env, std::vector<Type> value)
+    {
+        auto result = Napi::Array ::New(env, value.size());
+        for (uint32_t i = 0; i < value.size(); i++) {
+            result[i] = Convert<Type>::to_value(value[i]);
+        }
+        return result;
+    }
+
+    template <size_t I>
+    static std::vector<Type> from_value(Napi::Value value)
+    {
+        if (!value.IsArray()) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        auto arr = value.As<Napi::Array>();
+        std::vector<Type> result(arr.Length());
+        for (uint32_t i = 0; i < arr.Length(); i++) {
+            result[i] = Convert<Type>::template from_value<I>(arr[i]);
+        }
+        return result;
+    }
+};
+
+template <typename... Type>
+struct Convert<std::tuple<Type...>>
+{
+    using args_t = std::tuple<Type...>;
+
+    static std::string name()
+    {
+        std::string decl;
+        [&]<size_t... Is>(std::index_sequence<Is...>) {
+            ((decl += Convert<std::tuple_element_t<Is, args_t>>::name(), decl += ", "), ...);
+        }(std::make_index_sequence<std::tuple_size_v<args_t>>());
+        if (decl.length() > 1) {
+            decl.pop_back();
+            decl.pop_back();
+        }
+        return std::format("[{}]", decl);
+    }
+
+    static Napi::Value to_value(Napi::Env env, std::tuple<Type...> value)
+    {
+        auto result = Napi::Array ::New(env, std::tuple_size_v<args_t>);
+
+        [&]<size_t... Is>(std::index_sequence<Is...>) {
+            ((result[Is] = Convert<std::tuple_element_t<Is, args_t>>::to_value(env, std::get<Is>(value))), ...);
+        }(std::make_index_sequence<std::tuple_size_v<args_t>>());
+
+        return result;
+    }
+
+    template <size_t I>
+    static std::tuple<Type...> from_value(Napi::Value value)
+    {
+        if (!value.IsArray()) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        auto arr = value.As<Napi::Array>();
+        if (arr.Length() != std::tuple_size_v<args_t>) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        args_t result;
+        [&]<size_t... Is>(std::index_sequence<Is...>) {
+            ((std::get<Is>(result) = Convert<std::tuple_element_t<Is, args_t>>::template from_value<I>(arr[Is])), ...);
+        }(std::make_index_sequence<std::tuple_size_v<args_t>>());
+        return result;
+    }
+};
+
+template <typename Type>
 struct Convert<ConvertRef<Type>>
 {
     static std::string name() { return std::format("object({})", typeid(Type).name()); }
@@ -191,5 +305,19 @@ struct Convert<ConvertRef<Type>>
         catch (const Napi::Error& error) {
             throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
         }
+    }
+};
+
+template <typename Type>
+struct Convert<ConvertReturn<Type>>
+{
+    static std::string name() { return std::format("object({})", typeid(Type).name()); }
+
+    static Napi::Value to_value(Napi::Env env, ConvertReturn<Type> value) { return value.data; }
+
+    template <size_t I>
+    static ConvertReturn<Type> from_value(Napi::Value value)
+    {
+        throw ConvertFailed { "" };
     }
 };

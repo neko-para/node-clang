@@ -8,10 +8,9 @@ if (process.platform === 'win32') {
 
 const opt = new CIndexOptions()
 console.log(opt)
-for (const key in opt) {
-    console.log(key, opt[key])
-}
 const index = new CIndex()
 index.create(false, true)
-// index.create(opt)
 console.log(index)
+
+const tu = index.createTranslationUnitFromSourceFile('test.c', [], [])
+console.log(tu)
