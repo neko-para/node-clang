@@ -17,6 +17,7 @@ Napi::Function Cursor::Init(Napi::Env env)
           InstanceAccessor("isNull", &Cursor::dispatcher<"get isNull", &Cursor::isNull>, nullptr),
           InstanceAccessor("hash", &Cursor::dispatcher<"get hash", &Cursor::getHash>, nullptr),
           InstanceAccessor("kind", &Cursor::dispatcher<"get kind", &Cursor::getKind>, nullptr),
+          InstanceAccessor("kindStr", &Cursor::dispatcher<"get kindStr", &Cursor::getKindStr>, nullptr),
           InstanceAccessor("spelling", &Cursor::dispatcher<"get spelling", &Cursor::getSpelling>, nullptr),
           InstanceAccessor("translateUnit", &Cursor::dispatcher<"get translateUnit", &Cursor::getTranslateUnit>, nullptr),
           InstanceAccessor("type", &Cursor::dispatcher<"get type", &Cursor::getType>, nullptr),
@@ -57,6 +58,13 @@ unsigned Cursor::getHash()
 int Cursor::getKind()
 {
     return library()->getCursorKind(state->data);
+}
+
+std::string Cursor::getKindStr()
+{
+    auto kind = getKind();
+    auto iter = cursorKind_enum2str.find(static_cast<CXCursorKind>(kind));
+    return iter == cursorKind_enum2str.end() ? std::to_string(kind) : iter->second;
 }
 
 std::string Cursor::getSpelling()
@@ -123,9 +131,7 @@ bool Cursor::visitChildren(Napi::Function visitor)
 std::string Cursor::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect)
 {
     if (!isNull()) {
-        auto kind = getKind();
-        auto iter = cursorKind_enum2str.find(static_cast<CXCursorKind>(kind));
-        return std::format("CCursor {{ {}({}) }}", getSpelling(), iter == cursorKind_enum2str.end() ? std::to_string(kind) : iter->second);
+        return std::format("CCursor {{ {}({}) }}", getSpelling(), getKindStr());
     }
     else {
         return "CCursor { null }";

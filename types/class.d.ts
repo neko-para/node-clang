@@ -57,6 +57,7 @@ export class CCursor {
     get isNull(): boolean
     get hash(): unsigned
     get kind(): CXCursorKind
+    get kindStr(): string
     get spelling(): string
     get translationUnit(): CTranslationUnit
     get type(): CType
@@ -67,5 +68,6 @@ export class CCursor {
 export class CType {
     equal(type: CType): boolean
     get kind(): CXTypeKind
+    get kindStr(): string
     get spelling(): string
 }

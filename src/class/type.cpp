@@ -14,6 +14,7 @@ Napi::Function Type::Init(Napi::Env env)
         "CType",
         { InstanceMethod("equal", &Type::dispatcher<"equal", &Type::equal>),
           InstanceAccessor("kind", &Type::dispatcher<"get kind", &Type::getKind>, nullptr),
+          InstanceAccessor("kindStr", &Type::dispatcher<"get kindStr", &Type::getKindStr>, nullptr),
           InstanceAccessor("spelling", &Type::dispatcher<"get spelling", &Type::getSpelling>, nullptr),
 
           InstanceMethod(
@@ -39,6 +40,11 @@ int Type::getKind()
     return state->data.kind;
 }
 
+std::string Type::getKindStr()
+{
+    return getStr(library()->getTypeKindSpelling(static_cast<CXTypeKind>(getKind())));
+}
+
 std::string Type::getSpelling()
 {
     return getStr(library()->getTypeSpelling(state->data));
@@ -48,7 +54,7 @@ std::string Type::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny in
 {
     auto kind = getKind();
     if (kind != CXType_Invalid) {
-        return std::format("CType {{ {}({}) }}", getSpelling(), getStr(library()->getTypeKindSpelling(static_cast<CXTypeKind>(kind))));
+        return std::format("CType {{ {}({}) }}", getSpelling(), getKindStr());
     }
     else {
         return "CType { invalid }";

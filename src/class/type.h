@@ -15,6 +15,7 @@ struct Type : public WrapBase<Type>
     Type(const Napi::CallbackInfo& info);
     bool equal(ConvertRef<Type> cursor);
     int getKind();
+    std::string getKindStr();
     std::string getSpelling();
 
     std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);

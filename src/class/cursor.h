@@ -20,6 +20,7 @@ struct Cursor : public WrapBase<Cursor>
     bool isNull();
     unsigned getHash();
     int getKind();
+    std::string getKindStr();
     std::string getSpelling();
     ConvertReturn<TranslationUnit> getTranslateUnit();
     ConvertReturn<Type> getType();
