@@ -20,6 +20,10 @@ Napi::Function Cursor::Init(Napi::Env env)
           InstanceAccessor("spelling", &Cursor::dispatcher<"get spelling", &Cursor::getSpelling>, nullptr),
           InstanceAccessor("translateUnit", &Cursor::dispatcher<"get translateUnit", &Cursor::getTranslateUnit>, nullptr),
           InstanceAccessor("type", &Cursor::dispatcher<"get type", &Cursor::getType>, nullptr),
+          InstanceAccessor(
+              "enumConstantDeclValue",
+              &Cursor::dispatcher<"get enumConstantDeclValue", &Cursor::getEnumConstantDeclValue>,
+              nullptr),
           InstanceMethod("visitChildren", &Cursor::dispatcher<"visitChildren", &Cursor::visitChildren>),
 
           InstanceMethod(
@@ -70,6 +74,11 @@ ConvertReturn<Type> Cursor::getType()
     auto obj = instance().typeConstructor.New({});
     Napi::ObjectWrap<Type>::Unwrap(obj)->state->data = library()->getCursorType(state->data);
     return { obj };
+}
+
+long long Cursor::getEnumConstantDeclValue()
+{
+    return library()->getEnumConstantDeclValue(state->data);
 }
 
 bool Cursor::visitChildren(Napi::Function visitor)

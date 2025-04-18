@@ -24,6 +24,8 @@ struct Cursor : public WrapBase<Cursor>
     ConvertReturn<TranslationUnit> getTranslateUnit();
     ConvertReturn<Type> getType();
 
+    long long getEnumConstantDeclValue();
+
     bool visitChildren(Napi::Function visitor);
 
     std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);

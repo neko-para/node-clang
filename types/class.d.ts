@@ -1,4 +1,4 @@
-import type { ulong, unsigned } from './base'
+import type { longlong, ulong, unsigned } from './base'
 import type { CXChildVisitResult, CXCursorKind, CXErrorCode, CXTypeKind } from './enum'
 
 export type CUnsavedFile = [Filename: string, Contents: string, Length: ulong]
@@ -29,21 +29,21 @@ export class CIndex {
 
 export class CIndexOptions {
     get Size(): unsigned
-    set Size(value: unsigned): void
+    set Size(value: unsigned)
     get ThreadBackgroundPriorityForIndexing(): boolean
-    set ThreadBackgroundPriorityForIndexing(value: boolean): void
+    set ThreadBackgroundPriorityForIndexing(value: boolean)
     get ThreadBackgroundPriorityForEditing(): boolean
-    set ThreadBackgroundPriorityForEditing(value: boolean): void
+    set ThreadBackgroundPriorityForEditing(value: boolean)
     get ExcludeDeclarationsFromPCH(): boolean
-    set ExcludeDeclarationsFromPCH(value: boolean): void
+    set ExcludeDeclarationsFromPCH(value: boolean)
     get DisplayDiagnostics(): boolean
-    set DisplayDiagnostics(value: boolean): void
+    set DisplayDiagnostics(value: boolean)
     get StorePreamblesInMemory(): boolean
-    set StorePreamblesInMemory(value: boolean): void
+    set StorePreamblesInMemory(value: boolean)
     get PreambleStoragePath(): string | null
-    set PreambleStoragePath(value: string | null): void
+    set PreambleStoragePath(value: string | null)
     get InvocationEmissionPath(): string | null
-    set InvocationEmissionPath(value: string | null): void
+    set InvocationEmissionPath(value: string | null)
 }
 
 export class CTranslationUnit {
@@ -58,8 +58,9 @@ export class CCursor {
     get hash(): unsigned
     get kind(): CXCursorKind
     get spelling(): string
-    get translateUnit(): CTranslateUnit
+    get translationUnit(): CTranslationUnit
     get type(): CType
+    get enumConstantDeclValue(): longlong
     visitChildren(visitor: (cursor: CCursor, parent: CCursor) => CXChildVisitResult): boolean
 }
 

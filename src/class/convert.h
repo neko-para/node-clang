@@ -173,6 +173,37 @@ struct Convert<unsigned long>
 };
 
 template <>
+struct Convert<long long>
+{
+    static std::string name() { return "number(i64)"; }
+
+    static Napi::Value to_value(Napi::Env env, long long value)
+    {
+        if (value > ((1ll << 53) - 1) || value < -((1ll << 53) - 1)) {
+            return Napi::BigInt::New(env, static_cast<int64_t>(value));
+        }
+        else {
+            return Napi::Number::New(env, value);
+        }
+    }
+
+    template <size_t I>
+    static long long from_value(Napi::Value value)
+    {
+        if (!value.IsNumber() && !value.IsBigInt()) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        if (value.IsNumber()) {
+            return value.As<Napi::Number>().Int64Value();
+        }
+        else {
+            bool suc;
+            return value.As<Napi::BigInt>().Int64Value(&suc);
+        }
+    }
+};
+
+template <>
 struct Convert<std::string>
 {
     static std::string name() { return "string"; }
