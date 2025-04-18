@@ -1,6 +1,6 @@
 import { writeFileSync } from 'fs'
 
-import clang, { CCursor, CIndex, CTranslationUnit } from '../loader'
+import clang, { CCursor, CIndex, CTranslationUnit, CXChildVisitResult } from '../loader'
 
 let includes: string[] = []
 if (process.platform === 'darwin') {
@@ -59,7 +59,7 @@ function generateEnum(tu: CTranslationUnit) {
             cursors.shift()
         }
         cursors.unshift(cursor)
-        if (cursors.length === 2) {
+        if (cursors.length === 3) {
             if (cursor.kind === clang.CXCursorKind.EnumDecl) {
                 if (cursor.spelling.startsWith('CX')) {
                     enums[cursor.spelling] = []
@@ -71,7 +71,7 @@ function generateEnum(tu: CTranslationUnit) {
             } else {
                 return clang.CXChildVisitResult.Continue
             }
-        } else if (cursors.length === 3) {
+        } else if (cursors.length === 4) {
             if (cursor.kind === clang.CXCursorKind.EnumConstantDecl) {
                 const value = cursor.enumConstantDeclValue
                 if (typeof value === 'bigint') {
@@ -82,7 +82,9 @@ function generateEnum(tu: CTranslationUnit) {
             }
             return clang.CXChildVisitResult.Continue
         } else {
-            return clang.CXChildVisitResult.Break
+            return cursors.length < 3
+                ? clang.CXChildVisitResult.Recurse
+                : clang.CXChildVisitResult.Continue
         }
     })
 
@@ -90,6 +92,11 @@ function generateEnum(tu: CTranslationUnit) {
         '#include "enum.h"',
         '',
         '#include <clang-c/Index.h>',
+        '',
+        'std::map<CXCursorKind, std::string> cursorKind_enum2str = {};',
+        'std::map<std::string, CXCursorKind> cursorKind_str2enum = {};',
+        'std::map<CXTypeKind, std::string> typeKind_enum2str = {};',
+        'std::map<std::string, CXTypeKind> typeKind_str2enum = {};',
         '',
         'void implEnum(Napi::Object exports)',
         '{'
@@ -107,6 +114,13 @@ function generateEnum(tu: CTranslationUnit) {
                 `    ${key}_obj["${val.replace(prefix, '')}"] = static_cast<int>(${val});`,
                 `    static_assert(static_cast<int>(${val}) == ${num});`
             )
+            if (key === 'CXCursorKind') {
+                cppSrc.push(`    cursorKind_str2enum["${val.replace(prefix, '')}"] = ${val};`)
+                cppSrc.push(`    cursorKind_enum2str[${val}] = "${val.replace(prefix, '')}";`)
+            } else if (key === 'CXTypeKind') {
+                cppSrc.push(`    typeKind_str2enum["${val.replace(prefix, '')}"] = ${val};`)
+                cppSrc.push(`    typeKind_enum2str[${val}] = "${val.replace(prefix, '')}";`)
+            }
             dtsSrc.push(`    ${val.replace(prefix, '')} = ${num},`)
         }
         cppSrc.push(`    exports["${key}"] = ${key}_obj;`)
@@ -151,6 +165,8 @@ function generateFunc(tu: CTranslationUnit) {
 
     const funcs: string[] = []
 
+    const deprecate = ['clang_getDiagnosticCategoryName']
+
     const root = tu.cursor
     const cursors: CCursor[] = [root]
     root.visitChildren((cursor, parent) => {
@@ -158,12 +174,12 @@ function generateFunc(tu: CTranslationUnit) {
             cursors.shift()
         }
         cursors.unshift(cursor)
-        if (cursors.length < 2) {
+        if (cursors.length < 3) {
             return clang.CXChildVisitResult.Recurse
         }
 
-        if (cursors.length === 2 && cursor.kind === clang.CXCursorKind.FunctionDecl) {
-            if (cursor.spelling.startsWith('clang_')) {
+        if (cursors.length === 3 && cursor.kind === clang.CXCursorKind.FunctionDecl) {
+            if (cursor.spelling.startsWith('clang_') && !deprecate.includes(cursor.spelling)) {
                 funcs.push(cursor.spelling)
             }
         }

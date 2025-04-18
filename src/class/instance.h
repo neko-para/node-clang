@@ -81,7 +81,7 @@ struct WrapBase : Napi::ObjectWrap<Type>
 
     std::string getStr(CXString str)
     {
-        auto res = library()->getCString(str);
+        std::string res = library()->getCString(str);
         library()->disposeString(str);
         return res;
     }

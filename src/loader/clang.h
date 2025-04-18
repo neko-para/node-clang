@@ -54,7 +54,6 @@ struct Library : public LibraryBase
     decltype(clang_getDiagnosticSpelling)* getDiagnosticSpelling;
     decltype(clang_getDiagnosticOption)* getDiagnosticOption;
     decltype(clang_getDiagnosticCategory)* getDiagnosticCategory;
-    // decltype(clang_getDiagnosticCategoryName)* getDiagnosticCategoryName;
     decltype(clang_getDiagnosticCategoryText)* getDiagnosticCategoryText;
     decltype(clang_getDiagnosticNumRanges)* getDiagnosticNumRanges;
     decltype(clang_getDiagnosticRange)* getDiagnosticRange;
@@ -412,7 +411,6 @@ struct Library : public LibraryBase
         getDiagnosticSpelling = lib_get_func<decltype(clang_getDiagnosticSpelling)*>(library_, "clang_getDiagnosticSpelling");
         getDiagnosticOption = lib_get_func<decltype(clang_getDiagnosticOption)*>(library_, "clang_getDiagnosticOption");
         getDiagnosticCategory = lib_get_func<decltype(clang_getDiagnosticCategory)*>(library_, "clang_getDiagnosticCategory");
-        // getDiagnosticCategoryName = lib_get_func<decltype(clang_getDiagnosticCategoryName)*>(library_, "clang_getDiagnosticCategoryName");
         getDiagnosticCategoryText = lib_get_func<decltype(clang_getDiagnosticCategoryText)*>(library_, "clang_getDiagnosticCategoryText");
         getDiagnosticNumRanges = lib_get_func<decltype(clang_getDiagnosticNumRanges)*>(library_, "clang_getDiagnosticNumRanges");
         getDiagnosticRange = lib_get_func<decltype(clang_getDiagnosticRange)*>(library_, "clang_getDiagnosticRange");
