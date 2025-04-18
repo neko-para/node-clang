@@ -49,7 +49,7 @@ endif()
 
 set(NodeClang_src
     src/main.cpp
-    src/api/enum.cpp
+    src/enum.cpp
     src/class/index.cpp
     src/class/translation_unit.cpp
     src/class/cursor.cpp
@@ -59,5 +59,5 @@ set(NodeClang_src
 add_library(NodeClang SHARED ${CMAKE_JS_SRC} ${NodeClang_src})
 set_target_properties(NodeClang PROPERTIES PREFIX "" SUFFIX ".node")
 target_compile_definitions(NodeClang PRIVATE NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS)
-target_include_directories(NodeClang PRIVATE ${CMAKE_JS_INC} third_party)
+target_include_directories(NodeClang PRIVATE ${CMAKE_JS_INC} third_party src)
 target_link_libraries(NodeClang PRIVATE ${CMAKE_JS_LIB})

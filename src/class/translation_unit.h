@@ -6,10 +6,10 @@
 #include <clang-c/Index.h>
 #include <napi.h>
 
-#include "convert.h"
-#include "cursor.h"
-#include "instance.h"
-#include "types.h"
+#include "class/convert.h"
+#include "class/cursor.h"
+#include "class/instance.h"
+#include "class/types.h"
 
 class TranslationUnit : public WrapBase<TranslationUnit>
 {

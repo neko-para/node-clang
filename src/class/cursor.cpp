@@ -1,12 +1,11 @@
-#include "cursor.h"
+#include "class/cursor.h"
 
 #include <memory>
 
-#include "../api/enum.h"
-#include "convert.h"
-#include "instance.h"
-#include "type.h"
-#include "clang-c/Index.h"
+#include "class/convert.h"
+#include "class/instance.h"
+#include "class/type.h"
+#include "enum.h"
 
 Napi::Function Cursor::Init(Napi::Env env)
 {

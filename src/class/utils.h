@@ -8,7 +8,7 @@
 #include <napi.h>
 #include <variant>
 
-#include "./convert.h"
+#include "class/convert.h"
 
 template <typename Self, typename Func>
 struct FuncTraits

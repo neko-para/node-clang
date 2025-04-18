@@ -5,8 +5,8 @@
 #include <clang-c/Index.h>
 #include <napi.h>
 
-#include "convert.h"
-#include "instance.h"
+#include "class/convert.h"
+#include "class/instance.h"
 
 struct Type : public WrapBase<Type>
 {

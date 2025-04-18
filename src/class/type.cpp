@@ -1,11 +1,9 @@
-#include "type.h"
+#include "class/type.h"
 
 #include <memory>
 
-#include "../api/enum.h"
-#include "instance.h"
-#include "type.h"
-#include "clang-c/Index.h"
+#include "class/instance.h"
+#include "class/type.h"
 
 Napi::Function Type::Init(Napi::Env env)
 {

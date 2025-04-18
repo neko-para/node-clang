@@ -59,6 +59,9 @@ function generateEnum(tu: CTranslationUnit) {
             cursors.shift()
         }
         cursors.unshift(cursor)
+        if (cursors.length < 3) {
+            return CXChildVisitResult.Recurse
+        }
         if (cursors.length === 3) {
             if (cursor.kind === clang.CXCursorKind.EnumDecl) {
                 if (cursor.spelling.startsWith('CX')) {
@@ -82,9 +85,7 @@ function generateEnum(tu: CTranslationUnit) {
             }
             return clang.CXChildVisitResult.Continue
         } else {
-            return cursors.length < 3
-                ? clang.CXChildVisitResult.Recurse
-                : clang.CXChildVisitResult.Continue
+            return clang.CXChildVisitResult.Continue
         }
     })
 
@@ -149,7 +150,7 @@ function generateEnum(tu: CTranslationUnit) {
 
     cppSrc.push('}', '')
 
-    writeFileSync('src/api/enum.cpp', cppSrc.join('\n'))
+    writeFileSync('src/enum.cpp', cppSrc.join('\n'))
     writeFileSync('types/enum.d.ts', dtsSrc.join('\n'))
 }
 
@@ -157,7 +158,9 @@ function generateFunc(tu: CTranslationUnit) {
     const cppSrc: string[] = [
         '#pragma once',
         '',
-        '#include "loader.h"',
+        '#include <clang-c/Index.h>',
+        '',
+        '#include "loader/loader.h"',
         '',
         'struct Library : public LibraryBase',
         '{'

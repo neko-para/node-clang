@@ -1,12 +1,12 @@
 #include <clang-c/Index.h>
 #include <napi.h>
 
-#include "api/enum.h"
 #include "class/cursor.h"
 #include "class/index.h"
 #include "class/instance.h"
 #include "class/translation_unit.h"
 #include "class/type.h"
+#include "enum.h"
 #include "loader/clang.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)

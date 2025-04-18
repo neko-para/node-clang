@@ -1,6 +1,8 @@
 #pragma once
 
-#include "loader.h"
+#include <clang-c/Index.h>
+
+#include "loader/loader.h"
 
 struct Library : public LibraryBase
 {

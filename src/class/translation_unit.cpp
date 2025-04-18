@@ -1,11 +1,10 @@
-#include "translation_unit.h"
+#include "class/translation_unit.h"
 
-#include "../loader/clang.h"
-#include "instance.h"
-#include "clang-c/Index.h"
 #include <cstdint>
-#include <iostream>
 #include <memory>
+
+#include "class/instance.h"
+#include "loader/clang.h"
 
 Napi::Function TranslationUnit::Init(Napi::Env env)
 {

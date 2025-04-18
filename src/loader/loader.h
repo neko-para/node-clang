@@ -1,10 +1,6 @@
 #pragma once
 
-#include <utility>
-
-#include <clang-c/Index.h>
-
-#include "lib.h"
+#include "loader/lib.h"
 
 struct LibraryBase
 {

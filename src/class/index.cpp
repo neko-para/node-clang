@@ -1,9 +1,10 @@
-#include "index.h"
+#include "class/index.h"
 
-#include "../loader/clang.h"
-#include "instance.h"
 #include <cstdint>
 #include <memory>
+
+#include "class/instance.h"
+#include "loader/clang.h"
 
 #define BIND_GETTER_SETTER(name)                                                 \
     InstanceAccessor(                                                            \

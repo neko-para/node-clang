@@ -5,9 +5,9 @@
 #include <clang-c/Index.h>
 #include <napi.h>
 
-#include "convert.h"
-#include "instance.h"
-#include "type.h"
+#include "class/convert.h"
+#include "class/instance.h"
+#include "class/type.h"
 
 class TranslationUnit;
 

@@ -6,10 +6,10 @@
 #include <clang-c/Index.h>
 #include <napi.h>
 
-#include "convert.h"
-#include "instance.h"
-#include "translation_unit.h"
-#include "types.h"
+#include "class/convert.h"
+#include "class/instance.h"
+#include "class/translation_unit.h"
+#include "class/types.h"
 
 struct IndexOptions : public WrapBase<IndexOptions>
 {

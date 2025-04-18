@@ -5,8 +5,8 @@
 
 #include <napi.h>
 
-#include "../loader/clang.h"
-#include "utils.h"
+#include "class/utils.h"
+#include "loader/clang.h"
 
 struct Instance
 {
