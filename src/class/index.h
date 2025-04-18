@@ -16,7 +16,7 @@ struct IndexOptions : public WrapBase<IndexOptions>
 public:
     static Napi::Function Init(Napi::Env env);
 
-    using WrapBase::WrapBase;
+    IndexOptions(const Napi::CallbackInfo& info);
 
     unsigned getSize();
     void setSize(unsigned value);
@@ -42,15 +42,20 @@ public:
     std::optional<std::string> getInvocationEmissionPath();
     void setInvocationEmissionPath(std::optional<std::string> value);
 
-    void __flush_pointer()
+    struct State
     {
-        data.PreambleStoragePath = __PreambleStoragePath ? __PreambleStoragePath->c_str() : nullptr;
-        data.InvocationEmissionPath = __InvocationEmissionPath ? __InvocationEmissionPath->c_str() : nullptr;
-    }
+        CXIndexOptions data {};
+        std::optional<std::string> __PreambleStoragePath;
+        std::optional<std::string> __InvocationEmissionPath;
 
-    CXIndexOptions data;
-    std::optional<std::string> __PreambleStoragePath;
-    std::optional<std::string> __InvocationEmissionPath;
+        void __flush_pointer()
+        {
+            data.PreambleStoragePath = __PreambleStoragePath ? __PreambleStoragePath->c_str() : nullptr;
+            data.InvocationEmissionPath = __InvocationEmissionPath ? __InvocationEmissionPath->c_str() : nullptr;
+        }
+    };
+
+    std::shared_ptr<State> state {};
 };
 
 struct Index : public WrapBase<Index>
@@ -68,6 +73,18 @@ public:
         std::string source_filename,
         std::vector<std::string> clang_command_line_args,
         std::vector<UnsavedFile> unsaved_files);
+    std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>>
+        createTranslationUnit(std::string ast_filename);
+    std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>> parseTranslationUnit(
+        std::string source_filename,
+        std::vector<std::string> clang_command_line_args,
+        std::vector<UnsavedFile> unsaved_files,
+        unsigned options);
+    std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>> parseTranslationUnitFullArgv(
+        std::string source_filename,
+        std::vector<std::string> clang_command_line_args,
+        std::vector<UnsavedFile> unsaved_files,
+        unsigned options);
 
     std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 

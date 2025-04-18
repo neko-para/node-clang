@@ -2,11 +2,13 @@
 
 #include <exception>
 #include <format>
+#include <sstream>
 #include <string>
+#include <tuple>
+#include <variant>
 
 #include <clang-c/Index.h>
 #include <napi.h>
-#include <tuple>
 
 struct ConvertFailed : public std::exception
 {
@@ -21,6 +23,10 @@ struct ConvertFailed : public std::exception
 };
 
 struct ConvertAny
+{
+};
+
+struct ConvertNull
 {
 };
 
@@ -259,7 +265,7 @@ struct Convert<std::tuple<Type...>>
 
     static Napi::Value to_value(Napi::Env env, std::tuple<Type...> value)
     {
-        auto result = Napi::Array ::New(env, std::tuple_size_v<args_t>);
+        auto result = Napi::Array::New(env, std::tuple_size_v<args_t>);
 
         [&]<size_t... Is>(std::index_sequence<Is...>) {
             ((result[Is] = Convert<std::tuple_element_t<Is, args_t>>::to_value(env, std::get<Is>(value))), ...);
@@ -278,11 +284,113 @@ struct Convert<std::tuple<Type...>>
         if (arr.Length() != std::tuple_size_v<args_t>) {
             throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
         }
-        args_t result;
+        std::tuple<Type...> result;
         [&]<size_t... Is>(std::index_sequence<Is...>) {
             ((std::get<Is>(result) = Convert<std::tuple_element_t<Is, args_t>>::template from_value<I>(arr[Is])), ...);
         }(std::make_index_sequence<std::tuple_size_v<args_t>>());
         return result;
+    }
+};
+
+template <typename... Type>
+struct Convert<std::variant<Type...>>
+{
+    using args_t = std::tuple<Type...>;
+
+    static std::string name()
+    {
+        std::string decl;
+        [&]<size_t... Is>(std::index_sequence<Is...>) {
+            ((decl += Convert<std::tuple_element_t<Is, args_t>>::name(), decl += " | "), ...);
+        }(std::make_index_sequence<std::tuple_size_v<args_t>>());
+        if (decl.length() > 2) {
+            decl.pop_back();
+            decl.pop_back();
+            decl.pop_back();
+        }
+        return decl;
+    }
+
+    static Napi::Value to_value(Napi::Env env, std::variant<Type...> value)
+    {
+        Napi::Value result = env.Null();
+
+        [&]<size_t... Is>(std::index_sequence<Is...>) {
+            return (
+                (value.index() == Is ? (result = Convert<std::tuple_element_t<Is, args_t>>::to_value(env, std::get<Is>(value))),
+                 true
+                                     : false)
+                || ...);
+        }(std::make_index_sequence<std::tuple_size_v<args_t>>());
+
+        return result;
+    }
+
+    template <size_t I>
+    static std::variant<Type...> from_value(Napi::Value value)
+    {
+        std::variant<Type...> result;
+        std::vector<std::string> trace;
+        bool success = [&]<size_t... Is>(std::index_sequence<Is...>) {
+            return ((try_from_value<I, Is>(value, result, trace)) || ...);
+        }(std::make_index_sequence<std::tuple_size_v<args_t>>());
+        if (!success) {
+            std::ostringstream traceResult;
+            for (const auto& err : trace) {
+                traceResult << err << '\n';
+            }
+            throw ConvertFailed {
+                std::format("Type mismatch at {}, expect {}, got {}\n{}", I, name(), valueType(value), traceResult.str())
+            };
+        }
+        return result;
+    }
+
+    template <size_t I, size_t II>
+    static bool try_from_value(Napi::Value value, std::variant<Type...>& result, std::vector<std::string>& trace)
+    {
+        try {
+            std::get<II>(result) = Convert<std::tuple_element_t<II, args_t>>::template from_value<I>(value);
+            return true;
+        }
+        catch (ConvertFailed error) {
+            trace.push_back(std::format("    Tried ({}) failed: {}", Convert<std::tuple_element_t<II, args_t>>::name(), error.error));
+        }
+        return false;
+    }
+};
+
+template <>
+struct Convert<Napi::Function>
+{
+    static std::string name() { return "function"; }
+
+    static Napi::Value to_value(Napi::Env env, Napi::Function value) { return value; }
+
+    template <size_t I>
+    static Napi::Function from_value(Napi::Value value)
+    {
+        if (!value.IsFunction()) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        return value.As<Napi::Function>();
+    }
+};
+
+template <>
+struct Convert<ConvertNull>
+{
+    static std::string name() { return "null"; }
+
+    static Napi::Value to_value(Napi::Env env, ConvertNull value) { return env.Null(); }
+
+    template <size_t I>
+    static ConvertNull from_value(Napi::Value value)
+    {
+        if (!value.IsNull()) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        return {};
     }
 };
 

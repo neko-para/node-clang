@@ -1,13 +1,12 @@
 #pragma once
 
 #include <format>
-
-#include <napi.h>
 #include <sstream>
 
-#include "utils.h"
+#include <napi.h>
 
-struct Library;
+#include "../loader/clang.h"
+#include "utils.h"
 
 struct Instance
 {
@@ -16,6 +15,7 @@ struct Instance
     Napi::FunctionReference indexConstructor;
     Napi::FunctionReference translationUnitConstructor;
     Napi::FunctionReference cursorConstructor;
+    Napi::FunctionReference typeConstructor;
 
     static void init(Napi::Env env) { env.SetInstanceData<Instance>(new Instance); }
 
@@ -77,5 +77,12 @@ struct WrapBase : Napi::ObjectWrap<Type>
                 .ThrowAsJavaScriptException();
             return;
         }
+    }
+
+    std::string getStr(CXString str)
+    {
+        auto res = library()->getCString(str);
+        library()->disposeString(str);
+        return res;
     }
 };

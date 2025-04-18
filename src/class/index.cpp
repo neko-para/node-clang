@@ -2,10 +2,7 @@
 
 #include "../loader/clang.h"
 #include "instance.h"
-#include "translation_unit.h"
-#include "clang-c/Index.h"
 #include <cstdint>
-#include <iostream>
 #include <memory>
 
 #define BIND_GETTER_SETTER(name)                                                 \
@@ -34,84 +31,90 @@ Napi::Function IndexOptions::Init(Napi::Env env)
     return func;
 }
 
+IndexOptions::IndexOptions(const Napi::CallbackInfo& info)
+    : WrapBase<IndexOptions>(info)
+    , state(std::make_shared<State>())
+{
+}
+
 unsigned IndexOptions::getSize()
 {
-    return data.Size;
+    return state->data.Size;
 }
 
 void IndexOptions::setSize(unsigned value)
 {
-    data.Size = value;
+    state->data.Size = value;
 }
 
 bool IndexOptions::getThreadBackgroundPriorityForIndexing()
 {
-    return data.ThreadBackgroundPriorityForIndexing;
+    return state->data.ThreadBackgroundPriorityForIndexing;
 }
 
 void IndexOptions::setThreadBackgroundPriorityForIndexing(bool value)
 {
-    data.ThreadBackgroundPriorityForIndexing = value ? CXGlobalOpt_ThreadBackgroundPriorityForIndexing : 0;
+    state->data.ThreadBackgroundPriorityForIndexing = value ? CXGlobalOpt_ThreadBackgroundPriorityForIndexing : 0;
 }
 
 bool IndexOptions::getThreadBackgroundPriorityForEditing()
 {
-    return data.ThreadBackgroundPriorityForEditing;
+    return state->data.ThreadBackgroundPriorityForEditing;
 }
 
 void IndexOptions::setThreadBackgroundPriorityForEditing(bool value)
 {
-    data.ThreadBackgroundPriorityForEditing = value ? CXGlobalOpt_ThreadBackgroundPriorityForEditing : 0;
+    state->data.ThreadBackgroundPriorityForEditing = value ? CXGlobalOpt_ThreadBackgroundPriorityForEditing : 0;
 }
 
 bool IndexOptions::getExcludeDeclarationsFromPCH()
 {
-    return data.ExcludeDeclarationsFromPCH;
+    return state->data.ExcludeDeclarationsFromPCH;
 }
 
 void IndexOptions::setExcludeDeclarationsFromPCH(bool value)
 {
-    data.ExcludeDeclarationsFromPCH = value ? 1 : 0;
+    state->data.ExcludeDeclarationsFromPCH = value ? 1 : 0;
 }
 
 bool IndexOptions::getDisplayDiagnostics()
 {
-    return data.DisplayDiagnostics;
+    return state->data.DisplayDiagnostics;
 }
 
 void IndexOptions::setDisplayDiagnostics(bool value)
 {
-    data.DisplayDiagnostics = value ? 1 : 0;
+    state->data.DisplayDiagnostics = value ? 1 : 0;
 }
 
 bool IndexOptions::getStorePreamblesInMemory()
 {
-    return data.StorePreamblesInMemory;
+    return state->data.StorePreamblesInMemory;
 }
 
 void IndexOptions::setStorePreamblesInMemory(bool value)
 {
-    data.StorePreamblesInMemory = value ? 1 : 0;
+    state->data.StorePreamblesInMemory = value ? 1 : 0;
 }
 
 std::optional<std::string> IndexOptions::getPreambleStoragePath()
 {
-    return __PreambleStoragePath;
+    return state->__PreambleStoragePath;
 }
 
 void IndexOptions::setPreambleStoragePath(std::optional<std::string> value)
 {
-    __PreambleStoragePath = value;
+    state->__PreambleStoragePath = value;
 }
 
 std::optional<std::string> IndexOptions::getInvocationEmissionPath()
 {
-    return __InvocationEmissionPath;
+    return state->__InvocationEmissionPath;
 }
 
 void IndexOptions::setInvocationEmissionPath(std::optional<std::string> value)
 {
-    __InvocationEmissionPath = value;
+    state->__InvocationEmissionPath = value;
 }
 
 Napi::Function Index::Init(Napi::Env env)
@@ -125,6 +128,11 @@ Napi::Function Index::Init(Napi::Env env)
             InstanceMethod(
                 "createTranslationUnitFromSourceFile",
                 &Index::dispatcher<"createTranslationUnitFromSourceFile", &Index::createTranslationUnitFromSourceFile>),
+            InstanceMethod("createTranslationUnit", &Index::dispatcher<"createTranslationUnit", &Index::createTranslationUnit>),
+            InstanceMethod("parseTranslationUnit", &Index::dispatcher<"parseTranslationUnit", &Index::parseTranslationUnit>),
+            InstanceMethod(
+                "parseTranslationUnitFullArgv",
+                &Index::dispatcher<"parseTranslationUnitFullArgv", &Index::parseTranslationUnitFullArgv>),
 
             InstanceMethod(
                 Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
@@ -148,8 +156,8 @@ bool Index::create(bool excludeDeclarationsFromPCH, bool displayDiagnostics)
 
 bool Index::createIndexWithOptions(ConvertRef<IndexOptions> options)
 {
-    options.data->__flush_pointer();
-    state->data = library()->createIndexWithOptions(&options.data->data);
+    options.data->state->__flush_pointer();
+    state->data = library()->createIndexWithOptions(&options.data->state->data);
     return !!state->data;
 }
 
@@ -193,6 +201,102 @@ std::optional<ConvertReturn<TranslationUnit>> Index::createTranslationUnitFromSo
     auto obj = instance().translationUnitConstructor.New({});
     Napi::ObjectWrap<TranslationUnit>::Unwrap(obj)->__change(tu);
     return ConvertReturn<TranslationUnit> { obj };
+}
+
+std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>>
+    Index::createTranslationUnit(std::string ast_filename)
+{
+    CXTranslationUnit tu = nullptr;
+    auto err = library()->createTranslationUnit2(state->data, ast_filename.c_str(), &tu);
+    if (err != CXError_Success) {
+        return std::tuple<ConvertNull, int>({}, err);
+    }
+
+    auto obj = instance().translationUnitConstructor.New({});
+    Napi::ObjectWrap<TranslationUnit>::Unwrap(obj)->__change(tu);
+    return std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>({ obj }, {});
+}
+
+std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>> Index::parseTranslationUnit(
+    std::string source_filename,
+    std::vector<std::string> clang_command_line_args,
+    std::vector<UnsavedFile> unsaved_files,
+    unsigned options)
+{
+    std::vector<const char*> args;
+    std::vector<CXUnsavedFile> unsaves;
+
+    for (const auto& arg : clang_command_line_args) {
+        args.push_back(arg.c_str());
+    }
+
+    for (const auto& unsave : unsaved_files) {
+        unsaves.push_back(
+            {
+                std::get<0>(unsave).c_str(),
+                std::get<1>(unsave).c_str(),
+                std::get<2>(unsave),
+            });
+    }
+
+    CXTranslationUnit tu = nullptr;
+    auto err = library()->parseTranslationUnit2(
+        state->data,
+        source_filename.c_str(),
+        args.data(),
+        args.size(),
+        unsaves.data(),
+        unsaves.size(),
+        options,
+        &tu);
+    if (!tu) {
+        return std::tuple<ConvertNull, int>({}, err);
+    }
+
+    auto obj = instance().translationUnitConstructor.New({});
+    Napi::ObjectWrap<TranslationUnit>::Unwrap(obj)->__change(tu);
+    return std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>({ obj }, {});
+}
+
+std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>> Index::parseTranslationUnitFullArgv(
+    std::string source_filename,
+    std::vector<std::string> clang_command_line_args,
+    std::vector<UnsavedFile> unsaved_files,
+    unsigned options)
+{
+    std::vector<const char*> args;
+    std::vector<CXUnsavedFile> unsaves;
+
+    for (const auto& arg : clang_command_line_args) {
+        args.push_back(arg.c_str());
+    }
+
+    for (const auto& unsave : unsaved_files) {
+        unsaves.push_back(
+            {
+                std::get<0>(unsave).c_str(),
+                std::get<1>(unsave).c_str(),
+                std::get<2>(unsave),
+            });
+    }
+
+    CXTranslationUnit tu = nullptr;
+    auto err = library()->parseTranslationUnit2FullArgv(
+        state->data,
+        source_filename.c_str(),
+        args.data(),
+        args.size(),
+        unsaves.data(),
+        unsaves.size(),
+        options,
+        &tu);
+    if (!tu) {
+        return std::tuple<ConvertNull, int>({}, err);
+    }
+
+    auto obj = instance().translationUnitConstructor.New({});
+    Napi::ObjectWrap<TranslationUnit>::Unwrap(obj)->__change(tu);
+    return std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>({ obj }, {});
 }
 
 std::string Index::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect)

@@ -7,7 +7,9 @@
 #include <napi.h>
 
 #include "convert.h"
+#include "cursor.h"
 #include "instance.h"
+#include "types.h"
 
 class TranslationUnit : public WrapBase<TranslationUnit>
 {
@@ -15,6 +17,10 @@ public:
     static Napi::Function Init(Napi::Env env);
 
     TranslationUnit(const Napi::CallbackInfo& info);
+
+    std::string getSpelling();
+    int reparse(std::vector<UnsavedFile> unsaved_files, unsigned options);
+    ConvertReturn<Cursor> getCursor();
 
     void __change(CXTranslationUnit tu)
     {
