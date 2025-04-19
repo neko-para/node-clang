@@ -16,6 +16,7 @@ struct Instance
     Napi::FunctionReference translationUnitConstructor;
     Napi::FunctionReference cursorConstructor;
     Napi::FunctionReference typeConstructor;
+    Napi::FunctionReference fileConstructor;
 
     static void init(Napi::Env env) { env.SetInstanceData<Instance>(new Instance); }
 

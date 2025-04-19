@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <exception>
 #include <format>
 #include <optional>
@@ -143,6 +144,37 @@ struct Convert<unsigned>
 };
 
 template <>
+struct Convert<long>
+{
+    static std::string name() { return "number(i64)"; }
+
+    static Napi::Value to_value(Napi::Env env, long value)
+    {
+        if (value > ((1ll << 53) - 1) || value < -((1ll << 53) - 1)) {
+            return Napi::BigInt::New(env, static_cast<int64_t>(value));
+        }
+        else {
+            return Napi::Number::New(env, value);
+        }
+    }
+
+    template <size_t I>
+    static long from_value(Napi::Value value)
+    {
+        if (!value.IsNumber() && !value.IsBigInt()) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        if (value.IsNumber()) {
+            return value.As<Napi::Number>().Int64Value();
+        }
+        else {
+            bool suc;
+            return value.As<Napi::BigInt>().Int64Value(&suc);
+        }
+    }
+};
+
+template <>
 struct Convert<unsigned long>
 {
     static std::string name() { return "number(u64)"; }
@@ -205,6 +237,37 @@ struct Convert<long long>
 };
 
 template <>
+struct Convert<unsigned long long>
+{
+    static std::string name() { return "number(u64)"; }
+
+    static Napi::Value to_value(Napi::Env env, unsigned long long value)
+    {
+        if (value > ((1ull << 53) - 1)) {
+            return Napi::BigInt::New(env, static_cast<uint64_t>(value));
+        }
+        else {
+            return Napi::Number::New(env, value);
+        }
+    }
+
+    template <size_t I>
+    static unsigned long long from_value(Napi::Value value)
+    {
+        if (!value.IsNumber() && !value.IsBigInt()) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        if (value.IsNumber()) {
+            return value.As<Napi::Number>().Int64Value();
+        }
+        else {
+            bool suc;
+            return value.As<Napi::BigInt>().Uint64Value(&suc);
+        }
+    }
+};
+
+template <>
 struct Convert<std::string>
 {
     static std::string name() { return "string"; }
@@ -257,7 +320,7 @@ struct Convert<std::vector<Type>>
     {
         auto result = Napi::Array ::New(env, value.size());
         for (uint32_t i = 0; i < value.size(); i++) {
-            result[i] = Convert<Type>::to_value(value[i]);
+            result[i] = Convert<Type>::to_value(env, value[i]);
         }
         return result;
     }
@@ -271,6 +334,38 @@ struct Convert<std::vector<Type>>
         auto arr = value.As<Napi::Array>();
         std::vector<Type> result(arr.Length());
         for (uint32_t i = 0; i < arr.Length(); i++) {
+            result[i] = Convert<Type>::template from_value<I>(arr[i]);
+        }
+        return result;
+    }
+};
+
+template <typename Type, size_t N>
+struct Convert<std::array<Type, N>>
+{
+    static std::string name() { return std::format("({})[{}]", Convert<Type>::name(), N); }
+
+    static Napi::Value to_value(Napi::Env env, std::array<Type, N> value)
+    {
+        auto result = Napi::Array ::New(env, N);
+        for (uint32_t i = 0; i < N; i++) {
+            result[i] = Convert<Type>::to_value(env, value[i]);
+        }
+        return result;
+    }
+
+    template <size_t I>
+    static std::array<Type, N> from_value(Napi::Value value)
+    {
+        if (!value.IsArray()) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        auto arr = value.As<Napi::Array>();
+        if (arr.Length() != N) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        std::array<Type, N> result;
+        for (uint32_t i = 0; i < N; i++) {
             result[i] = Convert<Type>::template from_value<I>(arr[i]);
         }
         return result;
@@ -406,6 +501,23 @@ struct Convert<Napi::Function>
             throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
         }
         return value.As<Napi::Function>();
+    }
+};
+
+template <>
+struct Convert<Napi::Date>
+{
+    static std::string name() { return "date"; }
+
+    static Napi::Value to_value(Napi::Env env, Napi::Date value) { return value; }
+
+    template <size_t I>
+    static Napi::Date from_value(Napi::Value value)
+    {
+        if (!value.IsDate()) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        return value.As<Napi::Date>();
     }
 };
 

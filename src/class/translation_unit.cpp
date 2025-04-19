@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <memory>
 
+#include "class/file.h"
 #include "class/instance.h"
 #include "loader/clang.h"
 
@@ -12,6 +13,7 @@ Napi::Function TranslationUnit::Init(Napi::Env env)
         env,
         "CTranslationUnit",
         {
+            InstanceMethod("getFile", &TranslationUnit::dispatcher<"getFile", &TranslationUnit::getFile>),
             InstanceAccessor("spelling", &TranslationUnit::dispatcher<"get spelling", &TranslationUnit::getSpelling>, nullptr),
             InstanceMethod("reparse", &TranslationUnit::dispatcher<"reparse", &TranslationUnit::reparse>),
             InstanceAccessor("cursor", &TranslationUnit::dispatcher<"get cursor", &TranslationUnit::getCursor>, nullptr),
@@ -28,6 +30,20 @@ TranslationUnit::TranslationUnit(const Napi::CallbackInfo& info)
     : WrapBase<TranslationUnit>(info)
     , state(std::make_shared<State>(Env()))
 {
+}
+
+std::optional<ConvertReturn<File>> TranslationUnit::getFile(std::string file_name)
+{
+    auto file = library()->getFile(state->data, file_name.c_str());
+    if (!file) {
+        return std::nullopt;
+    }
+
+    auto obj = instance().fileConstructor.New({});
+    auto fst = Napi::ObjectWrap<File>::Unwrap(obj)->state;
+    fst->tu = Napi::Persistent(Value());
+    fst->data = file;
+    return ConvertReturn<File> { obj };
 }
 
 std::string TranslationUnit::getSpelling()

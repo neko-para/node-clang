@@ -13,10 +13,14 @@ index.create(false, true)
 console.log(index)
 
 const [tu, err] = index.parseTranslationUnit('test.cpp', [], [], 0)
-if (err) {
+if (!tu) {
     process.exit(0)
 }
-console.log(tu, tu.cursor, tu.cursor.type)
+
+const f = tu.getFile('test.cpp')
+if (f) {
+    console.log(f)
+}
 
 tu.cursor.visitChildren((cursor, parent) => {
     console.log(cursor, cursor.type)

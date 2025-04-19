@@ -2,6 +2,7 @@
 #include <napi.h>
 
 #include "class/cursor.h"
+#include "class/file.h"
 #include "class/index.h"
 #include "class/instance.h"
 #include "class/translation_unit.h"
@@ -49,6 +50,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     exports["CTranslationUnit"] = TranslationUnit::Init(env);
     exports["CCursor"] = Cursor::Init(env);
     exports["CType"] = Type::Init(env);
+    exports["CFile"] = File::Init(env);
 
     /*
     exports["parseTranslationUnit"] = Napi::Function::New(

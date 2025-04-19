@@ -1,4 +1,4 @@
-import type { longlong, ulong, unsigned } from './base'
+import type { longlong, ulong, ulonglong, unsigned } from './base'
 import type { CXChildVisitResult, CXCursorKind, CXErrorCode, CXTypeKind } from './enum'
 
 export type CUnsavedFile = [Filename: string, Contents: string, Length: ulong]
@@ -47,6 +47,7 @@ export class CIndexOptions {
 }
 
 export class CTranslationUnit {
+    getFile(file_name: string): CFile | null
     get spelling(): string
     reparse(unsaved_files: CUnsavedFile[], options: unsigned): CXErrorCode
     get cursor(): CCursor
@@ -70,4 +71,14 @@ export class CType {
     get kind(): CXTypeKind
     get kindStr(): string
     get spelling(): string
+}
+
+export class CFile {
+    get fileName(): string
+    get fileTime(): Date
+    get fileUniqueID(): [ulonglong, ulonglong, ulonglong] | null
+    equal(file: CFile): boolean
+    get realPathName(): string
+    get isMultipleIncludeGuarded(): boolean
+    get fileContents(): string | null
 }

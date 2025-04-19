@@ -8,16 +8,17 @@
 
 #include "class/convert.h"
 #include "class/cursor.h"
+#include "class/file.h"
 #include "class/instance.h"
 #include "class/types.h"
 
-class TranslationUnit : public WrapBase<TranslationUnit>
+struct TranslationUnit : public WrapBase<TranslationUnit>
 {
-public:
     static Napi::Function Init(Napi::Env env);
 
     TranslationUnit(const Napi::CallbackInfo& info);
 
+    std::optional<ConvertReturn<File>> getFile(std::string file_name);
     std::string getSpelling();
     int reparse(std::vector<UnsavedFile> unsaved_files, unsigned options);
     ConvertReturn<Cursor> getCursor();
@@ -30,7 +31,6 @@ public:
 
     std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
-private:
     struct State
     {
         Napi::Env env;

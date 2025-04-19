@@ -3,7 +3,6 @@
 #include <memory>
 
 #include "class/instance.h"
-#include "class/type.h"
 
 Napi::Function Type::Init(Napi::Env env)
 {
