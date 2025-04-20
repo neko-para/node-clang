@@ -55,6 +55,7 @@ export class CTranslationUnit {
 
 export class CCursor {
     equal(cursor: CCursor): boolean
+    equal(cursor: CCursor, relax: boolean): boolean
     get isNull(): boolean
     get hash(): unsigned
     get kind(): CXCursorKind
@@ -62,10 +63,14 @@ export class CCursor {
     get spelling(): string
     get translationUnit(): CTranslationUnit
     get type(): CType
+    get lexicalParent(): CCursor
+    get semanticParent(): CCursor
     get location(): CSourceLocation
     get enumConstantDeclValue(): longlong
     visitChildren(visitor: (cursor: CCursor, parent: CCursor) => CXChildVisitResult): boolean
     get CXXMethod_isStatic(): boolean
+
+    __dump(): string
 }
 
 export class CType {

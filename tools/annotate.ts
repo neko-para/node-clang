@@ -1,5 +1,5 @@
 import { CCursor, CIndex, CTranslationUnit, CXChildVisitResult, CXCursorKind } from '../loader'
-import { setup } from './load'
+import { directChild, setup, visit } from './utils'
 
 const includes = setup()
 
@@ -30,6 +30,22 @@ function parseAnnotate(tu: CTranslationUnit) {
     let outter: CCursor | null = null
     let structName: string = ''
     let isTarget: boolean = false
+    let structs: CCursor[] = []
+    visit(tu.cursor, (cursor, parent, path) => {
+        if (cursor.location.isInSystemHeader) {
+            return CXChildVisitResult.Continue
+        }
+        if (cursor.kind === CXCursorKind.StructDecl) {
+            const child = directChild(cursor, 1)
+            if (child[0]?.kind === CXCursorKind.AnnotateAttr) {
+                structs.push(cursor)
+            }
+            return CXChildVisitResult.Continue
+        }
+        return CXChildVisitResult.Recurse
+    })
+    console.log(structs)
+    /*
     tu.cursor.visitChildren((cursor, parent) => {
         if (outter && outter.equal(parent)) {
             outter = null
@@ -65,6 +81,7 @@ function parseAnnotate(tu: CTranslationUnit) {
             return CXChildVisitResult.Continue
         }
     })
+        */
 }
 
 function main() {

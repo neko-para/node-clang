@@ -13,7 +13,7 @@ Napi::Function Cursor::Init(Napi::Env env)
     Napi::Function func = DefineClass(
         env,
         "CCursor",
-        { InstanceMethod("equal", &Cursor::dispatcher<"equal", &Cursor::equal>),
+        { InstanceMethod("equal", &Cursor::dispatcher<"equal", &Cursor::equal, &Cursor::equalRelax>),
           InstanceAccessor("isNull", &Cursor::dispatcher<"get isNull", &Cursor::isNull>, nullptr),
           InstanceAccessor("hash", &Cursor::dispatcher<"get hash", &Cursor::getHash>, nullptr),
           InstanceAccessor("kind", &Cursor::dispatcher<"get kind", &Cursor::getKind>, nullptr),
@@ -21,6 +21,8 @@ Napi::Function Cursor::Init(Napi::Env env)
           InstanceAccessor("spelling", &Cursor::dispatcher<"get spelling", &Cursor::getSpelling>, nullptr),
           InstanceAccessor("translateUnit", &Cursor::dispatcher<"get translateUnit", &Cursor::getTranslateUnit>, nullptr),
           InstanceAccessor("type", &Cursor::dispatcher<"get type", &Cursor::getType>, nullptr),
+          InstanceAccessor("lexicalParent", &Cursor::dispatcher<"get lexicalParent", &Cursor::getLexicalParent>, nullptr),
+          InstanceAccessor("semanticParent", &Cursor::dispatcher<"get semanticParent", &Cursor::getSemanticParent>, nullptr),
           InstanceAccessor("location", &Cursor::dispatcher<"get location", &Cursor::getLocation>, nullptr),
           InstanceAccessor(
               "enumConstantDeclValue",
@@ -47,6 +49,27 @@ Cursor::Cursor(const Napi::CallbackInfo& info)
 bool Cursor::equal(ConvertRef<Cursor> cursor)
 {
     return library()->equalCursors(state->data, cursor.data->state->data);
+}
+
+bool Cursor::equalRelax(ConvertRef<Cursor> cursor, bool relax)
+{
+    auto c1 = state->data;
+    auto c2 = cursor.data->state->data;
+    if (library()->isDeclaration(c1.kind)) {
+        c1.data[1] = nullptr;
+    }
+    if (library()->isDeclaration(c2.kind)) {
+        c2.data[1] = nullptr;
+    }
+    if (!(c1.kind == c2.kind && c1.data[1] == c2.data[1] && c1.data[2] == c2.data[2])) {
+        return false;
+    }
+    if (relax) {
+        return c1.data[0] == c2.data[0] || !c1.data[0] || !c2.data[0];
+    }
+    else {
+        return c1.data[0] == c2.data[0];
+    }
 }
 
 bool Cursor::isNull()
@@ -85,6 +108,24 @@ ConvertReturn<Type> Cursor::getType()
 {
     auto obj = instance().typeConstructor.New({});
     Napi::ObjectWrap<Type>::Unwrap(obj)->state->data = library()->getCursorType(state->data);
+    return { obj };
+}
+
+ConvertReturn<Cursor> Cursor::getLexicalParent()
+{
+    auto obj = instance().cursorConstructor.New({});
+    auto cst = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
+    cst->tu = Napi::Persistent(state->tu.Value());
+    cst->data = library()->getCursorLexicalParent(state->data);
+    return { obj };
+}
+
+ConvertReturn<Cursor> Cursor::getSemanticParent()
+{
+    auto obj = instance().cursorConstructor.New({});
+    auto cst = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
+    cst->tu = Napi::Persistent(state->tu.Value());
+    cst->data = library()->getCursorSemanticParent(state->data);
     return { obj };
 }
 

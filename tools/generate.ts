@@ -1,7 +1,7 @@
 import { writeFileSync } from 'fs'
 
 import clang, { CCursor, CIndex, CTranslationUnit, CXChildVisitResult } from '../loader'
-import { setup } from './load'
+import { setup } from './utils'
 
 const includes = setup()
 
@@ -93,18 +93,23 @@ function generateEnum(tu: CTranslationUnit) {
         cppSrc.push(`    // ${key}`, `    auto ${key}_obj = Napi::Object::New(exports.Env());`)
         dtsSrc.push(`export const enum ${key} {`)
         for (const [val, num] of vals) {
+            const name = val.replace(prefix, '')
             cppSrc.push(
-                `    ${key}_obj["${val.replace(prefix, '')}"] = static_cast<int>(${val});`,
+                `    ${key}_obj["${name}"] = static_cast<int>(${val});`,
                 `    static_assert(static_cast<int>(${val}) == ${num});`
             )
             if (key === 'CXCursorKind') {
-                cppSrc.push(`    cursorKind_str2enum["${val.replace(prefix, '')}"] = ${val};`)
-                cppSrc.push(`    cursorKind_enum2str[${val}] = "${val.replace(prefix, '')}";`)
+                cppSrc.push(`    cursorKind_str2enum["${name}"] = ${val};`)
+                if (!name.startsWith('First') && !name.startsWith('Last')) {
+                    cppSrc.push(`    cursorKind_enum2str[${val}] = "${name}";`)
+                }
             } else if (key === 'CXTypeKind') {
-                cppSrc.push(`    typeKind_str2enum["${val.replace(prefix, '')}"] = ${val};`)
-                cppSrc.push(`    typeKind_enum2str[${val}] = "${val.replace(prefix, '')}";`)
+                cppSrc.push(`    typeKind_str2enum["${name}"] = ${val};`)
+                if (!name.startsWith('First') && !name.startsWith('Last')) {
+                    cppSrc.push(`    typeKind_enum2str[${val}] = "${name}";`)
+                }
             }
-            dtsSrc.push(`    ${val.replace(prefix, '')} = ${num},`)
+            dtsSrc.push(`    ${name} = ${num},`)
         }
         cppSrc.push(`    exports["${key}"] = ${key}_obj;`)
         dtsSrc.push('}')
