@@ -1,4 +1,11 @@
-const { CCursor, CIndex, load, CIndexOptions, CXChildVisitResult } = require('./loader')
+const {
+    CCursor,
+    CIndex,
+    load,
+    CIndexOptions,
+    CXChildVisitResult,
+    CXCursorKind
+} = require('./loader')
 
 if (process.platform === 'win32') {
     load('C:/Program Files/LLVM/bin/libclang.dll')
@@ -17,12 +24,7 @@ if (!tu) {
     process.exit(0)
 }
 
-const f = tu.getFile('test.cpp')
-if (f) {
-    console.log(f)
-}
-
 tu.cursor.visitChildren((cursor, parent) => {
-    console.log(cursor, cursor.type)
+    console.log(cursor)
     return CXChildVisitResult.Recurse
 })

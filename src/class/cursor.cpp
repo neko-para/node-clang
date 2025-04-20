@@ -26,6 +26,8 @@ Napi::Function Cursor::Init(Napi::Env env)
               nullptr),
           InstanceMethod("visitChildren", &Cursor::dispatcher<"visitChildren", &Cursor::visitChildren>),
 
+          InstanceMethod("__dump", &Cursor::dispatcher<"__dump", &Cursor::__dump>),
+
           InstanceMethod(
               Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
               &Cursor::dispatcher<"nodejs inspect", &Cursor::nodejsInspect>) });
@@ -125,6 +127,17 @@ bool Cursor::visitChildren(Napi::Function visitor)
             }
         },
         &ctx);
+}
+
+std::string Cursor::__dump()
+{
+    return std::format(
+        "{} {} {} {} {}",
+        (int)state->data.kind,
+        state->data.xdata,
+        reinterpret_cast<size_t>(state->data.data[0]),
+        reinterpret_cast<size_t>(state->data.data[1]),
+        reinterpret_cast<size_t>(state->data.data[2]));
 }
 
 std::string Cursor::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect)

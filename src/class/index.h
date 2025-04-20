@@ -13,7 +13,6 @@
 
 struct IndexOptions : public WrapBase<IndexOptions>
 {
-public:
     static Napi::Function Init(Napi::Env env);
 
     IndexOptions(const Napi::CallbackInfo& info);
@@ -60,7 +59,6 @@ public:
 
 struct Index : public WrapBase<Index>
 {
-public:
     static Napi::Function Init(Napi::Env env);
 
     Index(const Napi::CallbackInfo& info);
@@ -88,7 +86,6 @@ public:
 
     std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
-private:
     struct State
     {
         Napi::Env env;
