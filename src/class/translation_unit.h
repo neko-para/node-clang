@@ -12,7 +12,7 @@
 #include "class/instance.h"
 #include "class/types.h"
 
-struct TranslationUnit : public WrapBase<TranslationUnit>
+struct [[clang::annotate("class")]] TranslationUnit : public WrapBase<TranslationUnit>
 {
     static Napi::Function Init(Napi::Env env);
 

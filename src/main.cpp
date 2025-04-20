@@ -1,12 +1,7 @@
 #include <clang-c/Index.h>
 #include <napi.h>
 
-#include "class/cursor.h"
-#include "class/file.h"
-#include "class/index.h"
-#include "class/instance.h"
-#include "class/translation_unit.h"
-#include "class/type.h"
+#include "class/classes.h"
 #include "enum.h"
 #include "loader/clang.h"
 
@@ -51,6 +46,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     exports["CCursor"] = Cursor::Init(env);
     exports["CType"] = Type::Init(env);
     exports["CFile"] = File::Init(env);
+    exports["CSourceLocation"] = SourceLocation::Init(env);
 
     /*
     exports["parseTranslationUnit"] = Napi::Function::New(

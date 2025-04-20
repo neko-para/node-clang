@@ -62,8 +62,10 @@ export class CCursor {
     get spelling(): string
     get translationUnit(): CTranslationUnit
     get type(): CType
+    get location(): CSourceLocation
     get enumConstantDeclValue(): longlong
     visitChildren(visitor: (cursor: CCursor, parent: CCursor) => CXChildVisitResult): boolean
+    get CXXMethod_isStatic(): boolean
 }
 
 export class CType {
@@ -81,4 +83,10 @@ export class CFile {
     get realPathName(): string
     get isMultipleIncludeGuarded(): boolean
     get fileContents(): string | null
+}
+
+export class CSourceLocation {
+    get isInSystemHeader(): boolean
+    get expansionLocation(): [file: CFile, line: unsigned, column: unsigned, offset: unsigned]
+    get presumedLocation(): [filename: string, line: unsigned, column: unsigned]
 }

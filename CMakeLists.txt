@@ -55,6 +55,7 @@ set(NodeClang_src
     src/class/cursor.cpp
     src/class/type.cpp
     src/class/file.cpp
+    src/class/source_location.cpp
 )
 
 add_library(NodeClang SHARED ${CMAKE_JS_SRC} ${NodeClang_src})

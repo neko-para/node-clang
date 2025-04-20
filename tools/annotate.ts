@@ -7,7 +7,7 @@ function load(): [CIndex, CTranslationUnit] {
     const index = new CIndex()
     index.create(false, true)
     const [tu, err] = index.parseTranslationUnit(
-        'test.cpp',
+        'src/class/classes.h',
         [
             '-xc++',
             '-std=c++20',
@@ -27,21 +27,43 @@ function load(): [CIndex, CTranslationUnit] {
 
 function parseAnnotate(tu: CTranslationUnit) {
     const root = tu.cursor
-    const cursors: CCursor[] = [root]
+    let outter: CCursor | null = null
+    let structName: string = ''
+    let isTarget: boolean = false
     tu.cursor.visitChildren((cursor, parent) => {
-        if (cursor.spelling === '_Const_lvalue_cond_oper') {
-            console.log(111)
+        if (outter && outter.equal(parent)) {
+            outter = null
+            structName = ''
+            isTarget = false
         }
-        while (cursors.length > 0 && !cursors[0].equal(parent)) {
-            cursors.shift()
+        if (!structName) {
+            if (cursor.kind === CXCursorKind.StructDecl) {
+                outter = parent
+                structName = cursor.spelling
+                isTarget = false
+                return CXChildVisitResult.Recurse
+            } else {
+                return CXChildVisitResult.Continue
+            }
+        } else if (!isTarget) {
+            if (cursor.kind === CXCursorKind.AnnotateAttr && cursor.spelling === 'class') {
+                isTarget = true
+                console.log(structName)
+            } else {
+                structName = ''
+            }
+            return CXChildVisitResult.Continue
+        } else {
+            // console.log(cursor)
+            if (cursor.kind === CXCursorKind.CXXMethod) {
+                if (cursor.CXXMethod_isStatic) {
+                    console.log('+', cursor.spelling)
+                } else {
+                    console.log('-', cursor.spelling)
+                }
+            }
+            return CXChildVisitResult.Continue
         }
-        if (cursors.length === 0) {
-            console.warn('jump out root', cursor, parent)
-        }
-        cursors.unshift(cursor)
-
-        console.log('  '.repeat(cursors.length - 2), cursor.spelling, cursor.kindStr)
-        return CXChildVisitResult.Recurse
     })
 }
 

@@ -11,7 +11,7 @@
 #include "class/translation_unit.h"
 #include "class/types.h"
 
-struct IndexOptions : public WrapBase<IndexOptions>
+struct [[clang::annotate("class")]] IndexOptions : public WrapBase<IndexOptions>
 {
     static Napi::Function Init(Napi::Env env);
 
@@ -57,7 +57,7 @@ struct IndexOptions : public WrapBase<IndexOptions>
     std::shared_ptr<State> state {};
 };
 
-struct Index : public WrapBase<Index>
+struct [[clang::annotate("class")]] Index : public WrapBase<Index>
 {
     static Napi::Function Init(Napi::Env env);
 

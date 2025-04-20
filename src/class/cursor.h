@@ -7,11 +7,12 @@
 
 #include "class/convert.h"
 #include "class/instance.h"
+#include "class/source_location.h"
 #include "class/type.h"
 
 struct TranslationUnit;
 
-struct Cursor : public WrapBase<Cursor>
+struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
 {
     static Napi::Function Init(Napi::Env env);
 
@@ -26,9 +27,12 @@ struct Cursor : public WrapBase<Cursor>
     [[clang::annotate("getter")]] ConvertReturn<TranslationUnit> getTranslateUnit();
     [[clang::annotate("getter")]] ConvertReturn<Type> getType();
 
+    [[clang::annotate("getter")]] ConvertReturn<SourceLocation> getLocation();
     [[clang::annotate("getter")]] long long getEnumConstantDeclValue();
 
     [[clang::annotate("method")]] bool visitChildren(Napi::Function visitor);
+
+    [[clang::annotate("method")]] bool CXXMethod_isStatic();
 
     std::string __dump();
     [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);

@@ -6,6 +6,7 @@
 #include "class/instance.h"
 #include "class/type.h"
 #include "enum.h"
+#include "source_location.h"
 
 Napi::Function Cursor::Init(Napi::Env env)
 {
@@ -20,11 +21,13 @@ Napi::Function Cursor::Init(Napi::Env env)
           InstanceAccessor("spelling", &Cursor::dispatcher<"get spelling", &Cursor::getSpelling>, nullptr),
           InstanceAccessor("translateUnit", &Cursor::dispatcher<"get translateUnit", &Cursor::getTranslateUnit>, nullptr),
           InstanceAccessor("type", &Cursor::dispatcher<"get type", &Cursor::getType>, nullptr),
+          InstanceAccessor("location", &Cursor::dispatcher<"get location", &Cursor::getLocation>, nullptr),
           InstanceAccessor(
               "enumConstantDeclValue",
               &Cursor::dispatcher<"get enumConstantDeclValue", &Cursor::getEnumConstantDeclValue>,
               nullptr),
           InstanceMethod("visitChildren", &Cursor::dispatcher<"visitChildren", &Cursor::visitChildren>),
+          InstanceAccessor("CXXMethod_isStatic", &Cursor::dispatcher<"get CXXMethod_isStatic", &Cursor::CXXMethod_isStatic>, nullptr),
 
           InstanceMethod("__dump", &Cursor::dispatcher<"__dump", &Cursor::__dump>),
 
@@ -85,6 +88,15 @@ ConvertReturn<Type> Cursor::getType()
     return { obj };
 }
 
+ConvertReturn<SourceLocation> Cursor::getLocation()
+{
+    auto obj = instance().sourceLocationConstructor.New({});
+    auto sst = Napi::ObjectWrap<SourceLocation>::Unwrap(obj)->state;
+    sst->tu = Napi::Persistent(state->tu.Value());
+    sst->data = library()->getCursorLocation(state->data);
+    return { obj };
+}
+
 long long Cursor::getEnumConstantDeclValue()
 {
     return library()->getEnumConstantDeclValue(state->data);
@@ -127,6 +139,11 @@ bool Cursor::visitChildren(Napi::Function visitor)
             }
         },
         &ctx);
+}
+
+bool Cursor::CXXMethod_isStatic()
+{
+    return library()->CXXMethod_isStatic(state->data);
 }
 
 std::string Cursor::__dump()

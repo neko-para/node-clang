@@ -8,7 +8,7 @@
 #include "class/convert.h"
 #include "class/instance.h"
 
-struct File : public WrapBase<File>
+struct [[clang::annotate("class")]] File : public WrapBase<File>
 {
     static Napi::Function Init(Napi::Env env);
 
