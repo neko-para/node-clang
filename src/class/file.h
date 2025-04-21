@@ -14,16 +14,16 @@ struct [[clang::annotate("class")]] File : public WrapBase<File>
 
     File(const Napi::CallbackInfo& info);
 
-    std::string getFileName();
-    Napi::Date getFileTime();
-    std::optional<std::array<unsigned long long, 3>> getFileUniqueID();
-    bool equal(ConvertRef<File> file);
-    std::string getRealPathName();
+    [[clang::annotate("getter")]] std::string getFileName();
+    [[clang::annotate("getter")]] Napi::Date getFileTime();
+    [[clang::annotate("getter")]] std::optional<std::array<unsigned long long, 3>> getFileUniqueID();
+    [[clang::annotate("method")]] bool equal(ConvertRef<File> file);
+    [[clang::annotate("getter")]] std::string getRealPathName();
 
-    bool isMultipleIncludeGuarded();
-    std::optional<std::string> getFileContents();
+    [[clang::annotate("getter")]] bool isMultipleIncludeGuarded();
+    [[clang::annotate("getter")]] std::optional<std::string> getFileContents();
 
-    std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
+    [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {

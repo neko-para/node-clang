@@ -15,12 +15,12 @@ struct [[clang::annotate("class")]] SourceLocation : public WrapBase<SourceLocat
 
     SourceLocation(const Napi::CallbackInfo& info);
 
-    bool isInSystemHeader();
+    [[clang::annotate("getter")]] bool isInSystemHeader();
 
-    std::tuple<ConvertReturn<File>, unsigned, unsigned, unsigned> getExpansionLocation();
-    std::tuple<std::string, unsigned, unsigned> getPresumedLocation();
+    [[clang::annotate("getter")]] std::tuple<ConvertReturn<File>, unsigned, unsigned, unsigned> getExpansionLocation();
+    [[clang::annotate("getter")]] std::tuple<std::string, unsigned, unsigned> getPresumedLocation();
 
-    std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
+    [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {

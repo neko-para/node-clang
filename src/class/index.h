@@ -17,29 +17,29 @@ struct [[clang::annotate("class")]] IndexOptions : public WrapBase<IndexOptions>
 
     IndexOptions(const Napi::CallbackInfo& info);
 
-    unsigned getSize();
-    void setSize(unsigned value);
+    [[clang::annotate("getter")]] unsigned getSize();
+    [[clang::annotate("setter")]] void setSize(unsigned value);
 
-    bool getThreadBackgroundPriorityForIndexing();
-    void setThreadBackgroundPriorityForIndexing(bool value);
+    [[clang::annotate("getter")]] bool getThreadBackgroundPriorityForIndexing();
+    [[clang::annotate("setter")]] void setThreadBackgroundPriorityForIndexing(bool value);
 
-    bool getThreadBackgroundPriorityForEditing();
-    void setThreadBackgroundPriorityForEditing(bool value);
+    [[clang::annotate("getter")]] bool getThreadBackgroundPriorityForEditing();
+    [[clang::annotate("setter")]] void setThreadBackgroundPriorityForEditing(bool value);
 
-    bool getExcludeDeclarationsFromPCH();
-    void setExcludeDeclarationsFromPCH(bool value);
+    [[clang::annotate("getter")]] bool getExcludeDeclarationsFromPCH();
+    [[clang::annotate("setter")]] void setExcludeDeclarationsFromPCH(bool value);
 
-    bool getDisplayDiagnostics();
-    void setDisplayDiagnostics(bool value);
+    [[clang::annotate("getter")]] bool getDisplayDiagnostics();
+    [[clang::annotate("setter")]] void setDisplayDiagnostics(bool value);
 
-    bool getStorePreamblesInMemory();
-    void setStorePreamblesInMemory(bool value);
+    [[clang::annotate("getter")]] bool getStorePreamblesInMemory();
+    [[clang::annotate("setter")]] void setStorePreamblesInMemory(bool value);
 
-    std::optional<std::string> getPreambleStoragePath();
-    void setPreambleStoragePath(std::optional<std::string> value);
+    [[clang::annotate("getter")]] std::optional<std::string> getPreambleStoragePath();
+    [[clang::annotate("setter")]] void setPreambleStoragePath(std::optional<std::string> value);
 
-    std::optional<std::string> getInvocationEmissionPath();
-    void setInvocationEmissionPath(std::optional<std::string> value);
+    [[clang::annotate("getter")]] std::optional<std::string> getInvocationEmissionPath();
+    [[clang::annotate("setter")]] void setInvocationEmissionPath(std::optional<std::string> value);
 
     struct State
     {
@@ -63,28 +63,30 @@ struct [[clang::annotate("class")]] Index : public WrapBase<Index>
 
     Index(const Napi::CallbackInfo& info);
 
-    bool create(bool excludeDeclarationsFromPCH, bool displayDiagnostics);
-    bool createIndexWithOptions(ConvertRef<IndexOptions> options);
-    unsigned getGlobalOptions();
+    [[clang::annotate("method")]] bool create(bool excludeDeclarationsFromPCH, bool displayDiagnostics);
+    [[clang::annotate("method:create")]] bool createIndexWithOptions(ConvertRef<IndexOptions> options);
+    [[clang::annotate("getter")]] unsigned getGlobalOptions();
 
-    std::optional<ConvertReturn<TranslationUnit>> createTranslationUnitFromSourceFile(
+    [[clang::annotate("method")]] std::optional<ConvertReturn<TranslationUnit>> createTranslationUnitFromSourceFile(
         std::string source_filename,
         std::vector<std::string> clang_command_line_args,
         std::vector<UnsavedFile> unsaved_files);
-    std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>>
+    [[clang::annotate("method")]] std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>>
         createTranslationUnit(std::string ast_filename);
-    std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>> parseTranslationUnit(
-        std::string source_filename,
-        std::vector<std::string> clang_command_line_args,
-        std::vector<UnsavedFile> unsaved_files,
-        unsigned options);
-    std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>> parseTranslationUnitFullArgv(
-        std::string source_filename,
-        std::vector<std::string> clang_command_line_args,
-        std::vector<UnsavedFile> unsaved_files,
-        unsigned options);
+    [[clang::annotate("method")]] std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>>
+        parseTranslationUnit(
+            std::string source_filename,
+            std::vector<std::string> clang_command_line_args,
+            std::vector<UnsavedFile> unsaved_files,
+            unsigned options);
+    [[clang::annotate("method")]] std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>>
+        parseTranslationUnitFullArgv(
+            std::string source_filename,
+            std::vector<std::string> clang_command_line_args,
+            std::vector<UnsavedFile> unsaved_files,
+            unsigned options);
 
-    std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
+    [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {

@@ -26,10 +26,6 @@ function load(): [CIndex, CTranslationUnit] {
 }
 
 function parseAnnotate(tu: CTranslationUnit) {
-    const root = tu.cursor
-    let outter: CCursor | null = null
-    let structName: string = ''
-    let isTarget: boolean = false
     let structs: CCursor[] = []
     visit(tu.cursor, (cursor, parent, path) => {
         if (cursor.location.isInSystemHeader) {
@@ -44,44 +40,16 @@ function parseAnnotate(tu: CTranslationUnit) {
         }
         return CXChildVisitResult.Recurse
     })
-    console.log(structs)
-    /*
-    tu.cursor.visitChildren((cursor, parent) => {
-        if (outter && outter.equal(parent)) {
-            outter = null
-            structName = ''
-            isTarget = false
+    for (const struct of structs) {
+        console.log(struct.spelling)
+        for (const method of directChild(struct).filter(x => x.kind === CXCursorKind.CXXMethod)) {
+            const annotate = directChild(method, 1)[0]
+            if (annotate?.kind !== CXCursorKind.AnnotateAttr) {
+                continue
+            }
+            console.log(method.CXXMethod_isStatic ? '+' : '-', method.spelling, annotate.spelling)
         }
-        if (!structName) {
-            if (cursor.kind === CXCursorKind.StructDecl) {
-                outter = parent
-                structName = cursor.spelling
-                isTarget = false
-                return CXChildVisitResult.Recurse
-            } else {
-                return CXChildVisitResult.Continue
-            }
-        } else if (!isTarget) {
-            if (cursor.kind === CXCursorKind.AnnotateAttr && cursor.spelling === 'class') {
-                isTarget = true
-                console.log(structName)
-            } else {
-                structName = ''
-            }
-            return CXChildVisitResult.Continue
-        } else {
-            // console.log(cursor)
-            if (cursor.kind === CXCursorKind.CXXMethod) {
-                if (cursor.CXXMethod_isStatic) {
-                    console.log('+', cursor.spelling)
-                } else {
-                    console.log('-', cursor.spelling)
-                }
-            }
-            return CXChildVisitResult.Continue
-        }
-    })
-        */
+    }
 }
 
 function main() {

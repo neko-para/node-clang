@@ -18,10 +18,10 @@ struct [[clang::annotate("class")]] TranslationUnit : public WrapBase<Translatio
 
     TranslationUnit(const Napi::CallbackInfo& info);
 
-    std::optional<ConvertReturn<File>> getFile(std::string file_name);
-    std::string getSpelling();
-    int reparse(std::vector<UnsavedFile> unsaved_files, unsigned options);
-    ConvertReturn<Cursor> getCursor();
+    [[clang::annotate("method")]] std::optional<ConvertReturn<File>> getFile(std::string file_name);
+    [[clang::annotate("getter")]] std::string getSpelling();
+    [[clang::annotate("method")]] int reparse(std::vector<UnsavedFile> unsaved_files, unsigned options);
+    [[clang::annotate("getter")]] ConvertReturn<Cursor> getCursor();
 
     void __change(CXTranslationUnit tu)
     {
@@ -29,7 +29,7 @@ struct [[clang::annotate("class")]] TranslationUnit : public WrapBase<Translatio
         state->data = tu;
     }
 
-    std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
+    [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {
