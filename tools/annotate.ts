@@ -206,12 +206,26 @@ function parseAnnotate(tu: CTranslationUnit) {
             )
         }
 
+        const constructorName = info.name[0].toLowerCase() + info.name.substring(1) + 'Constructor'
+
         cppSrc.push(
             '        });',
-            `    Instance::get(env).${info.name[0].toLowerCase() + info.name.substring(1)}Constructor = Napi::Persistent(func);`,
+            `    Instance::get(env).${constructorName} = Napi::Persistent(func);`,
             '    return func;',
             '}'
         )
+
+        if (!['Global', 'IndexOptions'].includes(info.name)) {
+            cppSrc.push(
+                '',
+                `std::tuple<${info.name}::State*, Napi::Object> ${info.name}::construct(Napi::Env env)`,
+                '{',
+                `    auto obj = Instance::get(env).${constructorName}.New({});`,
+                `    auto state = Napi::ObjectWrap<${info.name}>::Unwrap(obj)->state;`,
+                '    return { state.get(), obj };',
+                '}'
+            )
+        }
     }
 
     cppSrc.push('')

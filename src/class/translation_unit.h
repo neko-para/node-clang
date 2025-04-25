@@ -23,12 +23,6 @@ struct [[clang::annotate("class")]] TranslationUnit : public WrapBase<Translatio
     [[clang::annotate("method")]] int reparse(std::vector<UnsavedFile> unsaved_files, unsigned options);
     [[clang::annotate("getter")]] ConvertReturn<Cursor> getCursor();
 
-    void __change(CXTranslationUnit tu)
-    {
-        state = std::make_shared<State>(Env());
-        state->data = tu;
-    }
-
     [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
@@ -42,5 +36,7 @@ struct [[clang::annotate("class")]] TranslationUnit : public WrapBase<Translatio
     };
 
     std::shared_ptr<State> state {};
+
+    static std::tuple<State*, Napi::Object> construct(Napi::Env env);
 };
 

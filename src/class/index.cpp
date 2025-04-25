@@ -4,6 +4,7 @@
 #include <memory>
 
 #include "class/instance.h"
+#include "class/translation_unit.h"
 #include "loader/clang.h"
 
 IndexOptions::IndexOptions(const Napi::CallbackInfo& info)
@@ -104,9 +105,8 @@ std::optional<ConvertReturn<Index>> Index::create(Napi::Env env, bool excludeDec
     if (!data) {
         return std::nullopt;
     }
-    auto obj = Instance::get(env).indexConstructor.New({});
-    auto ist = Napi::ObjectWrap<Index>::Unwrap(obj)->state;
-    ist->data = data;
+    auto [state, obj] = Index::construct(env);
+    state->data = data;
     return ConvertReturn<Index> { obj };
 }
 
@@ -117,9 +117,8 @@ std::optional<ConvertReturn<Index>> Index::createIndexWithOptions(Napi::Env env,
     if (!data) {
         return std::nullopt;
     }
-    auto obj = Instance::get(env).indexConstructor.New({});
-    auto ist = Napi::ObjectWrap<Index>::Unwrap(obj)->state;
-    ist->data = data;
+    auto [state, obj] = Index::construct(env);
+    state->data = data;
     return ConvertReturn<Index> { obj };
 }
 
@@ -160,8 +159,8 @@ std::optional<ConvertReturn<TranslationUnit>> Index::createTranslationUnitFromSo
         return std::nullopt;
     }
 
-    auto obj = instance().translationUnitConstructor.New({});
-    Napi::ObjectWrap<TranslationUnit>::Unwrap(obj)->__change(tu);
+    auto [state, obj] = TranslationUnit::construct(Env());
+    state->data = tu;
     return ConvertReturn<TranslationUnit> { obj };
 }
 
@@ -174,8 +173,8 @@ std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple
         return std::tuple<ConvertNull, int>({}, err);
     }
 
-    auto obj = instance().translationUnitConstructor.New({});
-    Napi::ObjectWrap<TranslationUnit>::Unwrap(obj)->__change(tu);
+    auto [state, obj] = TranslationUnit::construct(Env());
+    state->data = tu;
     return std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>({ obj }, {});
 }
 
@@ -215,8 +214,8 @@ std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple
         return std::tuple<ConvertNull, int>({}, err);
     }
 
-    auto obj = instance().translationUnitConstructor.New({});
-    Napi::ObjectWrap<TranslationUnit>::Unwrap(obj)->__change(tu);
+    auto [state, obj] = TranslationUnit::construct(Env());
+    state->data = tu;
     return std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>({ obj }, {});
 }
 
@@ -256,8 +255,8 @@ std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple
         return std::tuple<ConvertNull, int>({}, err);
     }
 
-    auto obj = instance().translationUnitConstructor.New({});
-    Napi::ObjectWrap<TranslationUnit>::Unwrap(obj)->__change(tu);
+    auto [state, obj] = TranslationUnit::construct(Env());
+    state->data = tu;
     return std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>({ obj }, {});
 }
 

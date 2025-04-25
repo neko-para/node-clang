@@ -17,9 +17,8 @@ std::optional<ConvertReturn<VirtualFileOverlay>> VirtualFileOverlay::create(Napi
     if (!data) {
         return std::nullopt;
     }
-    auto obj = Instance::get(env).virtualFileOverlayConstructor.New({});
-    auto vst = Napi::ObjectWrap<VirtualFileOverlay>::Unwrap(obj)->state;
-    vst->data = data;
+    auto [state, obj] = VirtualFileOverlay::construct(env);
+    state->data = data;
     return ConvertReturn<VirtualFileOverlay> { obj };
 }
 
@@ -67,9 +66,8 @@ std::optional<ConvertReturn<ModuleMapDescriptor>> ModuleMapDescriptor::create(Na
     if (!data) {
         return std::nullopt;
     }
-    auto obj = Instance::get(env).moduleMapDescriptorConstructor.New({});
-    auto vst = Napi::ObjectWrap<ModuleMapDescriptor>::Unwrap(obj)->state;
-    vst->data = data;
+    auto [state, obj] = ModuleMapDescriptor::construct(env);
+    state->data = data;
     return ConvertReturn<ModuleMapDescriptor> { obj };
 }
 

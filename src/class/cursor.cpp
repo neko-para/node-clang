@@ -16,9 +16,8 @@ Cursor::Cursor(const Napi::CallbackInfo& info)
 
 ConvertReturn<Cursor> Cursor::null(Napi::Env env)
 {
-    auto obj = Instance::get(env).cursorConstructor.New({});
-    auto cst = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
-    cst->data = Instance::get(env).library->getNullCursor();
+    auto [state, obj] = Cursor::construct(env);
+    state->data = Instance::get(env).library->getNullCursor();
     return { obj };
 }
 
@@ -85,35 +84,33 @@ std::optional<ConvertReturn<TranslationUnit>> Cursor::getTranslateUnit()
 
 ConvertReturn<Type> Cursor::getType()
 {
-    auto obj = instance().typeConstructor.New({});
-    Napi::ObjectWrap<Type>::Unwrap(obj)->state->data = library()->getCursorType(state->data);
+    auto [tstate, obj] = Type::construct(Env());
+    tstate->tu = tryPersist(state->tu);
+    tstate->data = library()->getCursorType(state->data);
     return { obj };
 }
 
 ConvertReturn<Cursor> Cursor::getLexicalParent()
 {
-    auto obj = instance().cursorConstructor.New({});
-    auto cst = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
-    cst->tu = tryPersist(state->tu);
-    cst->data = library()->getCursorLexicalParent(state->data);
+    auto [cstate, obj] = Cursor::construct(Env());
+    cstate->tu = tryPersist(state->tu);
+    cstate->data = library()->getCursorLexicalParent(state->data);
     return { obj };
 }
 
 ConvertReturn<Cursor> Cursor::getSemanticParent()
 {
-    auto obj = instance().cursorConstructor.New({});
-    auto cst = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
-    cst->tu = tryPersist(state->tu);
-    cst->data = library()->getCursorSemanticParent(state->data);
+    auto [cstate, obj] = Cursor::construct(Env());
+    cstate->tu = tryPersist(state->tu);
+    cstate->data = library()->getCursorSemanticParent(state->data);
     return { obj };
 }
 
 ConvertReturn<SourceLocation> Cursor::getLocation()
 {
-    auto obj = instance().sourceLocationConstructor.New({});
-    auto sst = Napi::ObjectWrap<SourceLocation>::Unwrap(obj)->state;
-    sst->tu = tryPersist(state->tu);
-    sst->data = library()->getCursorLocation(state->data);
+    auto [sstate, obj] = SourceLocation::construct(Env());
+    sstate->tu = tryPersist(state->tu);
+    sstate->data = library()->getCursorLocation(state->data);
     return { obj };
 }
 
@@ -139,17 +136,15 @@ bool Cursor::visitChildren(Napi::Function visitor)
             auto ctx = reinterpret_cast<VisitCtx*>(client_data);
             auto env = ctx->visitor.Env();
 
-            auto cursorObj = Instance::get(env).cursorConstructor.New({});
-            auto cst = Napi::ObjectWrap<Cursor>::Unwrap(cursorObj)->state;
-            cst->tu = Napi::Persistent(ctx->tu);
-            cst->data = cursor;
+            auto [cstate, cobj] = Cursor::construct(env);
+            cstate->tu = Napi::Persistent(ctx->tu);
+            cstate->data = cursor;
 
-            auto pcursorObj = Instance::get(env).cursorConstructor.New({});
-            auto pcst = Napi::ObjectWrap<Cursor>::Unwrap(pcursorObj)->state;
-            pcst->tu = Napi::Persistent(ctx->tu);
-            pcst->data = parent;
+            auto [pstate, pobj] = Cursor::construct(env);
+            pstate->tu = Napi::Persistent(ctx->tu);
+            pstate->data = parent;
 
-            auto res = ctx->visitor.Call({ cursorObj, pcursorObj });
+            auto res = ctx->visitor.Call({ cobj, pobj });
             try {
                 return static_cast<CXChildVisitResult>(Convert<int>::from_value<0>(res));
             }

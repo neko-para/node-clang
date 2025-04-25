@@ -36,6 +36,8 @@ struct [[clang::annotate("class")]] SourceLocation : public WrapBase<SourceLocat
     };
 
     std::shared_ptr<State> state {};
+
+    static std::tuple<State*, Napi::Object> construct(Napi::Env env);
 };
 
 struct [[clang::annotate("class")]] SourceRange : public WrapBase<SourceRange>
@@ -63,4 +65,6 @@ struct [[clang::annotate("class")]] SourceRange : public WrapBase<SourceRange>
     };
 
     std::shared_ptr<State> state {};
+
+    static std::tuple<State*, Napi::Object> construct(Napi::Env env);
 };

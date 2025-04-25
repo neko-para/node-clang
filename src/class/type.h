@@ -28,5 +28,7 @@ struct [[clang::annotate("class")]] Type : public WrapBase<Type>
     };
 
     std::shared_ptr<State> state {};
+
+    static std::tuple<State*, Napi::Object> construct(Napi::Env env);
 };
 

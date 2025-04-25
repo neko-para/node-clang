@@ -15,9 +15,8 @@ SourceLocation::SourceLocation(const Napi::CallbackInfo& info)
 
 ConvertReturn<SourceLocation> SourceLocation::null(Napi::Env env)
 {
-    auto obj = Instance::get(env).sourceLocationConstructor.New({});
-    auto sst = Napi::ObjectWrap<SourceLocation>::Unwrap(obj)->state;
-    sst->data = Instance::get(env).library->getNullLocation();
+    auto [state, obj] = SourceLocation::construct(env);
+    state->data = Instance::get(env).library->getNullLocation();
     return { obj };
 }
 
@@ -47,10 +46,9 @@ std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> Sou
     unsigned line, column, offset;
     library()->getExpansionLocation(state->data, &file, &line, &column, &offset);
     if (file) {
-        auto obj = instance().fileConstructor.New({});
-        auto fst = Napi::ObjectWrap<File>::Unwrap(obj)->state;
-        fst->tu = tryPersist(state->tu);
-        fst->data = file;
+        auto [fstate, obj] = File::construct(Env());
+        fstate->tu = tryPersist(state->tu);
+        fstate->data = file;
         return { ConvertReturn<File> { obj }, line, column, offset };
     }
     else {
@@ -72,10 +70,9 @@ std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> Sou
     unsigned line, column, offset;
     library()->getSpellingLocation(state->data, &file, &line, &column, &offset);
     if (file) {
-        auto obj = instance().fileConstructor.New({});
-        auto fst = Napi::ObjectWrap<File>::Unwrap(obj)->state;
-        fst->tu = tryPersist(state->tu);
-        fst->data = file;
+        auto [fstate, obj] = File::construct(Env());
+        fstate->tu = tryPersist(state->tu);
+        fstate->data = file;
         return { ConvertReturn<File> { obj }, line, column, offset };
     }
     else {
@@ -89,10 +86,9 @@ std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> Sou
     unsigned line, column, offset;
     library()->getFileLocation(state->data, &file, &line, &column, &offset);
     if (file) {
-        auto obj = instance().fileConstructor.New({});
-        auto fst = Napi::ObjectWrap<File>::Unwrap(obj)->state;
-        fst->tu = tryPersist(state->tu);
-        fst->data = file;
+        auto [fstate, obj] = File::construct(Env());
+        fstate->tu = tryPersist(state->tu);
+        fstate->data = file;
         return { ConvertReturn<File> { obj }, line, column, offset };
     }
     else {
@@ -113,17 +109,15 @@ SourceRange::SourceRange(const Napi::CallbackInfo& info)
 
 ConvertReturn<SourceRange> SourceRange::null(Napi::Env env)
 {
-    auto obj = Instance::get(env).sourceRangeConstructor.New({});
-    auto sst = Napi::ObjectWrap<SourceRange>::Unwrap(obj)->state;
-    sst->data = Instance::get(env).library->getNullRange();
+    auto [state, obj] = SourceRange::construct(env);
+    state->data = Instance::get(env).library->getNullRange();
     return { obj };
 }
 
 ConvertReturn<SourceRange> SourceRange::create(Napi::Env env, ConvertRef<SourceLocation> begin, ConvertRef<SourceLocation> end)
 {
-    auto obj = Instance::get(env).sourceRangeConstructor.New({});
-    auto sst = Napi::ObjectWrap<SourceRange>::Unwrap(obj)->state;
-    sst->data = Instance::get(env).library->getRange(begin.data->state->data, end.data->state->data);
+    auto [state, obj] = SourceRange::construct(env);
+    state->data = Instance::get(env).library->getRange(begin.data->state->data, end.data->state->data);
     return { obj };
 }
 
@@ -139,19 +133,17 @@ bool SourceRange::isNull()
 
 ConvertReturn<SourceLocation> SourceRange::getStart()
 {
-    auto obj = instance().sourceLocationConstructor.New({});
-    auto sst = Napi::ObjectWrap<SourceLocation>::Unwrap(obj)->state;
-    sst->tu = tryPersist(state->tu);
-    sst->data = library()->getRangeStart(state->data);
+    auto [sstate, obj] = SourceLocation::construct(Env());
+    sstate->tu = tryPersist(state->tu);
+    sstate->data = library()->getRangeStart(state->data);
     return { obj };
 }
 
 ConvertReturn<SourceLocation> SourceRange::getEnd()
 {
-    auto obj = instance().sourceLocationConstructor.New({});
-    auto sst = Napi::ObjectWrap<SourceLocation>::Unwrap(obj)->state;
-    sst->tu = tryPersist(state->tu);
-    sst->data = library()->getRangeEnd(state->data);
+    auto [sstate, obj] = SourceLocation::construct(Env());
+    sstate->tu = tryPersist(state->tu);
+    sstate->data = library()->getRangeEnd(state->data);
     return { obj };
 }
 

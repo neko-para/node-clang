@@ -20,10 +20,9 @@ std::optional<ConvertReturn<File>> TranslationUnit::getFile(std::string file_nam
         return std::nullopt;
     }
 
-    auto obj = instance().fileConstructor.New({});
-    auto fst = Napi::ObjectWrap<File>::Unwrap(obj)->state;
-    fst->tu = Napi::Persistent(Value());
-    fst->data = file;
+    auto [fstate, obj] = File::construct(Env());
+    fstate->tu = Napi::Persistent(Value());
+    fstate->data = file;
     return ConvertReturn<File> { obj };
 }
 
@@ -49,10 +48,9 @@ int TranslationUnit::reparse(std::vector<UnsavedFile> unsaved_files, unsigned op
 
 ConvertReturn<Cursor> TranslationUnit::getCursor()
 {
-    auto obj = instance().cursorConstructor.New({});
-    auto cst = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
-    cst->tu = Napi::Persistent(Value());
-    cst->data = library()->getTranslationUnitCursor(state->data);
+    auto [cstate, obj] = Cursor::construct(Env());
+    cstate->tu = Napi::Persistent(Value());
+    cstate->data = library()->getTranslationUnitCursor(state->data);
     return { obj };
 }
 

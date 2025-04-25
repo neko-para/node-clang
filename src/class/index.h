@@ -101,5 +101,7 @@ struct [[clang::annotate("class")]] Index : public WrapBase<Index>
     };
 
     std::shared_ptr<State> state {};
+
+    static std::tuple<State*, Napi::Object> construct(Napi::Env env);
 };
 

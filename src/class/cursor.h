@@ -49,5 +49,7 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
     };
 
     std::shared_ptr<State> state {};
+
+    static std::tuple<State*, Napi::Object> construct(Napi::Env env);
 };
 

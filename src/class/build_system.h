@@ -30,6 +30,8 @@ struct [[clang::annotate("class")]] VirtualFileOverlay : public WrapBase<Virtual
     };
 
     std::shared_ptr<State> state {};
+
+    static std::tuple<State*, Napi::Object> construct(Napi::Env env);
 };
 
 struct [[clang::annotate("class")]] ModuleMapDescriptor : public WrapBase<ModuleMapDescriptor>
@@ -54,5 +56,7 @@ struct [[clang::annotate("class")]] ModuleMapDescriptor : public WrapBase<Module
     };
 
     std::shared_ptr<State> state {};
+
+    static std::tuple<State*, Napi::Object> construct(Napi::Env env);
 };
 

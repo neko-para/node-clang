@@ -113,6 +113,13 @@ Napi::Function Cursor::Init(Napi::Env env)
     return func;
 }
 
+std::tuple<Cursor::State*, Napi::Object> Cursor::construct(Napi::Env env)
+{
+    auto obj = Instance::get(env).cursorConstructor.New({});
+    auto state = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
+    return { state.get(), obj };
+}
+
 Napi::Function File::Init(Napi::Env env)
 {
     Napi::Function func = DefineClass(
@@ -162,6 +169,13 @@ Napi::Function File::Init(Napi::Env env)
         });
     Instance::get(env).fileConstructor = Napi::Persistent(func);
     return func;
+}
+
+std::tuple<File::State*, Napi::Object> File::construct(Napi::Env env)
+{
+    auto obj = Instance::get(env).fileConstructor.New({});
+    auto state = Napi::ObjectWrap<File>::Unwrap(obj)->state;
+    return { state.get(), obj };
 }
 
 Napi::Function Global::Init(Napi::Env env)
@@ -235,6 +249,13 @@ Napi::Function Index::Init(Napi::Env env)
         });
     Instance::get(env).indexConstructor = Napi::Persistent(func);
     return func;
+}
+
+std::tuple<Index::State*, Napi::Object> Index::construct(Napi::Env env)
+{
+    auto obj = Instance::get(env).indexConstructor.New({});
+    auto state = Napi::ObjectWrap<Index>::Unwrap(obj)->state;
+    return { state.get(), obj };
 }
 
 Napi::Function IndexOptions::Init(Napi::Env env)
@@ -323,6 +344,13 @@ Napi::Function ModuleMapDescriptor::Init(Napi::Env env)
     return func;
 }
 
+std::tuple<ModuleMapDescriptor::State*, Napi::Object> ModuleMapDescriptor::construct(Napi::Env env)
+{
+    auto obj = Instance::get(env).moduleMapDescriptorConstructor.New({});
+    auto state = Napi::ObjectWrap<ModuleMapDescriptor>::Unwrap(obj)->state;
+    return { state.get(), obj };
+}
+
 Napi::Function SourceLocation::Init(Napi::Env env)
 {
     Napi::Function func = DefineClass(
@@ -388,6 +416,13 @@ Napi::Function SourceLocation::Init(Napi::Env env)
     return func;
 }
 
+std::tuple<SourceLocation::State*, Napi::Object> SourceLocation::construct(Napi::Env env)
+{
+    auto obj = Instance::get(env).sourceLocationConstructor.New({});
+    auto state = Napi::ObjectWrap<SourceLocation>::Unwrap(obj)->state;
+    return { state.get(), obj };
+}
+
 Napi::Function SourceRange::Init(Napi::Env env)
 {
     Napi::Function func = DefineClass(
@@ -438,6 +473,13 @@ Napi::Function SourceRange::Init(Napi::Env env)
     return func;
 }
 
+std::tuple<SourceRange::State*, Napi::Object> SourceRange::construct(Napi::Env env)
+{
+    auto obj = Instance::get(env).sourceRangeConstructor.New({});
+    auto state = Napi::ObjectWrap<SourceRange>::Unwrap(obj)->state;
+    return { state.get(), obj };
+}
+
 Napi::Function TranslationUnit::Init(Napi::Env env)
 {
     Napi::Function func = DefineClass(
@@ -476,6 +518,13 @@ Napi::Function TranslationUnit::Init(Napi::Env env)
     return func;
 }
 
+std::tuple<TranslationUnit::State*, Napi::Object> TranslationUnit::construct(Napi::Env env)
+{
+    auto obj = Instance::get(env).translationUnitConstructor.New({});
+    auto state = Napi::ObjectWrap<TranslationUnit>::Unwrap(obj)->state;
+    return { state.get(), obj };
+}
+
 Napi::Function Type::Init(Napi::Env env)
 {
     Napi::Function func = DefineClass(
@@ -510,6 +559,13 @@ Napi::Function Type::Init(Napi::Env env)
         });
     Instance::get(env).typeConstructor = Napi::Persistent(func);
     return func;
+}
+
+std::tuple<Type::State*, Napi::Object> Type::construct(Napi::Env env)
+{
+    auto obj = Instance::get(env).typeConstructor.New({});
+    auto state = Napi::ObjectWrap<Type>::Unwrap(obj)->state;
+    return { state.get(), obj };
 }
 
 Napi::Function VirtualFileOverlay::Init(Napi::Env env)
@@ -547,4 +603,11 @@ Napi::Function VirtualFileOverlay::Init(Napi::Env env)
         });
     Instance::get(env).virtualFileOverlayConstructor = Napi::Persistent(func);
     return func;
+}
+
+std::tuple<VirtualFileOverlay::State*, Napi::Object> VirtualFileOverlay::construct(Napi::Env env)
+{
+    auto obj = Instance::get(env).virtualFileOverlayConstructor.New({});
+    auto state = Napi::ObjectWrap<VirtualFileOverlay>::Unwrap(obj)->state;
+    return { state.get(), obj };
 }
