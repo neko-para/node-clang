@@ -14,7 +14,7 @@ struct [[clang::annotate("class")]] VirtualFileOverlay : public WrapBase<Virtual
 
     VirtualFileOverlay(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("method")]] bool create();
+    [[clang::annotate("method")]] static std::optional<ConvertReturn<VirtualFileOverlay>> create(Napi::Env env);
     [[clang::annotate("method")]] int addFileMapping(std::string virtualPath, std::string realPath);
     [[clang::annotate("setter")]] void setCaseSensitivity(bool caseSensitive);
     [[clang::annotate("method")]] Napi::ArrayBuffer writeToBuffer();
@@ -38,7 +38,7 @@ struct [[clang::annotate("class")]] ModuleMapDescriptor : public WrapBase<Module
 
     ModuleMapDescriptor(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("method")]] bool create();
+    [[clang::annotate("method")]] static std::optional<ConvertReturn<ModuleMapDescriptor>> create(Napi::Env env);
     [[clang::annotate("setter")]] void setFrameworkModuleName(std::string name);
     [[clang::annotate("setter")]] void setUmbrellaHeader(std::string name);
     [[clang::annotate("method")]] Napi::ArrayBuffer writeToBuffer();

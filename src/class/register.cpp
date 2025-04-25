@@ -194,14 +194,6 @@ Napi::Function Index::Init(Napi::Env env)
                 nullptr
             ),
             InstanceMethod(
-                "create",
-                &Index::dispatcher<
-                    "create",
-                    &Index::create,
-                    &Index::createIndexWithOptions
-                >
-            ),
-            InstanceMethod(
                 "createTranslationUnit",
                 &Index::dispatcher<
                     "createTranslationUnit",
@@ -227,6 +219,14 @@ Napi::Function Index::Init(Napi::Env env)
                 &Index::dispatcher<
                     "parseTranslationUnitFullArgv",
                     &Index::parseTranslationUnitFullArgv
+                >
+            ),
+            StaticMethod(
+                "create",
+                &Index::dispatcherStatic<
+                    "create",
+                    &Index::create,
+                    &Index::createIndexWithOptions
                 >
             ),
             InstanceMethod(
@@ -305,17 +305,17 @@ Napi::Function ModuleMapDescriptor::Init(Napi::Env env)
                 &ModuleMapDescriptor::dispatcherSetter<"set umbrellaHeader", &ModuleMapDescriptor::setUmbrellaHeader>
             ),
             InstanceMethod(
-                "create",
-                &ModuleMapDescriptor::dispatcher<
-                    "create",
-                    &ModuleMapDescriptor::create
-                >
-            ),
-            InstanceMethod(
                 "writeToBuffer",
                 &ModuleMapDescriptor::dispatcher<
                     "writeToBuffer",
                     &ModuleMapDescriptor::writeToBuffer
+                >
+            ),
+            StaticMethod(
+                "create",
+                &ModuleMapDescriptor::dispatcherStatic<
+                    "create",
+                    &ModuleMapDescriptor::create
                 >
             ),
         });
@@ -531,17 +531,17 @@ Napi::Function VirtualFileOverlay::Init(Napi::Env env)
                 >
             ),
             InstanceMethod(
-                "create",
-                &VirtualFileOverlay::dispatcher<
-                    "create",
-                    &VirtualFileOverlay::create
-                >
-            ),
-            InstanceMethod(
                 "writeToBuffer",
                 &VirtualFileOverlay::dispatcher<
                     "writeToBuffer",
                     &VirtualFileOverlay::writeToBuffer
+                >
+            ),
+            StaticMethod(
+                "create",
+                &VirtualFileOverlay::dispatcherStatic<
+                    "create",
+                    &VirtualFileOverlay::create
                 >
             ),
         });

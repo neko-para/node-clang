@@ -63,8 +63,10 @@ struct [[clang::annotate("class")]] Index : public WrapBase<Index>
 
     Index(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("method")]] bool create(bool excludeDeclarationsFromPCH, bool displayDiagnostics);
-    [[clang::annotate("method:create")]] bool createIndexWithOptions(ConvertRef<IndexOptions> options);
+    [[clang::annotate("method")]] static std::optional<ConvertReturn<Index>>
+        create(Napi::Env env, bool excludeDeclarationsFromPCH, bool displayDiagnostics);
+    [[clang::annotate("method:create")]] static std::optional<ConvertReturn<Index>>
+        createIndexWithOptions(Napi::Env env, ConvertRef<IndexOptions> options);
     [[clang::annotate("getter")]] unsigned getGlobalOptions();
 
     [[clang::annotate("method")]] std::optional<ConvertReturn<TranslationUnit>> createTranslationUnitFromSourceFile(

@@ -6,8 +6,7 @@ import { setup } from './utils'
 const includes = setup()
 
 function load(): [CIndex, CTranslationUnit] {
-    const index = new CIndex()
-    index.create(false, true)
+    const index = CIndex.create(false, true)!
     const [tu, err] = index.parseTranslationUnit(
         'third_party/clang-c/Index.h',
         ['-xc++', `-I${process.cwd()}/third_party`].concat(includes.map(x => `-I${x}`)),

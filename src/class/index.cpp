@@ -98,17 +98,29 @@ Index::Index(const Napi::CallbackInfo& info)
 {
 }
 
-bool Index::create(bool excludeDeclarationsFromPCH, bool displayDiagnostics)
+std::optional<ConvertReturn<Index>> Index::create(Napi::Env env, bool excludeDeclarationsFromPCH, bool displayDiagnostics)
 {
-    state->data = library()->createIndex(excludeDeclarationsFromPCH, displayDiagnostics);
-    return !!state->data;
+    auto data = Instance::get(env).library->createIndex(excludeDeclarationsFromPCH, displayDiagnostics);
+    if (!data) {
+        return std::nullopt;
+    }
+    auto obj = Instance::get(env).indexConstructor.New({});
+    auto ist = Napi::ObjectWrap<Index>::Unwrap(obj)->state;
+    ist->data = data;
+    return ConvertReturn<Index> { obj };
 }
 
-bool Index::createIndexWithOptions(ConvertRef<IndexOptions> options)
+std::optional<ConvertReturn<Index>> Index::createIndexWithOptions(Napi::Env env, ConvertRef<IndexOptions> options)
 {
     options.data->state->__flush_pointer();
-    state->data = library()->createIndexWithOptions(&options.data->state->data);
-    return !!state->data;
+    auto data = Instance::get(env).library->createIndexWithOptions(&options.data->state->data);
+    if (!data) {
+        return std::nullopt;
+    }
+    auto obj = Instance::get(env).indexConstructor.New({});
+    auto ist = Napi::ObjectWrap<Index>::Unwrap(obj)->state;
+    ist->data = data;
+    return ConvertReturn<Index> { obj };
 }
 
 unsigned Index::getGlobalOptions()

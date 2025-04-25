@@ -7,8 +7,7 @@ import { directChild, setup, visit } from './utils'
 const includes = setup()
 
 function load(): [CIndex, CTranslationUnit] {
-    const index = new CIndex()
-    index.create(false, true)
+    const index = CIndex.create(false, true)!
     const [tu, err] = index.parseTranslationUnit(
         'src/class/classes.h',
         [

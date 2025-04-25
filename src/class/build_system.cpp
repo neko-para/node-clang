@@ -11,10 +11,16 @@ VirtualFileOverlay::VirtualFileOverlay(const Napi::CallbackInfo& info)
 {
 }
 
-bool VirtualFileOverlay::create()
+std::optional<ConvertReturn<VirtualFileOverlay>> VirtualFileOverlay::create(Napi::Env env)
 {
-    state->data = library()->VirtualFileOverlay_create(0);
-    return !!state->data;
+    auto data = Instance::get(env).library->VirtualFileOverlay_create(0);
+    if (!data) {
+        return std::nullopt;
+    }
+    auto obj = Instance::get(env).virtualFileOverlayConstructor.New({});
+    auto vst = Napi::ObjectWrap<VirtualFileOverlay>::Unwrap(obj)->state;
+    vst->data = data;
+    return ConvertReturn<VirtualFileOverlay> { obj };
 }
 
 int VirtualFileOverlay::addFileMapping(std::string virtualPath, std::string realPath)
@@ -55,10 +61,16 @@ ModuleMapDescriptor::ModuleMapDescriptor(const Napi::CallbackInfo& info)
 {
 }
 
-bool ModuleMapDescriptor::create()
+std::optional<ConvertReturn<ModuleMapDescriptor>> ModuleMapDescriptor::create(Napi::Env env)
 {
-    state->data = library()->ModuleMapDescriptor_create(0);
-    return !!state->data;
+    auto data = Instance::get(env).library->ModuleMapDescriptor_create(0);
+    if (!data) {
+        return std::nullopt;
+    }
+    auto obj = Instance::get(env).moduleMapDescriptorConstructor.New({});
+    auto vst = Napi::ObjectWrap<ModuleMapDescriptor>::Unwrap(obj)->state;
+    vst->data = data;
+    return ConvertReturn<ModuleMapDescriptor> { obj };
 }
 
 void ModuleMapDescriptor::setFrameworkModuleName(std::string name)

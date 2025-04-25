@@ -8,8 +8,8 @@ export class CGlobal {
 }
 
 export class CIndex {
-    create(excludeDeclarationsFromPCH: boolean, displayDiagnostics: boolean): boolean
-    create(options: CIndexOptions): boolean
+    static create(excludeDeclarationsFromPCH: boolean, displayDiagnostics: boolean): CIndex | null
+    static create(options: CIndexOptions): CIndex | null
     get globalOptions(): unsigned
     createTranslationUnitFromSourceFile(
         source_filename: string,
@@ -96,14 +96,14 @@ export class CFile {
 }
 
 export class CVirtualFileOverlay {
-    create(): boolean
+    static create(): CVirtualFileOverlay | null
     addFileMapping(virtualPath: string, realPath: string): CXErrorCode
     set caseSensitivity(value: boolean) // throw CXErrorCode
     writeToBuffer(): ArrayBuffer // throw CXErrorCode
 }
 
 export class CModuleMapDescriptor {
-    create(): boolean
+    static create(): CModuleMapDescriptor | null
     set frameworkModuleName(value: string) // throw CXErrorCode
     set umbrellaHeader(value: string) // throw CXErrorCode
     writeToBuffer(): ArrayBuffer // throw CXErrorCode
