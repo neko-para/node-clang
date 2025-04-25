@@ -57,6 +57,7 @@ set(NodeClang_src
     src/class/file.cpp
     src/class/source_location.cpp
     src/class/global.cpp
+    src/class/build_system.cpp
     src/class/register.cpp
 )
 

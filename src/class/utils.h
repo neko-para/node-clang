@@ -4,9 +4,9 @@
 #include <optional>
 #include <tuple>
 #include <utility>
+#include <variant>
 
 #include <napi.h>
-#include <variant>
 
 #include "class/convert.h"
 
@@ -207,4 +207,20 @@ consteval inline auto wrapStatic()
             return next(info, trace);
         }
     };
+}
+
+inline void throwValue(Napi::Value value)
+{
+    napi_throw(value.Env(), value);
+}
+
+inline bool throwErrorCode(Napi::Env env, CXErrorCode err)
+{
+    if (err != CXError_Success) {
+        throwValue(Napi::Number::New(env, err));
+        return true;
+    }
+    else {
+        return false;
+    }
 }

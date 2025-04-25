@@ -1,5 +1,6 @@
 #include <napi.h>
 
+#include "class/build_system.h"
 #include "class/cursor.h"
 #include "class/file.h"
 #include "class/global.h"
@@ -287,6 +288,41 @@ Napi::Function IndexOptions::Init(Napi::Env env)
     return func;
 }
 
+Napi::Function ModuleMapDescriptor::Init(Napi::Env env)
+{
+    Napi::Function func = DefineClass(
+        env,
+        "CModuleMapDescriptor",
+        {
+            InstanceAccessor(
+                "frameworkModuleName",
+                nullptr,
+                &ModuleMapDescriptor::dispatcherSetter<"set frameworkModuleName", &ModuleMapDescriptor::setFrameworkModuleName>
+            ),
+            InstanceAccessor(
+                "umbrellaHeader",
+                nullptr,
+                &ModuleMapDescriptor::dispatcherSetter<"set umbrellaHeader", &ModuleMapDescriptor::setUmbrellaHeader>
+            ),
+            InstanceMethod(
+                "create",
+                &ModuleMapDescriptor::dispatcher<
+                    "create",
+                    &ModuleMapDescriptor::create
+                >
+            ),
+            InstanceMethod(
+                "writeToBuffer",
+                &ModuleMapDescriptor::dispatcher<
+                    "writeToBuffer",
+                    &ModuleMapDescriptor::writeToBuffer
+                >
+            ),
+        });
+    Instance::get(env).moduleMapDescriptorConstructor = Napi::Persistent(func);
+    return func;
+}
+
 Napi::Function SourceLocation::Init(Napi::Env env)
 {
     Napi::Function func = DefineClass(
@@ -413,5 +449,42 @@ Napi::Function Type::Init(Napi::Env env)
                 &Type::dispatcher<"nodejs inspect", &Type::nodejsInspect>),
         });
     Instance::get(env).typeConstructor = Napi::Persistent(func);
+    return func;
+}
+
+Napi::Function VirtualFileOverlay::Init(Napi::Env env)
+{
+    Napi::Function func = DefineClass(
+        env,
+        "CVirtualFileOverlay",
+        {
+            InstanceAccessor(
+                "caseSensitivity",
+                nullptr,
+                &VirtualFileOverlay::dispatcherSetter<"set caseSensitivity", &VirtualFileOverlay::setCaseSensitivity>
+            ),
+            InstanceMethod(
+                "addFileMapping",
+                &VirtualFileOverlay::dispatcher<
+                    "addFileMapping",
+                    &VirtualFileOverlay::addFileMapping
+                >
+            ),
+            InstanceMethod(
+                "create",
+                &VirtualFileOverlay::dispatcher<
+                    "create",
+                    &VirtualFileOverlay::create
+                >
+            ),
+            InstanceMethod(
+                "writeToBuffer",
+                &VirtualFileOverlay::dispatcher<
+                    "writeToBuffer",
+                    &VirtualFileOverlay::writeToBuffer
+                >
+            ),
+        });
+    Instance::get(env).virtualFileOverlayConstructor = Napi::Persistent(func);
     return func;
 }

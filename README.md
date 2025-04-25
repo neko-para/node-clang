@@ -9,17 +9,17 @@ Dynamic load libclang.dll/so/dylib.
 - [x] clang_disposeString
 - [ ] clang_disposeStringSet
 - [x] clang_getBuildSessionTimestamp
-- [ ] clang_VirtualFileOverlay_create
-- [ ] clang_VirtualFileOverlay_addFileMapping
-- [ ] clang_VirtualFileOverlay_setCaseSensitivity
-- [ ] clang_VirtualFileOverlay_writeToBuffer
-- [ ] clang_free
-- [ ] clang_VirtualFileOverlay_dispose
-- [ ] clang_ModuleMapDescriptor_create
-- [ ] clang_ModuleMapDescriptor_setFrameworkModuleName
-- [ ] clang_ModuleMapDescriptor_setUmbrellaHeader
-- [ ] clang_ModuleMapDescriptor_writeToBuffer
-- [ ] clang_ModuleMapDescriptor_dispose
+- [x] clang_VirtualFileOverlay_create
+- [x] clang_VirtualFileOverlay_addFileMapping
+- [x] clang_VirtualFileOverlay_setCaseSensitivity
+- [x] clang_VirtualFileOverlay_writeToBuffer
+- [x] clang_free
+- [x] clang_VirtualFileOverlay_dispose
+- [x] clang_ModuleMapDescriptor_create
+- [x] clang_ModuleMapDescriptor_setFrameworkModuleName
+- [x] clang_ModuleMapDescriptor_setUmbrellaHeader
+- [x] clang_ModuleMapDescriptor_writeToBuffer
+- [x] clang_ModuleMapDescriptor_dispose
 - [x] clang_getFileName
 - [x] clang_getFileTime
 - [x] clang_getFileUniqueID

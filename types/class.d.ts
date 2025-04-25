@@ -3,7 +3,7 @@ import type { CXChildVisitResult, CXCursorKind, CXErrorCode, CXTypeKind } from '
 
 export type CUnsavedFile = [Filename: string, Contents: string, Length: ulong]
 
-export class Global {
+export class CGlobal {
     static buildSessionTimestamp(): ulonglong
 }
 
@@ -108,4 +108,18 @@ export class CSourceLocation {
         offset: unsigned
     ]
     get presumedLocation(): [filename: string, line: unsigned, column: unsigned]
+}
+
+export class CVirtualFileOverlay {
+    create(): boolean
+    addFileMapping(virtualPath: string, realPath: string): CXErrorCode
+    set caseSensitivity(value: boolean) // throw CXErrorCode
+    writeToBuffer(): ArrayBuffer // throw CXErrorCode
+}
+
+export class CModuleMapDescriptor {
+    create(): boolean
+    set frameworkModuleName(value: string) // throw CXErrorCode
+    set umbrellaHeader(value: string) // throw CXErrorCode
+    writeToBuffer(): ArrayBuffer // throw CXErrorCode
 }

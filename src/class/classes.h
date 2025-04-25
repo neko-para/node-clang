@@ -1,5 +1,6 @@
 #pragma once
 
+#include "class/build_system.h"
 #include "class/cursor.h"
 #include "class/file.h"
 #include "class/global.h"

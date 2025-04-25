@@ -505,6 +505,23 @@ struct Convert<Napi::Function>
 };
 
 template <>
+struct Convert<Napi::ArrayBuffer>
+{
+    static std::string name() { return "array buffer"; }
+
+    static Napi::Value to_value(Napi::Env env, Napi::ArrayBuffer value) { return value; }
+
+    template <size_t I>
+    static Napi::ArrayBuffer from_value(Napi::Value value)
+    {
+        if (!value.IsArrayBuffer()) {
+            throw ConvertFailed { std::format("Type mismatch at {}, expect {}, got {}", I, name(), valueType(value)) };
+        }
+        return value.As<Napi::ArrayBuffer>();
+    }
+};
+
+template <>
 struct Convert<Napi::Date>
 {
     static std::string name() { return "date"; }
