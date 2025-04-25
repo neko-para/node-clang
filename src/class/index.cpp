@@ -6,32 +6,6 @@
 #include "class/instance.h"
 #include "loader/clang.h"
 
-#define BIND_GETTER_SETTER(name)                                                 \
-    InstanceAccessor(                                                            \
-        #name,                                                                   \
-        &IndexOptions::dispatcher<"get " #name, &IndexOptions::get##name>,       \
-        &IndexOptions::dispatcherSetter<"set " #name, &IndexOptions::set##name>, \
-        napi_enumerable)
-
-Napi::Function IndexOptions::Init(Napi::Env env)
-{
-    Napi::Function func = DefineClass(
-        env,
-        "CIndexOptions",
-        {
-            BIND_GETTER_SETTER(Size),
-            BIND_GETTER_SETTER(ThreadBackgroundPriorityForIndexing),
-            BIND_GETTER_SETTER(ThreadBackgroundPriorityForEditing),
-            BIND_GETTER_SETTER(ExcludeDeclarationsFromPCH),
-            BIND_GETTER_SETTER(DisplayDiagnostics),
-            BIND_GETTER_SETTER(StorePreamblesInMemory),
-            BIND_GETTER_SETTER(PreambleStoragePath),
-            BIND_GETTER_SETTER(InvocationEmissionPath),
-        });
-    Instance::get(env).indexOptionsConstructor = Napi::Persistent(func);
-    return func;
-}
-
 IndexOptions::IndexOptions(const Napi::CallbackInfo& info)
     : WrapBase<IndexOptions>(info)
     , state(std::make_shared<State>())
@@ -116,31 +90,6 @@ std::optional<std::string> IndexOptions::getInvocationEmissionPath()
 void IndexOptions::setInvocationEmissionPath(std::optional<std::string> value)
 {
     state->__InvocationEmissionPath = value;
-}
-
-Napi::Function Index::Init(Napi::Env env)
-{
-    Napi::Function func = DefineClass(
-        env,
-        "CIndex",
-        {
-            InstanceMethod("create", &Index::dispatcher<"create", &Index::create, &Index::createIndexWithOptions>),
-            InstanceAccessor("globalOptions", &Index::dispatcher<"get globalOptions", &Index::getGlobalOptions>, nullptr),
-            InstanceMethod(
-                "createTranslationUnitFromSourceFile",
-                &Index::dispatcher<"createTranslationUnitFromSourceFile", &Index::createTranslationUnitFromSourceFile>),
-            InstanceMethod("createTranslationUnit", &Index::dispatcher<"createTranslationUnit", &Index::createTranslationUnit>),
-            InstanceMethod("parseTranslationUnit", &Index::dispatcher<"parseTranslationUnit", &Index::parseTranslationUnit>),
-            InstanceMethod(
-                "parseTranslationUnitFullArgv",
-                &Index::dispatcher<"parseTranslationUnitFullArgv", &Index::parseTranslationUnitFullArgv>),
-
-            InstanceMethod(
-                Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
-                &Index::dispatcher<"nodejs inspect", &Index::nodejsInspect>),
-        });
-    Instance::get(env).indexConstructor = Napi::Persistent(func);
-    return func;
 }
 
 Index::Index(const Napi::CallbackInfo& info)

@@ -6,31 +6,6 @@
 #include "translation_unit.h"
 #include "clang-c/CXFile.h"
 
-Napi::Function File::Init(Napi::Env env)
-{
-    Napi::Function func = DefineClass(
-        env,
-        "CFile",
-        { InstanceAccessor("fileName", &File::dispatcher<"get fileName", &File::getFileName>, nullptr),
-          InstanceAccessor("fileTime", &File::dispatcher<"get fileTime", &File::getFileTime>, nullptr),
-          InstanceAccessor("fileUniqueID", &File::dispatcher<"get fileUniqueID", &File::getFileUniqueID>, nullptr),
-          InstanceAccessor("fileUniqueID", &File::dispatcher<"get fileUniqueID", &File::getFileUniqueID>, nullptr),
-          InstanceMethod("equal", &File::dispatcher<"equal", &File::equal>),
-          InstanceAccessor("realPathName", &File::dispatcher<"get realPathName", &File::getRealPathName>, nullptr),
-
-          InstanceAccessor(
-              "isMultipleIncludeGuarded",
-              &File::dispatcher<"get isMultipleIncludeGuarded", &File::isMultipleIncludeGuarded>,
-              nullptr),
-          InstanceAccessor("fileContents", &File::dispatcher<"get fileContents", &File::getFileContents>, nullptr),
-
-          InstanceMethod(
-              Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
-              &File::dispatcher<"nodejs inspect", &File::nodejsInspect>) });
-    Instance::get(env).fileConstructor = Napi::Persistent(func);
-    return func;
-}
-
 File::File(const Napi::CallbackInfo& info)
     : WrapBase<File>(info)
     , state(std::make_shared<State>())

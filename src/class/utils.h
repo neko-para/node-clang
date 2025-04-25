@@ -176,7 +176,7 @@ consteval inline auto wrapStatic()
                     return info.Env().Null();
                 }
                 else {
-                    if constexpr (traits::has_self) {
+                    if constexpr (traits::has_env) {
                         return Convert<typename traits::return_t>::to_value(
                             info.Env(),
                             std::apply(func, std::tuple_cat(std::make_tuple<Napi::Env>(info.Env()), args)));

@@ -7,33 +7,6 @@
 #include "class/instance.h"
 #include "loader/clang.h"
 
-Napi::Function SourceLocation::Init(Napi::Env env)
-{
-    Napi::Function func = DefineClass(
-        env,
-        "CSourceLocation",
-        {
-            InstanceAccessor(
-                "isInSystemHeader",
-                &SourceLocation::dispatcher<"get isInSystemHeader", &SourceLocation::isInSystemHeader>,
-                nullptr),
-            InstanceAccessor(
-                "expansionLocation",
-                &SourceLocation::dispatcher<"get expansionLocation", &SourceLocation::getExpansionLocation>,
-                nullptr),
-            InstanceAccessor(
-                "presumedLocation",
-                &SourceLocation::dispatcher<"get presumedLocation", &SourceLocation::getPresumedLocation>,
-                nullptr),
-
-            InstanceMethod(
-                Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
-                &SourceLocation::dispatcher<"nodejs inspect", &SourceLocation::nodejsInspect>),
-        });
-    Instance::get(env).sourceLocationConstructor = Napi::Persistent(func);
-    return func;
-}
-
 SourceLocation::SourceLocation(const Napi::CallbackInfo& info)
     : WrapBase<SourceLocation>(info)
     , state(std::make_shared<State>())

@@ -7,25 +7,6 @@
 #include "class/instance.h"
 #include "loader/clang.h"
 
-Napi::Function TranslationUnit::Init(Napi::Env env)
-{
-    Napi::Function func = DefineClass(
-        env,
-        "CTranslationUnit",
-        {
-            InstanceMethod("getFile", &TranslationUnit::dispatcher<"getFile", &TranslationUnit::getFile>),
-            InstanceAccessor("spelling", &TranslationUnit::dispatcher<"get spelling", &TranslationUnit::getSpelling>, nullptr),
-            InstanceMethod("reparse", &TranslationUnit::dispatcher<"reparse", &TranslationUnit::reparse>),
-            InstanceAccessor("cursor", &TranslationUnit::dispatcher<"get cursor", &TranslationUnit::getCursor>, nullptr),
-
-            InstanceMethod(
-                Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
-                &TranslationUnit::dispatcher<"nodejs inspect", &TranslationUnit::nodejsInspect>),
-        });
-    Instance::get(env).translationUnitConstructor = Napi::Persistent(func);
-    return func;
-}
-
 TranslationUnit::TranslationUnit(const Napi::CallbackInfo& info)
     : WrapBase<TranslationUnit>(info)
     , state(std::make_shared<State>(Env()))

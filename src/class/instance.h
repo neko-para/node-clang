@@ -62,6 +62,26 @@ struct WrapBase : Napi::ObjectWrap<Type>
     }
 
     template <StringLitteral name, auto... impl>
+    static Napi::Value dispatcherStatic(const Napi::CallbackInfo& info)
+    {
+        constexpr auto func = wrapStatic<impl...>();
+        std::vector<std::string> trace;
+        auto result = func(info, trace);
+        if (result.has_value()) {
+            return result.value();
+        }
+        else {
+            std::ostringstream traceResult;
+            for (const auto& err : trace) {
+                traceResult << err << '\n';
+            }
+            Napi::Error::New(info.Env(), std::format("nodeClang: cannot resolve {}\n{}", name.value, traceResult.str()))
+                .ThrowAsJavaScriptException();
+            return info.Env().Null();
+        }
+    }
+
+    template <StringLitteral name, auto... impl>
     void dispatcherSetter(const Napi::CallbackInfo& info, const Napi::Value& value)
     {
         constexpr auto func = wrapSetter<Type, impl...>();

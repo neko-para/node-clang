@@ -18,6 +18,7 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
 
     Cursor(const Napi::CallbackInfo& info);
 
+    [[clang::annotate("method")]] static ConvertReturn<Cursor> null(Napi::Env env);
     [[clang::annotate("method")]] bool equal(ConvertRef<Cursor> cursor);
     [[clang::annotate("method:equal")]] bool equalRelax(ConvertRef<Cursor> cursor, bool relax);
     [[clang::annotate("getter")]] bool isNull();
@@ -25,7 +26,7 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
     [[clang::annotate("getter")]] int getKind();
     [[clang::annotate("getter")]] std::string getKindStr();
     [[clang::annotate("getter")]] std::string getSpelling();
-    [[clang::annotate("getter")]] ConvertReturn<TranslationUnit> getTranslateUnit();
+    [[clang::annotate("getter")]] std::optional<ConvertReturn<TranslationUnit>> getTranslateUnit();
     [[clang::annotate("getter")]] ConvertReturn<Type> getType();
 
     [[clang::annotate("getter")]] ConvertReturn<Cursor> getLexicalParent();
@@ -35,9 +36,10 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
 
     [[clang::annotate("method")]] bool visitChildren(Napi::Function visitor);
 
-    [[clang::annotate("method")]] bool CXXMethod_isStatic();
+    [[clang::annotate("getter")]] bool CXXMethod_isStatic();
 
-    std::string __dump();
+    [[clang::annotate("method")]] std::string __dump();
+
     [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State

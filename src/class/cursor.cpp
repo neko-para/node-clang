@@ -4,46 +4,22 @@
 
 #include "class/convert.h"
 #include "class/instance.h"
+#include "class/source_location.h"
 #include "class/type.h"
 #include "enum.h"
-#include "source_location.h"
-
-Napi::Function Cursor::Init(Napi::Env env)
-{
-    Napi::Function func = DefineClass(
-        env,
-        "CCursor",
-        { InstanceMethod("equal", &Cursor::dispatcher<"equal", &Cursor::equal, &Cursor::equalRelax>),
-          InstanceAccessor("isNull", &Cursor::dispatcher<"get isNull", &Cursor::isNull>, nullptr),
-          InstanceAccessor("hash", &Cursor::dispatcher<"get hash", &Cursor::getHash>, nullptr),
-          InstanceAccessor("kind", &Cursor::dispatcher<"get kind", &Cursor::getKind>, nullptr),
-          InstanceAccessor("kindStr", &Cursor::dispatcher<"get kindStr", &Cursor::getKindStr>, nullptr),
-          InstanceAccessor("spelling", &Cursor::dispatcher<"get spelling", &Cursor::getSpelling>, nullptr),
-          InstanceAccessor("translateUnit", &Cursor::dispatcher<"get translateUnit", &Cursor::getTranslateUnit>, nullptr),
-          InstanceAccessor("type", &Cursor::dispatcher<"get type", &Cursor::getType>, nullptr),
-          InstanceAccessor("lexicalParent", &Cursor::dispatcher<"get lexicalParent", &Cursor::getLexicalParent>, nullptr),
-          InstanceAccessor("semanticParent", &Cursor::dispatcher<"get semanticParent", &Cursor::getSemanticParent>, nullptr),
-          InstanceAccessor("location", &Cursor::dispatcher<"get location", &Cursor::getLocation>, nullptr),
-          InstanceAccessor(
-              "enumConstantDeclValue",
-              &Cursor::dispatcher<"get enumConstantDeclValue", &Cursor::getEnumConstantDeclValue>,
-              nullptr),
-          InstanceMethod("visitChildren", &Cursor::dispatcher<"visitChildren", &Cursor::visitChildren>),
-          InstanceAccessor("CXXMethod_isStatic", &Cursor::dispatcher<"get CXXMethod_isStatic", &Cursor::CXXMethod_isStatic>, nullptr),
-
-          InstanceMethod("__dump", &Cursor::dispatcher<"__dump", &Cursor::__dump>),
-
-          InstanceMethod(
-              Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
-              &Cursor::dispatcher<"nodejs inspect", &Cursor::nodejsInspect>) });
-    Instance::get(env).cursorConstructor = Napi::Persistent(func);
-    return func;
-}
 
 Cursor::Cursor(const Napi::CallbackInfo& info)
     : WrapBase<Cursor>(info)
     , state(std::make_shared<State>())
 {
+}
+
+ConvertReturn<Cursor> Cursor::null(Napi::Env env)
+{
+    auto obj = Instance::get(env).cursorConstructor.New({});
+    auto cst = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
+    cst->data = Instance::get(env).library->getNullCursor();
+    return { obj };
 }
 
 bool Cursor::equal(ConvertRef<Cursor> cursor)
@@ -99,9 +75,12 @@ std::string Cursor::getSpelling()
     return getStr(library()->getCursorSpelling(state->data));
 }
 
-ConvertReturn<TranslationUnit> Cursor::getTranslateUnit()
+std::optional<ConvertReturn<TranslationUnit>> Cursor::getTranslateUnit()
 {
-    return { state->tu.Value() };
+    if (state->tu.IsEmpty()) {
+        return std::nullopt;
+    }
+    return ConvertReturn<TranslationUnit> { state->tu.Value() };
 }
 
 ConvertReturn<Type> Cursor::getType()

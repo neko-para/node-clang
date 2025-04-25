@@ -3,7 +3,7 @@ import { CCursor, CXChildVisitResult, load } from '../loader'
 export function setup() {
     let includes: string[] = []
     if (process.platform === 'darwin') {
-        load('/usr/local/Cellar/llvm/20.1.1/lib/libclang.dylib')
+        load('/usr/local/Cellar/llvm/20.1.3/lib/libclang.dylib')
         includes = [
             '/Library/Developer/CommandLineTools/SDKs/MacOSX14.5.sdk/usr/include/c++/v1',
             '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/15.0.0/include',

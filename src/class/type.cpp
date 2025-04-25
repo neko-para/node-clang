@@ -4,23 +4,6 @@
 
 #include "class/instance.h"
 
-Napi::Function Type::Init(Napi::Env env)
-{
-    Napi::Function func = DefineClass(
-        env,
-        "CType",
-        { InstanceMethod("equal", &Type::dispatcher<"equal", &Type::equal>),
-          InstanceAccessor("kind", &Type::dispatcher<"get kind", &Type::getKind>, nullptr),
-          InstanceAccessor("kindStr", &Type::dispatcher<"get kindStr", &Type::getKindStr>, nullptr),
-          InstanceAccessor("spelling", &Type::dispatcher<"get spelling", &Type::getSpelling>, nullptr),
-
-          InstanceMethod(
-              Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
-              &Type::dispatcher<"nodejs inspect", &Type::nodejsInspect>) });
-    Instance::get(env).typeConstructor = Napi::Persistent(func);
-    return func;
-}
-
 Type::Type(const Napi::CallbackInfo& info)
     : WrapBase<Type>(info)
     , state(std::make_shared<State>())

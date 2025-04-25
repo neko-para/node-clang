@@ -54,6 +54,7 @@ export class CTranslationUnit {
 }
 
 export class CCursor {
+    static null(): CCursor
     equal(cursor: CCursor): boolean
     equal(cursor: CCursor, relax: boolean): boolean
     get isNull(): boolean
@@ -61,7 +62,7 @@ export class CCursor {
     get kind(): CXCursorKind
     get kindStr(): string
     get spelling(): string
-    get translationUnit(): CTranslationUnit
+    get translationUnit(): CTranslationUnit | null
     get type(): CType
     get lexicalParent(): CCursor
     get semanticParent(): CCursor
