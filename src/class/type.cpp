@@ -10,7 +10,7 @@ Type::Type(const Napi::CallbackInfo& info)
 {
 }
 
-bool Type::equal(ConvertRef<Type> type)
+bool Type::isEqual(ConvertRef<Type> type)
 {
     return library()->equalTypes(state->data, type.data->state->data);
 }

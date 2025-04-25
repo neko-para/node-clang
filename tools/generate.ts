@@ -37,7 +37,7 @@ function generateEnum(tu: CTranslationUnit) {
     const root = tu.cursor
     const cursors: CCursor[] = [root]
     root.visitChildren((cursor, parent) => {
-        while (!cursors[0].equal(parent)) {
+        while (!cursors[0].isEqual(parent)) {
             cursors.shift()
         }
         cursors.unshift(cursor)
@@ -160,7 +160,7 @@ function generateFunc(tu: CTranslationUnit) {
     const root = tu.cursor
     const cursors: CCursor[] = [root]
     root.visitChildren((cursor, parent) => {
-        while (!cursors[0].equal(parent)) {
+        while (!cursors[0].isEqual(parent)) {
             cursors.shift()
         }
         cursors.unshift(cursor)

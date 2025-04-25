@@ -22,12 +22,12 @@ ConvertReturn<Cursor> Cursor::null(Napi::Env env)
     return { obj };
 }
 
-bool Cursor::equal(ConvertRef<Cursor> cursor)
+bool Cursor::isEqual(ConvertRef<Cursor> cursor)
 {
     return library()->equalCursors(state->data, cursor.data->state->data);
 }
 
-bool Cursor::equalRelax(ConvertRef<Cursor> cursor, bool relax)
+bool Cursor::isEqualRelax(ConvertRef<Cursor> cursor, bool relax)
 {
     auto c1 = state->data;
     auto c2 = cursor.data->state->data;

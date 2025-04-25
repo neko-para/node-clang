@@ -2,6 +2,7 @@
 
 #include "class/cursor.h"
 #include "class/file.h"
+#include "class/global.h"
 #include "class/index.h"
 #include "class/instance.h"
 #include "class/source_location.h"
@@ -82,11 +83,11 @@ Napi::Function Cursor::Init(Napi::Env env)
                 >
             ),
             InstanceMethod(
-                "equal",
+                "isEqual",
                 &Cursor::dispatcher<
-                    "equal",
-                    &Cursor::equal,
-                    &Cursor::equalRelax
+                    "isEqual",
+                    &Cursor::isEqual,
+                    &Cursor::isEqualRelax
                 >
             ),
             InstanceMethod(
@@ -159,6 +160,24 @@ Napi::Function File::Init(Napi::Env env)
                 &File::dispatcher<"nodejs inspect", &File::nodejsInspect>),
         });
     Instance::get(env).fileConstructor = Napi::Persistent(func);
+    return func;
+}
+
+Napi::Function Global::Init(Napi::Env env)
+{
+    Napi::Function func = DefineClass(
+        env,
+        "CGlobal",
+        {
+            StaticMethod(
+                "buildSessionTimestamp",
+                &Global::dispatcherStatic<
+                    "buildSessionTimestamp",
+                    &Global::buildSessionTimestamp
+                >
+            ),
+        });
+    Instance::get(env).globalConstructor = Napi::Persistent(func);
     return func;
 }
 
@@ -280,6 +299,11 @@ Napi::Function SourceLocation::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "isFromMainFile",
+                &SourceLocation::dispatcher<"get isFromMainFile", &SourceLocation::isFromMainFile>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "isInSystemHeader",
                 &SourceLocation::dispatcher<"get isInSystemHeader", &SourceLocation::isInSystemHeader>,
                 nullptr
@@ -288,6 +312,27 @@ Napi::Function SourceLocation::Init(Napi::Env env)
                 "presumedLocation",
                 &SourceLocation::dispatcher<"get presumedLocation", &SourceLocation::getPresumedLocation>,
                 nullptr
+            ),
+            InstanceMethod(
+                "isBefore",
+                &SourceLocation::dispatcher<
+                    "isBefore",
+                    &SourceLocation::isBefore
+                >
+            ),
+            InstanceMethod(
+                "isEqual",
+                &SourceLocation::dispatcher<
+                    "isEqual",
+                    &SourceLocation::isEqual
+                >
+            ),
+            StaticMethod(
+                "null",
+                &SourceLocation::dispatcherStatic<
+                    "null",
+                    &SourceLocation::null
+                >
             ),
             InstanceMethod(
                 Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
@@ -357,10 +402,10 @@ Napi::Function Type::Init(Napi::Env env)
                 nullptr
             ),
             InstanceMethod(
-                "equal",
+                "isEqual",
                 &Type::dispatcher<
-                    "equal",
-                    &Type::equal
+                    "isEqual",
+                    &Type::isEqual
                 >
             ),
             InstanceMethod(

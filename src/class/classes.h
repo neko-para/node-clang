@@ -2,6 +2,7 @@
 
 #include "class/cursor.h"
 #include "class/file.h"
+#include "class/global.h"
 #include "class/index.h"
 #include "class/instance.h"
 #include "class/source_location.h"

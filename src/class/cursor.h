@@ -19,8 +19,8 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
     Cursor(const Napi::CallbackInfo& info);
 
     [[clang::annotate("method")]] static ConvertReturn<Cursor> null(Napi::Env env);
-    [[clang::annotate("method")]] bool equal(ConvertRef<Cursor> cursor);
-    [[clang::annotate("method:equal")]] bool equalRelax(ConvertRef<Cursor> cursor, bool relax);
+    [[clang::annotate("method")]] bool isEqual(ConvertRef<Cursor> cursor);
+    [[clang::annotate("method:isEqual")]] bool isEqualRelax(ConvertRef<Cursor> cursor, bool relax);
     [[clang::annotate("getter")]] bool isNull();
     [[clang::annotate("getter")]] unsigned getHash();
     [[clang::annotate("getter")]] int getKind();

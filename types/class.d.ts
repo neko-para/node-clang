@@ -3,6 +3,10 @@ import type { CXChildVisitResult, CXCursorKind, CXErrorCode, CXTypeKind } from '
 
 export type CUnsavedFile = [Filename: string, Contents: string, Length: ulong]
 
+export class Global {
+    static buildSessionTimestamp(): ulonglong
+}
+
 export class CIndex {
     create(excludeDeclarationsFromPCH: boolean, displayDiagnostics: boolean): boolean
     create(options: CIndexOptions): boolean
@@ -55,8 +59,8 @@ export class CTranslationUnit {
 
 export class CCursor {
     static null(): CCursor
-    equal(cursor: CCursor): boolean
-    equal(cursor: CCursor, relax: boolean): boolean
+    isEqual(cursor: CCursor): boolean
+    isEqual(cursor: CCursor, relax: boolean): boolean
     get isNull(): boolean
     get hash(): unsigned
     get kind(): CXCursorKind
@@ -75,7 +79,7 @@ export class CCursor {
 }
 
 export class CType {
-    equal(type: CType): boolean
+    isEqual(type: CType): boolean
     get kind(): CXTypeKind
     get kindStr(): string
     get spelling(): string
@@ -92,7 +96,16 @@ export class CFile {
 }
 
 export class CSourceLocation {
+    static null(): CSourceLocation
+    isEqual(loc: CSourceLocation): boolean
+    isBefore(loc: CSourceLocation): boolean
     get isInSystemHeader(): boolean
-    get expansionLocation(): [file: CFile, line: unsigned, column: unsigned, offset: unsigned]
+    get isFromMainFile(): boolean
+    get expansionLocation(): [
+        file: CFile | null,
+        line: unsigned,
+        column: unsigned,
+        offset: unsigned
+    ]
     get presumedLocation(): [filename: string, line: unsigned, column: unsigned]
 }

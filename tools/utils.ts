@@ -33,20 +33,20 @@ export function visit(
 ) {
     const stack = [root]
     return root.visitChildren((cursor, parent) => {
-        let idx = stack.findIndex(x => x.equal(parent))
+        let idx = stack.findIndex(x => x.isEqual(parent))
         if (idx === -1) {
             // https://github.com/llvm/llvm-project/issues/136435
             // equal may return incorrect result, retry relaxed one.
-            idx = stack.findIndex(x => x.equal(parent, true))
+            idx = stack.findIndex(x => x.isEqual(parent, true))
             if (idx === -1) {
                 let grandParent = parent.lexicalParent
                 if (grandParent.isNull) {
                     grandParent = parent.semanticParent
                 }
                 if (!grandParent.isNull) {
-                    let idx2 = stack.findIndex(x => x.equal(grandParent))
+                    let idx2 = stack.findIndex(x => x.isEqual(grandParent))
                     if (idx2 === -1) {
-                        idx2 = stack.findIndex(x => x.equal(grandParent, true))
+                        idx2 = stack.findIndex(x => x.isEqual(grandParent, true))
                     }
                     if (idx2 !== -1) {
                         stack.splice(idx2 + 1)
@@ -60,7 +60,7 @@ export function visit(
                     console.log(
                         cursor,
                         cursor.__dump(),
-                        cursor.location.expansionLocation[0].fileName
+                        cursor.location.expansionLocation[0]?.fileName
                     )
                     console.log(
                         parent,

@@ -18,6 +18,7 @@ struct Instance
     Napi::FunctionReference typeConstructor;
     Napi::FunctionReference fileConstructor;
     Napi::FunctionReference sourceLocationConstructor;
+    Napi::FunctionReference globalConstructor;
 
     static void init(Napi::Env env) { env.SetInstanceData<Instance>(new Instance); }
 

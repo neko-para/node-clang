@@ -65,7 +65,7 @@ function parseAnnotate(tu: CTranslationUnit) {
             header: path
                 .relative(
                     path.join(process.cwd(), 'src'),
-                    struct.location.expansionLocation[0].fileName
+                    struct.location.expansionLocation[0]!.fileName
                 )
                 .replaceAll('\\', '/'),
             methods: {},

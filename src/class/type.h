@@ -14,7 +14,7 @@ struct [[clang::annotate("class")]] Type : public WrapBase<Type>
 
     Type(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("method")]] bool equal(ConvertRef<Type> cursor);
+    [[clang::annotate("method")]] bool isEqual(ConvertRef<Type> cursor);
     [[clang::annotate("getter")]] int getKind();
     [[clang::annotate("getter")]] std::string getKindStr();
     [[clang::annotate("getter")]] std::string getSpelling();
