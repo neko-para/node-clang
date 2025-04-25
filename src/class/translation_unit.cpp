@@ -51,7 +51,7 @@ ConvertReturn<Cursor> TranslationUnit::getCursor()
 {
     auto obj = instance().cursorConstructor.New({});
     auto cst = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
-    cst->tu = Napi::Persistent(this->Value());
+    cst->tu = Napi::Persistent(Value());
     cst->data = library()->getTranslationUnitCursor(state->data);
     return { obj };
 }

@@ -94,7 +94,7 @@ ConvertReturn<Cursor> Cursor::getLexicalParent()
 {
     auto obj = instance().cursorConstructor.New({});
     auto cst = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
-    cst->tu = Napi::Persistent(state->tu.Value());
+    cst->tu = tryPersist(state->tu);
     cst->data = library()->getCursorLexicalParent(state->data);
     return { obj };
 }
@@ -103,7 +103,7 @@ ConvertReturn<Cursor> Cursor::getSemanticParent()
 {
     auto obj = instance().cursorConstructor.New({});
     auto cst = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
-    cst->tu = Napi::Persistent(state->tu.Value());
+    cst->tu = tryPersist(state->tu);
     cst->data = library()->getCursorSemanticParent(state->data);
     return { obj };
 }
@@ -112,7 +112,7 @@ ConvertReturn<SourceLocation> Cursor::getLocation()
 {
     auto obj = instance().sourceLocationConstructor.New({});
     auto sst = Napi::ObjectWrap<SourceLocation>::Unwrap(obj)->state;
-    sst->tu = Napi::Persistent(state->tu.Value());
+    sst->tu = tryPersist(state->tu);
     sst->data = library()->getCursorLocation(state->data);
     return { obj };
 }

@@ -4,6 +4,7 @@
 
 #include "class/file.h"
 #include "class/instance.h"
+#include "class/utils.h"
 #include "loader/clang.h"
 
 SourceLocation::SourceLocation(const Napi::CallbackInfo& info)
@@ -48,7 +49,7 @@ std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> Sou
     if (file) {
         auto obj = instance().fileConstructor.New({});
         auto fst = Napi::ObjectWrap<File>::Unwrap(obj)->state;
-        fst->tu = Napi::Persistent(state->tu.Value());
+        fst->tu = tryPersist(state->tu);
         fst->data = file;
         return { ConvertReturn<File> { obj }, line, column, offset };
     }
@@ -73,7 +74,7 @@ std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> Sou
     if (file) {
         auto obj = instance().fileConstructor.New({});
         auto fst = Napi::ObjectWrap<File>::Unwrap(obj)->state;
-        fst->tu = Napi::Persistent(state->tu.Value());
+        fst->tu = tryPersist(state->tu);
         fst->data = file;
         return { ConvertReturn<File> { obj }, line, column, offset };
     }
@@ -90,7 +91,7 @@ std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> Sou
     if (file) {
         auto obj = instance().fileConstructor.New({});
         auto fst = Napi::ObjectWrap<File>::Unwrap(obj)->state;
-        fst->tu = Napi::Persistent(state->tu.Value());
+        fst->tu = tryPersist(state->tu);
         fst->data = file;
         return { ConvertReturn<File> { obj }, line, column, offset };
     }
@@ -140,7 +141,7 @@ ConvertReturn<SourceLocation> SourceRange::getStart()
 {
     auto obj = instance().sourceLocationConstructor.New({});
     auto sst = Napi::ObjectWrap<SourceLocation>::Unwrap(obj)->state;
-    sst->tu = Napi::Persistent(state->tu.Value());
+    sst->tu = tryPersist(state->tu);
     sst->data = library()->getRangeStart(state->data);
     return { obj };
 }
@@ -149,7 +150,7 @@ ConvertReturn<SourceLocation> SourceRange::getEnd()
 {
     auto obj = instance().sourceLocationConstructor.New({});
     auto sst = Napi::ObjectWrap<SourceLocation>::Unwrap(obj)->state;
-    sst->tu = Napi::Persistent(state->tu.Value());
+    sst->tu = tryPersist(state->tu);
     sst->data = library()->getRangeEnd(state->data);
     return { obj };
 }

@@ -224,3 +224,14 @@ inline bool throwErrorCode(Napi::Env env, CXErrorCode err)
         return false;
     }
 }
+
+template <typename Type>
+inline Napi::Reference<Type> tryPersist(const Napi::Reference<Type>& ref)
+{
+    if (ref.IsEmpty()) {
+        return {};
+    }
+    else {
+        return Napi::Persistent(ref.Value());
+    }
+}
