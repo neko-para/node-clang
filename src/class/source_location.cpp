@@ -65,7 +65,96 @@ std::tuple<std::string, unsigned, unsigned> SourceLocation::getPresumedLocation(
     return { getStr(filename), line, column };
 }
 
+std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> SourceLocation::getSpellingLocation()
+{
+    CXFile file;
+    unsigned line, column, offset;
+    library()->getSpellingLocation(state->data, &file, &line, &column, &offset);
+    if (file) {
+        auto obj = instance().fileConstructor.New({});
+        auto fst = Napi::ObjectWrap<File>::Unwrap(obj)->state;
+        fst->tu = Napi::Persistent(state->tu.Value());
+        fst->data = file;
+        return { ConvertReturn<File> { obj }, line, column, offset };
+    }
+    else {
+        return { std::nullopt, line, column, offset };
+    }
+}
+
+std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> SourceLocation::getFileLocation()
+{
+    CXFile file;
+    unsigned line, column, offset;
+    library()->getFileLocation(state->data, &file, &line, &column, &offset);
+    if (file) {
+        auto obj = instance().fileConstructor.New({});
+        auto fst = Napi::ObjectWrap<File>::Unwrap(obj)->state;
+        fst->tu = Napi::Persistent(state->tu.Value());
+        fst->data = file;
+        return { ConvertReturn<File> { obj }, line, column, offset };
+    }
+    else {
+        return { std::nullopt, line, column, offset };
+    }
+}
+
 std::string SourceLocation::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect)
 {
     return "CSourceLocation {}";
+}
+
+SourceRange::SourceRange(const Napi::CallbackInfo& info)
+    : WrapBase<SourceRange>(info)
+    , state(std::make_shared<State>())
+{
+}
+
+ConvertReturn<SourceRange> SourceRange::null(Napi::Env env)
+{
+    auto obj = Instance::get(env).sourceRangeConstructor.New({});
+    auto sst = Napi::ObjectWrap<SourceRange>::Unwrap(obj)->state;
+    sst->data = Instance::get(env).library->getNullRange();
+    return { obj };
+}
+
+ConvertReturn<SourceRange> SourceRange::create(Napi::Env env, ConvertRef<SourceLocation> begin, ConvertRef<SourceLocation> end)
+{
+    auto obj = Instance::get(env).sourceRangeConstructor.New({});
+    auto sst = Napi::ObjectWrap<SourceRange>::Unwrap(obj)->state;
+    sst->data = Instance::get(env).library->getRange(begin.data->state->data, end.data->state->data);
+    return { obj };
+}
+
+bool SourceRange::isEqual(ConvertRef<SourceRange> rng)
+{
+    return library()->equalRanges(state->data, rng.data->state->data);
+}
+
+bool SourceRange::isNull()
+{
+    return library()->Range_isNull(state->data);
+}
+
+ConvertReturn<SourceLocation> SourceRange::getStart()
+{
+    auto obj = instance().sourceLocationConstructor.New({});
+    auto sst = Napi::ObjectWrap<SourceLocation>::Unwrap(obj)->state;
+    sst->tu = Napi::Persistent(state->tu.Value());
+    sst->data = library()->getRangeStart(state->data);
+    return { obj };
+}
+
+ConvertReturn<SourceLocation> SourceRange::getEnd()
+{
+    auto obj = instance().sourceLocationConstructor.New({});
+    auto sst = Napi::ObjectWrap<SourceLocation>::Unwrap(obj)->state;
+    sst->tu = Napi::Persistent(state->tu.Value());
+    sst->data = library()->getRangeEnd(state->data);
+    return { obj };
+}
+
+std::string SourceRange::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect)
+{
+    return "CSourceRange {}";
 }

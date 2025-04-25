@@ -335,6 +335,11 @@ Napi::Function SourceLocation::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "fileLocation",
+                &SourceLocation::dispatcher<"get fileLocation", &SourceLocation::getFileLocation>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "isFromMainFile",
                 &SourceLocation::dispatcher<"get isFromMainFile", &SourceLocation::isFromMainFile>,
                 nullptr
@@ -347,6 +352,11 @@ Napi::Function SourceLocation::Init(Napi::Env env)
             InstanceAccessor(
                 "presumedLocation",
                 &SourceLocation::dispatcher<"get presumedLocation", &SourceLocation::getPresumedLocation>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "spellingLocation",
+                &SourceLocation::dispatcher<"get spellingLocation", &SourceLocation::getSpellingLocation>,
                 nullptr
             ),
             InstanceMethod(
@@ -375,6 +385,56 @@ Napi::Function SourceLocation::Init(Napi::Env env)
                 &SourceLocation::dispatcher<"nodejs inspect", &SourceLocation::nodejsInspect>),
         });
     Instance::get(env).sourceLocationConstructor = Napi::Persistent(func);
+    return func;
+}
+
+Napi::Function SourceRange::Init(Napi::Env env)
+{
+    Napi::Function func = DefineClass(
+        env,
+        "CSourceRange",
+        {
+            InstanceAccessor(
+                "end",
+                &SourceRange::dispatcher<"get end", &SourceRange::getEnd>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "isNull",
+                &SourceRange::dispatcher<"get isNull", &SourceRange::isNull>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "start",
+                &SourceRange::dispatcher<"get start", &SourceRange::getStart>,
+                nullptr
+            ),
+            InstanceMethod(
+                "isEqual",
+                &SourceRange::dispatcher<
+                    "isEqual",
+                    &SourceRange::isEqual
+                >
+            ),
+            StaticMethod(
+                "create",
+                &SourceRange::dispatcherStatic<
+                    "create",
+                    &SourceRange::create
+                >
+            ),
+            StaticMethod(
+                "null",
+                &SourceRange::dispatcherStatic<
+                    "null",
+                    &SourceRange::null
+                >
+            ),
+            InstanceMethod(
+                Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
+                &SourceRange::dispatcher<"nodejs inspect", &SourceRange::nodejsInspect>),
+        });
+    Instance::get(env).sourceRangeConstructor = Napi::Persistent(func);
     return func;
 }
 

@@ -30,17 +30,17 @@ Dynamic load libclang.dll/so/dylib.
 - [x] clang_isBeforeInTranslationUnit
 - [x] clang_Location_isInSystemHeader
 - [x] clang_Location_isFromMainFile
-- [ ] clang_getNullRange
-- [ ] clang_getRange
-- [ ] clang_equalRanges
-- [ ] clang_Range_isNull
+- [x] clang_getNullRange
+- [x] clang_getRange
+- [x] clang_equalRanges
+- [x] clang_Range_isNull
 - [x] clang_getExpansionLocation
 - [x] clang_getPresumedLocation
-- [ ] clang_getInstantiationLocation
-- [ ] clang_getSpellingLocation
-- [ ] clang_getFileLocation
-- [ ] clang_getRangeStart
-- [ ] clang_getRangeEnd
+- [ ] ~~clang_getInstantiationLocation~~
+- [x] clang_getSpellingLocation
+- [x] clang_getFileLocation
+- [x] clang_getRangeStart
+- [x] clang_getRangeEnd
 - [ ] clang_disposeSourceRangeList
 - [ ] clang_getNumDiagnosticsInSet
 - [ ] clang_getDiagnosticInSet

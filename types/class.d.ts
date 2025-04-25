@@ -95,6 +95,20 @@ export class CFile {
     get fileContents(): string | null
 }
 
+export class CVirtualFileOverlay {
+    create(): boolean
+    addFileMapping(virtualPath: string, realPath: string): CXErrorCode
+    set caseSensitivity(value: boolean) // throw CXErrorCode
+    writeToBuffer(): ArrayBuffer // throw CXErrorCode
+}
+
+export class CModuleMapDescriptor {
+    create(): boolean
+    set frameworkModuleName(value: string) // throw CXErrorCode
+    set umbrellaHeader(value: string) // throw CXErrorCode
+    writeToBuffer(): ArrayBuffer // throw CXErrorCode
+}
+
 export class CSourceLocation {
     static null(): CSourceLocation
     isEqual(loc: CSourceLocation): boolean
@@ -108,18 +122,15 @@ export class CSourceLocation {
         offset: unsigned
     ]
     get presumedLocation(): [filename: string, line: unsigned, column: unsigned]
+    get spellingLocation(): [file: CFile | null, line: unsigned, column: unsigned, offset: unsigned]
+    get fileLocation(): [file: CFile | null, line: unsigned, column: unsigned, offset: unsigned]
 }
 
-export class CVirtualFileOverlay {
-    create(): boolean
-    addFileMapping(virtualPath: string, realPath: string): CXErrorCode
-    set caseSensitivity(value: boolean) // throw CXErrorCode
-    writeToBuffer(): ArrayBuffer // throw CXErrorCode
-}
-
-export class CModuleMapDescriptor {
-    create(): boolean
-    set frameworkModuleName(value: string) // throw CXErrorCode
-    set umbrellaHeader(value: string) // throw CXErrorCode
-    writeToBuffer(): ArrayBuffer // throw CXErrorCode
+export class CSourceRange {
+    static null(): CSourceRange
+    static create(begin: CSourceLocation, end: CSourceLocation): CSourceRange
+    isEqual(rng: CSourceRange): boolean
+    get isNull(): boolean
+    get start(): CSourceLocation
+    get end(): CSourceLocation
 }

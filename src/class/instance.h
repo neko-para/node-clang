@@ -17,10 +17,11 @@ struct Instance
     Napi::FunctionReference cursorConstructor;
     Napi::FunctionReference typeConstructor;
     Napi::FunctionReference fileConstructor;
-    Napi::FunctionReference sourceLocationConstructor;
     Napi::FunctionReference globalConstructor;
     Napi::FunctionReference virtualFileOverlayConstructor;
     Napi::FunctionReference moduleMapDescriptorConstructor;
+    Napi::FunctionReference sourceLocationConstructor;
+    Napi::FunctionReference sourceRangeConstructor;
 
     static void init(Napi::Env env) { env.SetInstanceData<Instance>(new Instance); }
 
