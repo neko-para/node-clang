@@ -2,6 +2,7 @@ import type { longlong, ulong, ulonglong, unsigned } from './base'
 import type {
     CXChildVisitResult,
     CXCursorKind,
+    CXDiagnosticSeverity,
     CXErrorCode,
     CXLoadDiag_Error,
     CXTypeKind
@@ -143,6 +144,13 @@ export class CSourceRange {
 
 export class CDiagnostic {
     get childDiagnostics(): CDiagnosticSet | null
+
+    format(option: unsigned): string // CXDiagnosticDisplayOptions
+    get severity(): CXDiagnosticSeverity
+    get location(): CSourceLocation
+    get spelling(): string
+    get option(): [enable: string, disable: string]
+    get category(): unsigned
 }
 
 export class CDiagnosticSet {

@@ -10,8 +10,6 @@
 #include "class/source_location.h"
 #include "class/type.h"
 
-struct TranslationUnit;
-
 struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
 {
     static Napi::Function Init(Napi::Env env);

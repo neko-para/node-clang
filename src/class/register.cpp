@@ -128,9 +128,48 @@ Napi::Function Diagnostic::Init(Napi::Env env)
         "CDiagnostic",
         {
             InstanceAccessor(
+                "category",
+                &Diagnostic::dispatcher<"get category", &Diagnostic::getCategory>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "childDiagnostics",
                 &Diagnostic::dispatcher<"get childDiagnostics", &Diagnostic::getChildDiagnostics>,
                 nullptr
+            ),
+            InstanceAccessor(
+                "location",
+                &Diagnostic::dispatcher<"get location", &Diagnostic::getLocation>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "option",
+                &Diagnostic::dispatcher<"get option", &Diagnostic::getOption>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "severity",
+                &Diagnostic::dispatcher<"get severity", &Diagnostic::getSeverity>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "spelling",
+                &Diagnostic::dispatcher<"get spelling", &Diagnostic::getSpelling>,
+                nullptr
+            ),
+            InstanceMethod(
+                "format",
+                &Diagnostic::dispatcher<
+                    "format",
+                    &Diagnostic::format
+                >
+            ),
+            StaticMethod(
+                "defaultDisplayOptions",
+                &Diagnostic::dispatcherStatic<
+                    "defaultDisplayOptions",
+                    &Diagnostic::defaultDisplayOptions
+                >
             ),
             InstanceMethod(
                 Napi::Symbol::For(env, "nodejs.util.inspect.custom"),

@@ -8,6 +8,20 @@
 #include "class/utils.h"
 #include "loader/clang.h"
 
+struct IndexOptions;
+struct Index;
+struct TranslationUnit;
+struct Cursor;
+struct Type;
+struct File;
+struct Global;
+struct VirtualFileOverlay;
+struct ModuleMapDescriptor;
+struct SourceLocation;
+struct SourceRange;
+struct Diagnostic;
+struct DiagnosticSet;
+
 struct Instance
 {
     Library* library {};

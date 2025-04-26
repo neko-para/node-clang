@@ -8,8 +8,6 @@
 #include "class/convert.h"
 #include "class/instance.h"
 
-struct DiagnosticSet;
-
 struct [[clang::annotate("class")]] Diagnostic : public WrapBase<Diagnostic>
 {
     static Napi::Function Init(Napi::Env env);
@@ -18,11 +16,20 @@ struct [[clang::annotate("class")]] Diagnostic : public WrapBase<Diagnostic>
 
     [[clang::annotate("getter")]] std::optional<ConvertReturn<DiagnosticSet>> getChildDiagnostics();
 
+    [[clang::annotate("method")]] std::string format(unsigned option);
+    [[clang::annotate("method")]] static unsigned defaultDisplayOptions(Napi::Env env);
+    [[clang::annotate("getter")]] int getSeverity();
+    [[clang::annotate("getter")]] ConvertReturn<SourceLocation> getLocation();
+    [[clang::annotate("getter")]] std::string getSpelling();
+    [[clang::annotate("getter")]] std::tuple<std::string, std::string> getOption();
+    [[clang::annotate("getter")]] unsigned getCategory();
+
     [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {
         Napi::Env env;
+        Napi::ObjectReference tu;
         CXDiagnostic data {};
 
         State(Napi::Env env)
@@ -53,6 +60,7 @@ struct [[clang::annotate("class")]] DiagnosticSet : public WrapBase<DiagnosticSe
     struct State
     {
         Napi::Env env;
+        Napi::ObjectReference tu;
         CXDiagnosticSet data {};
         bool dispose = false;
 
