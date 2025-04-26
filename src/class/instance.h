@@ -22,6 +22,8 @@ struct Instance
     Napi::FunctionReference moduleMapDescriptorConstructor;
     Napi::FunctionReference sourceLocationConstructor;
     Napi::FunctionReference sourceRangeConstructor;
+    Napi::FunctionReference diagnosticConstructor;
+    Napi::FunctionReference diagnosticSetConstructor;
 
     static void init(Napi::Env env) { env.SetInstanceData<Instance>(new Instance); }
 
@@ -109,6 +111,13 @@ struct WrapBase : Napi::ObjectWrap<Type>
     {
         std::string res = library()->getCString(str);
         library()->disposeString(str);
+        return res;
+    }
+
+    static std::string getStr(Napi::Env env, CXString str)
+    {
+        std::string res = Instance::get(env).library->getCString(str);
+        Instance::get(env).library->disposeString(str);
         return res;
     }
 };

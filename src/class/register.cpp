@@ -2,6 +2,7 @@
 
 #include "class/build_system.h"
 #include "class/cursor.h"
+#include "class/diagnostic.h"
 #include "class/file.h"
 #include "class/global.h"
 #include "class/index.h"
@@ -117,6 +118,72 @@ std::tuple<Cursor::State*, Napi::Object> Cursor::construct(Napi::Env env)
 {
     auto obj = Instance::get(env).cursorConstructor.New({});
     auto state = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
+    return { state.get(), obj };
+}
+
+Napi::Function Diagnostic::Init(Napi::Env env)
+{
+    Napi::Function func = DefineClass(
+        env,
+        "CDiagnostic",
+        {
+            InstanceAccessor(
+                "childDiagnostics",
+                &Diagnostic::dispatcher<"get childDiagnostics", &Diagnostic::getChildDiagnostics>,
+                nullptr
+            ),
+            InstanceMethod(
+                Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
+                &Diagnostic::dispatcher<"nodejs inspect", &Diagnostic::nodejsInspect>),
+        });
+    Instance::get(env).diagnosticConstructor = Napi::Persistent(func);
+    return func;
+}
+
+std::tuple<Diagnostic::State*, Napi::Object> Diagnostic::construct(Napi::Env env)
+{
+    auto obj = Instance::get(env).diagnosticConstructor.New({});
+    auto state = Napi::ObjectWrap<Diagnostic>::Unwrap(obj)->state;
+    return { state.get(), obj };
+}
+
+Napi::Function DiagnosticSet::Init(Napi::Env env)
+{
+    Napi::Function func = DefineClass(
+        env,
+        "CDiagnosticSet",
+        {
+            InstanceAccessor(
+                "length",
+                &DiagnosticSet::dispatcher<"get length", &DiagnosticSet::getLength>,
+                nullptr
+            ),
+            InstanceMethod(
+                "getDiagnostic",
+                &DiagnosticSet::dispatcher<
+                    "getDiagnostic",
+                    &DiagnosticSet::getDiagnostic
+                >
+            ),
+            StaticMethod(
+                "load",
+                &DiagnosticSet::dispatcherStatic<
+                    "load",
+                    &DiagnosticSet::load
+                >
+            ),
+            InstanceMethod(
+                Napi::Symbol::For(env, "nodejs.util.inspect.custom"),
+                &DiagnosticSet::dispatcher<"nodejs inspect", &DiagnosticSet::nodejsInspect>),
+        });
+    Instance::get(env).diagnosticSetConstructor = Napi::Persistent(func);
+    return func;
+}
+
+std::tuple<DiagnosticSet::State*, Napi::Object> DiagnosticSet::construct(Napi::Env env)
+{
+    auto obj = Instance::get(env).diagnosticSetConstructor.New({});
+    auto state = Napi::ObjectWrap<DiagnosticSet>::Unwrap(obj)->state;
     return { state.get(), obj };
 }
 

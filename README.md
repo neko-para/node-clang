@@ -3,7 +3,7 @@
 libclang wrapper written by napi.
 Dynamic load libclang.dll/so/dylib.
 
-## Progress
+## Progress ![](https://progress-bar.xyz/20?prefix=70%20/%20351%20=%20&width=200)
 
 - [x] clang_getCString
 - [x] clang_disposeString
@@ -42,12 +42,12 @@ Dynamic load libclang.dll/so/dylib.
 - [x] clang_getRangeStart
 - [x] clang_getRangeEnd
 - [ ] clang_disposeSourceRangeList
-- [ ] clang_getNumDiagnosticsInSet
-- [ ] clang_getDiagnosticInSet
-- [ ] clang_loadDiagnostics
-- [ ] clang_disposeDiagnosticSet
-- [ ] clang_getChildDiagnostics
-- [ ] clang_disposeDiagnostic
+- [x] clang_getNumDiagnosticsInSet
+- [x] clang_getDiagnosticInSet
+- [x] clang_loadDiagnostics
+- [x] clang_disposeDiagnosticSet
+- [x] clang_getChildDiagnostics
+- [x] clang_disposeDiagnostic
 - [ ] clang_formatDiagnostic
 - [ ] clang_defaultDiagnosticDisplayOptions
 - [ ] clang_getDiagnosticSeverity

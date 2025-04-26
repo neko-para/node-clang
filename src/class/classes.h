@@ -2,6 +2,7 @@
 
 #include "class/build_system.h"
 #include "class/cursor.h"
+#include "class/diagnostic.h"
 #include "class/file.h"
 #include "class/global.h"
 #include "class/index.h"

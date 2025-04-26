@@ -1,5 +1,11 @@
 import type { longlong, ulong, ulonglong, unsigned } from './base'
-import type { CXChildVisitResult, CXCursorKind, CXErrorCode, CXTypeKind } from './enum'
+import type {
+    CXChildVisitResult,
+    CXCursorKind,
+    CXErrorCode,
+    CXLoadDiag_Error,
+    CXTypeKind
+} from './enum'
 
 export type CUnsavedFile = [Filename: string, Contents: string, Length: ulong]
 
@@ -133,4 +139,16 @@ export class CSourceRange {
     get isNull(): boolean
     get start(): CSourceLocation
     get end(): CSourceLocation
+}
+
+export class CDiagnostic {
+    get childDiagnostics(): CDiagnosticSet | null
+}
+
+export class CDiagnosticSet {
+    get length(): number
+    getDiagnostic(index: unsigned): CDiagnostic | null
+    static load(
+        file: string
+    ): [CDiagnosticSet, null] | [null, [error: CXLoadDiag_Error, errorString: string]]
 }
