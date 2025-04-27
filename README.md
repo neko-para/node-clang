@@ -3,7 +3,7 @@
 libclang wrapper written by napi.
 Dynamic load libclang.dll/so/dylib.
 
-## Progress ![](https://progress-bar.xyz/37?prefix=129%20/%20351%20=%20&width=200)
+## Progress ![](https://progress-bar.xyz/40?prefix=140%20/%20351%20=%20&width=200)
 
 - [x] clang_getCString
 - [x] clang_disposeString
@@ -125,18 +125,18 @@ Dynamic load libclang.dll/so/dylib.
 - [x] clang_getCursorLanguage
 - [x] clang_getCursorTLSKind
 - [x] clang_Cursor_getTranslationUnit
-- [ ] clang_createCXCursorSet
-- [ ] clang_disposeCXCursorSet
-- [ ] clang_CXCursorSet_contains
-- [ ] clang_CXCursorSet_insert
-- [ ] clang_getCursorSemanticParent
-- [ ] clang_getCursorLexicalParent
-- [ ] clang_getOverriddenCursors
-- [ ] clang_disposeOverriddenCursors
-- [ ] clang_getIncludedFile
-- [ ] clang_getCursor
+- [x] clang_createCXCursorSet
+- [x] clang_disposeCXCursorSet
+- [x] clang_CXCursorSet_contains
+- [x] clang_CXCursorSet_insert
+- [x] clang_getCursorSemanticParent
+- [x] clang_getCursorLexicalParent
+- [x] clang_getOverriddenCursors
+- [x] clang_disposeOverriddenCursors
+- [x] clang_getIncludedFile
+- [x] clang_getCursor
 - [x] clang_getCursorLocation
-- [ ] clang_getCursorExtent
+- [x] clang_getCursorExtent
 - [x] clang_getCursorType
 - [x] clang_getTypeSpelling
 - [ ] clang_getTypedefDeclUnderlyingType

@@ -182,6 +182,13 @@ ConvertReturn<Cursor> TranslationUnit::getCursor()
     return { obj };
 }
 
+ConvertReturn<Cursor> TranslationUnit::getCursorForLocation(ConvertRef<SourceLocation> location)
+{
+    auto [cstate, obj] = Cursor::construct(Env());
+    cstate->data = library()->getCursor(state->data, location.data->state->data);
+    return { obj };
+}
+
 std::string TranslationUnit::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect)
 {
     if (state->data) {

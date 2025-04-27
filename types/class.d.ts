@@ -93,6 +93,7 @@ export class CTranslationUnit {
     get resourceUsage(): [kind: CXTUResourceUsageKind, name: string, amount: ulong][]
     get targetInfo(): [triple: string | null, pointer_width: int | null]
     get cursor(): CCursor
+    getCursor(location: CSourceLocation): CCursor
 }
 
 export class CCursor {
@@ -130,13 +131,16 @@ export class CCursor {
     get language(): CXLanguageKind
     get TLSKind(): CXTLSKind
     get translationUnit(): CTranslationUnit | null
-
-    get spelling(): string
-    get type(): CType
     get lexicalParent(): CCursor
     get semanticParent(): CCursor
+    get overriddenCursors(): CCursor[] | null
+    get includedFile(): CFile | null
     get location(): CSourceLocation
+    get extent(): CSourceRange
+    get type(): CType
+
     get enumConstantDeclValue(): longlong
+    get spelling(): string
     visitChildren(visitor: (cursor: CCursor, parent: CCursor) => CXChildVisitResult): boolean
     get mangling(): string
     get CXXManglings(): string[]
@@ -144,6 +148,12 @@ export class CCursor {
     get CXXMethod_isStatic(): boolean
 
     __dump(): string
+}
+
+export class CCursorSet {
+    static create(): CCursorSet
+    contains(cursor: CCursor): boolean
+    insert(cursor: CCursor): boolean
 }
 
 export class CType {

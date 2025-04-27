@@ -46,14 +46,16 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
     [[clang::annotate("getter")]] int getCursorLanguage();
     [[clang::annotate("getter:TLSKind")]] int getTLSKind();
     [[clang::annotate("getter")]] std::optional<ConvertReturn<TranslationUnit>> getTranslateUnit();
-
-    [[clang::annotate("getter")]] std::string getSpelling();
-    [[clang::annotate("getter")]] ConvertReturn<Type> getType();
     [[clang::annotate("getter")]] ConvertReturn<Cursor> getLexicalParent();
     [[clang::annotate("getter")]] ConvertReturn<Cursor> getSemanticParent();
+    [[clang::annotate("getter")]] std::optional<std::vector<ConvertReturn<Cursor>>> getOverriddenCursors();
+    [[clang::annotate("getter")]] std::optional<ConvertReturn<File>> getIncludedFile();
     [[clang::annotate("getter")]] ConvertReturn<SourceLocation> getLocation();
+    [[clang::annotate("getter")]] ConvertReturn<SourceRange> getExtent();
+    [[clang::annotate("getter")]] ConvertReturn<Type> getType();
     [[clang::annotate("getter")]] long long getEnumConstantDeclValue();
 
+    [[clang::annotate("getter")]] std::string getSpelling();
     [[clang::annotate("method")]] bool visitChildren(Napi::Function visitor);
 
     [[clang::annotate("getter")]] std::string getMangling();
@@ -76,3 +78,29 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
     static std::tuple<State*, Napi::Object> construct(Napi::Env env);
 };
 
+struct [[clang::annotate("class")]] CursorSet : public WrapBase<CursorSet>
+{
+    static Napi::Function Init(Napi::Env env);
+
+    CursorSet(const Napi::CallbackInfo& info);
+
+    [[clang::annotate("method")]] static ConvertReturn<CursorSet> create(Napi::Env env);
+    [[clang::annotate("method")]] bool contains(ConvertRef<Cursor> cursor);
+    [[clang::annotate("method")]] bool insert(ConvertRef<Cursor> cursor);
+
+    struct State
+    {
+        Napi::Env env;
+        CXCursorSet data {};
+
+        State(Napi::Env env)
+            : env(env) {};
+        ~State();
+    };
+
+    std::shared_ptr<State> state {};
+
+    static std::tuple<State*, Napi::Object> construct(Napi::Env env);
+};
+
+;

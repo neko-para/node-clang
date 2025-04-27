@@ -13,6 +13,7 @@ struct IndexOptions;
 struct Index;
 struct TranslationUnit;
 struct Cursor;
+struct CursorSet;
 struct Type;
 struct File;
 struct Global;
@@ -30,6 +31,7 @@ struct Instance
     Napi::FunctionReference indexConstructor;
     Napi::FunctionReference translationUnitConstructor;
     Napi::FunctionReference cursorConstructor;
+    Napi::FunctionReference cursorSetConstructor;
     Napi::FunctionReference typeConstructor;
     Napi::FunctionReference fileConstructor;
     Napi::FunctionReference globalConstructor;

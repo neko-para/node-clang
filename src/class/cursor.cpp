@@ -236,18 +236,6 @@ std::optional<ConvertReturn<TranslationUnit>> Cursor::getTranslateUnit()
     }
 }
 
-std::string Cursor::getSpelling()
-{
-    return getStr(library()->getCursorSpelling(state->data));
-}
-
-ConvertReturn<Type> Cursor::getType()
-{
-    auto [tstate, obj] = Type::construct(Env());
-    tstate->data = library()->getCursorType(state->data);
-    return { obj };
-}
-
 ConvertReturn<Cursor> Cursor::getLexicalParent()
 {
     auto [cstate, obj] = Cursor::construct(Env());
@@ -262,6 +250,36 @@ ConvertReturn<Cursor> Cursor::getSemanticParent()
     return { obj };
 }
 
+std::optional<std::vector<ConvertReturn<Cursor>>> Cursor::getOverriddenCursors()
+{
+    CXCursor* cursors;
+    unsigned size;
+    library()->getOverriddenCursors(state->data, &cursors, &size);
+    if (!cursors) {
+        return std::nullopt;
+    }
+    std::vector<ConvertReturn<Cursor>> result;
+    result.reserve(size);
+    std::transform(cursors, cursors + size, std::back_insert_iterator(result), [&](const CXCursor& cursor) -> ConvertReturn<Cursor> {
+        auto [cstate, obj] = Cursor::construct(Env());
+        cstate->data = cursor;
+        return { obj };
+    });
+    library()->disposeOverriddenCursors(cursors);
+    return result;
+}
+
+std::optional<ConvertReturn<File>> Cursor::getIncludedFile()
+{
+    auto file = library()->getIncludedFile(state->data);
+    if (!file) {
+        return std::nullopt;
+    }
+    auto [fstate, obj] = File::construct(Env());
+    fstate->data = file;
+    return ConvertReturn<File> { obj };
+}
+
 ConvertReturn<SourceLocation> Cursor::getLocation()
 {
     auto [sstate, obj] = SourceLocation::construct(Env());
@@ -269,9 +287,28 @@ ConvertReturn<SourceLocation> Cursor::getLocation()
     return { obj };
 }
 
+ConvertReturn<SourceRange> Cursor::getExtent()
+{
+    auto [sstate, obj] = SourceRange::construct(Env());
+    sstate->data = library()->getCursorExtent(state->data);
+    return { obj };
+}
+
+ConvertReturn<Type> Cursor::getType()
+{
+    auto [tstate, obj] = Type::construct(Env());
+    tstate->data = library()->getCursorType(state->data);
+    return { obj };
+}
+
 long long Cursor::getEnumConstantDeclValue()
 {
     return library()->getEnumConstantDeclValue(state->data);
+}
+
+std::string Cursor::getSpelling()
+{
+    return getStr(library()->getCursorSpelling(state->data));
 }
 
 bool Cursor::visitChildren(Napi::Function visitor)
@@ -359,5 +396,35 @@ std::string Cursor::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny 
     }
     else {
         return "CCursor { null }";
+    }
+}
+
+CursorSet::CursorSet(const Napi::CallbackInfo& info)
+    : WrapBase<CursorSet>(info)
+    , state(std::make_shared<State>(Env()))
+{
+}
+
+ConvertReturn<CursorSet> CursorSet::create(Napi::Env env)
+{
+    auto [state, obj] = CursorSet::construct(env);
+    state->data = Instance::get(env).library->createCXCursorSet();
+    return { obj };
+}
+
+bool CursorSet::contains(ConvertRef<Cursor> cursor)
+{
+    return library()->CXCursorSet_contains(state->data, cursor.data->state->data);
+}
+
+bool CursorSet::insert(ConvertRef<Cursor> cursor)
+{
+    return library()->CXCursorSet_insert(state->data, cursor.data->state->data);
+}
+
+CursorSet::State::~State()
+{
+    if (data) {
+        Instance::get(env).library->disposeCXCursorSet(data);
     }
 }

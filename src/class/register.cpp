@@ -43,6 +43,11 @@ Napi::Function Cursor::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "extent",
+                &Cursor::dispatcher<"get extent", &Cursor::getExtent>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "hasAttrs",
                 &Cursor::dispatcher<"get hasAttrs", &Cursor::hasAttrs>,
                 nullptr
@@ -60,6 +65,11 @@ Napi::Function Cursor::Init(Napi::Env env)
             InstanceAccessor(
                 "hasVarDeclGlobalStorage",
                 &Cursor::dispatcher<"get hasVarDeclGlobalStorage", &Cursor::hasVarDeclGlobalStorage>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "includedFile",
+                &Cursor::dispatcher<"get includedFile", &Cursor::getIncludedFile>,
                 nullptr
             ),
             InstanceAccessor(
@@ -105,6 +115,11 @@ Napi::Function Cursor::Init(Napi::Env env)
             InstanceAccessor(
                 "ObjCManglings",
                 &Cursor::dispatcher<"get ObjCManglings", &Cursor::getObjCManglings>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "overriddenCursors",
+                &Cursor::dispatcher<"get overriddenCursors", &Cursor::getOverriddenCursors>,
                 nullptr
             ),
             InstanceAccessor(
@@ -251,6 +266,45 @@ std::tuple<Cursor::State*, Napi::Object> Cursor::construct(Napi::Env env)
 {
     auto obj = Instance::get(env).cursorConstructor.New({});
     auto state = Napi::ObjectWrap<Cursor>::Unwrap(obj)->state;
+    return { state.get(), obj };
+}
+
+Napi::Function CursorSet::Init(Napi::Env env)
+{
+    Napi::Function func = DefineClass(
+        env,
+        "CCursorSet",
+        {
+            InstanceMethod(
+                "contains",
+                &CursorSet::dispatcher<
+                    "contains",
+                    &CursorSet::contains
+                >
+            ),
+            InstanceMethod(
+                "insert",
+                &CursorSet::dispatcher<
+                    "insert",
+                    &CursorSet::insert
+                >
+            ),
+            StaticMethod(
+                "create",
+                &CursorSet::dispatcherStatic<
+                    "create",
+                    &CursorSet::create
+                >
+            ),
+        });
+    Instance::get(env).cursorSetConstructor = Napi::Persistent(func);
+    return func;
+}
+
+std::tuple<CursorSet::State*, Napi::Object> CursorSet::construct(Napi::Env env)
+{
+    auto obj = Instance::get(env).cursorSetConstructor.New({});
+    auto state = Napi::ObjectWrap<CursorSet>::Unwrap(obj)->state;
     return { state.get(), obj };
 }
 
@@ -810,6 +864,13 @@ Napi::Function TranslationUnit::Init(Napi::Env env)
                 "targetInfo",
                 &TranslationUnit::dispatcher<"get targetInfo", &TranslationUnit::getTargetInfo>,
                 nullptr
+            ),
+            InstanceMethod(
+                "getCursor",
+                &TranslationUnit::dispatcher<
+                    "getCursor",
+                    &TranslationUnit::getCursorForLocation
+                >
             ),
             InstanceMethod(
                 "getDiagnostic",
