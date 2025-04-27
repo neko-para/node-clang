@@ -133,6 +133,11 @@ Napi::Function Diagnostic::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "categoryText",
+                &Diagnostic::dispatcher<"get categoryText", &Diagnostic::getCategoryText>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "childDiagnostics",
                 &Diagnostic::dispatcher<"get childDiagnostics", &Diagnostic::getChildDiagnostics>,
                 nullptr
@@ -140,6 +145,16 @@ Napi::Function Diagnostic::Init(Napi::Env env)
             InstanceAccessor(
                 "location",
                 &Diagnostic::dispatcher<"get location", &Diagnostic::getLocation>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "numFixIts",
+                &Diagnostic::dispatcher<"get numFixIts", &Diagnostic::getNumFixIts>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "numRanges",
+                &Diagnostic::dispatcher<"get numRanges", &Diagnostic::getNumRanges>,
                 nullptr
             ),
             InstanceAccessor(
@@ -162,6 +177,20 @@ Napi::Function Diagnostic::Init(Napi::Env env)
                 &Diagnostic::dispatcher<
                     "format",
                     &Diagnostic::format
+                >
+            ),
+            InstanceMethod(
+                "getFixIt",
+                &Diagnostic::dispatcher<
+                    "getFixIt",
+                    &Diagnostic::getFixIt
+                >
+            ),
+            InstanceMethod(
+                "getRange",
+                &Diagnostic::dispatcher<
+                    "getRange",
+                    &Diagnostic::getRange
                 >
             ),
             StaticMethod(
@@ -233,11 +262,6 @@ Napi::Function File::Init(Napi::Env env)
         "CFile",
         {
             InstanceAccessor(
-                "fileContents",
-                &File::dispatcher<"get fileContents", &File::getFileContents>,
-                nullptr
-            ),
-            InstanceAccessor(
                 "fileName",
                 &File::dispatcher<"get fileName", &File::getFileName>,
                 nullptr
@@ -253,11 +277,6 @@ Napi::Function File::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
-                "isMultipleIncludeGuarded",
-                &File::dispatcher<"get isMultipleIncludeGuarded", &File::isMultipleIncludeGuarded>,
-                nullptr
-            ),
-            InstanceAccessor(
                 "realPathName",
                 &File::dispatcher<"get realPathName", &File::getRealPathName>,
                 nullptr
@@ -267,6 +286,28 @@ Napi::Function File::Init(Napi::Env env)
                 &File::dispatcher<
                     "equal",
                     &File::equal
+                >
+            ),
+            InstanceMethod(
+                "getFileContents",
+                &File::dispatcher<
+                    "getFileContents",
+                    &File::getFileContents
+                >
+            ),
+            InstanceMethod(
+                "getLocation",
+                &File::dispatcher<
+                    "getLocation",
+                    &File::getLocation,
+                    &File::getLocationForOffset
+                >
+            ),
+            InstanceMethod(
+                "isMultipleIncludeGuarded",
+                &File::dispatcher<
+                    "isMultipleIncludeGuarded",
+                    &File::isMultipleIncludeGuarded
                 >
             ),
             InstanceMethod(
@@ -593,14 +634,46 @@ Napi::Function TranslationUnit::Init(Napi::Env env)
         "CTranslationUnit",
         {
             InstanceAccessor(
+                "allSkippedRanges",
+                &TranslationUnit::dispatcher<"get allSkippedRanges", &TranslationUnit::getAllSkippedRanges>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "cursor",
                 &TranslationUnit::dispatcher<"get cursor", &TranslationUnit::getCursor>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "defaultReparseOptions",
+                &TranslationUnit::dispatcher<"get defaultReparseOptions", &TranslationUnit::getDefaultReparseOptions>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "defaultSaveOptions",
+                &TranslationUnit::dispatcher<"get defaultSaveOptions", &TranslationUnit::getDefaultSaveOptions>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "diagnosticSet",
+                &TranslationUnit::dispatcher<"get diagnosticSet", &TranslationUnit::getDiagnosticSet>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "numDiagnostics",
+                &TranslationUnit::dispatcher<"get numDiagnostics", &TranslationUnit::getNumDiagnostics>,
                 nullptr
             ),
             InstanceAccessor(
                 "spelling",
                 &TranslationUnit::dispatcher<"get spelling", &TranslationUnit::getSpelling>,
                 nullptr
+            ),
+            InstanceMethod(
+                "getDiagnostic",
+                &TranslationUnit::dispatcher<
+                    "getDiagnostic",
+                    &TranslationUnit::getDiagnostic
+                >
             ),
             InstanceMethod(
                 "getFile",
@@ -610,10 +683,38 @@ Napi::Function TranslationUnit::Init(Napi::Env env)
                 >
             ),
             InstanceMethod(
+                "getSkippedRanges",
+                &TranslationUnit::dispatcher<
+                    "getSkippedRanges",
+                    &TranslationUnit::getSkippedRanges
+                >
+            ),
+            InstanceMethod(
                 "reparse",
                 &TranslationUnit::dispatcher<
                     "reparse",
                     &TranslationUnit::reparse
+                >
+            ),
+            InstanceMethod(
+                "save",
+                &TranslationUnit::dispatcher<
+                    "save",
+                    &TranslationUnit::save
+                >
+            ),
+            InstanceMethod(
+                "suspend",
+                &TranslationUnit::dispatcher<
+                    "suspend",
+                    &TranslationUnit::suspend
+                >
+            ),
+            StaticMethod(
+                "defaultEditingOptions",
+                &TranslationUnit::dispatcherStatic<
+                    "defaultEditingOptions",
+                    &TranslationUnit::defaultEditingOptions
                 >
             ),
             InstanceMethod(

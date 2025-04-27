@@ -1,6 +1,7 @@
 #pragma once
 
 #include <format>
+#include <map>
 #include <sstream>
 
 #include <napi.h>
@@ -38,6 +39,8 @@ struct Instance
     Napi::FunctionReference sourceRangeConstructor;
     Napi::FunctionReference diagnosticConstructor;
     Napi::FunctionReference diagnosticSetConstructor;
+
+    std::map<CXTranslationUnit, Napi::ObjectReference> translationUnits;
 
     static void init(Napi::Env env) { env.SetInstanceData<Instance>(new Instance); }
 

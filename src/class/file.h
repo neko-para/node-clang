@@ -20,14 +20,16 @@ struct [[clang::annotate("class")]] File : public WrapBase<File>
     [[clang::annotate("method")]] bool equal(ConvertRef<File> file);
     [[clang::annotate("getter")]] std::string getRealPathName();
 
-    [[clang::annotate("getter")]] bool isMultipleIncludeGuarded();
-    [[clang::annotate("getter")]] std::optional<std::string> getFileContents();
+    [[clang::annotate("method")]] bool isMultipleIncludeGuarded(ConvertRef<TranslationUnit> tu);
+    [[clang::annotate("method")]] std::optional<std::string> getFileContents(ConvertRef<TranslationUnit> tu);
+    [[clang::annotate("method")]] ConvertReturn<SourceLocation> getLocation(ConvertRef<TranslationUnit> tu, unsigned line, unsigned column);
+    [[clang::annotate("method:getLocation")]] ConvertReturn<SourceLocation>
+        getLocationForOffset(ConvertRef<TranslationUnit> tu, unsigned offset);
 
     [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {
-        Napi::ObjectReference tu;
         CXFile data {};
     };
 

@@ -4,6 +4,7 @@
 
 #include <clang-c/Index.h>
 #include <napi.h>
+#include <string>
 
 #include "class/convert.h"
 #include "class/instance.h"
@@ -23,13 +24,17 @@ struct [[clang::annotate("class")]] Diagnostic : public WrapBase<Diagnostic>
     [[clang::annotate("getter")]] std::string getSpelling();
     [[clang::annotate("getter")]] std::tuple<std::string, std::string> getOption();
     [[clang::annotate("getter")]] unsigned getCategory();
+    [[clang::annotate("getter")]] std::string getCategoryText();
+    [[clang::annotate("getter")]] unsigned getNumRanges();
+    [[clang::annotate("method")]] ConvertReturn<SourceRange> getRange(unsigned index);
+    [[clang::annotate("getter")]] unsigned getNumFixIts();
+    [[clang::annotate("method")]] std::tuple<std::string, ConvertReturn<SourceRange>> getFixIt(unsigned index);
 
     [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {
         Napi::Env env;
-        Napi::ObjectReference tu;
         CXDiagnostic data {};
 
         State(Napi::Env env)
@@ -60,7 +65,6 @@ struct [[clang::annotate("class")]] DiagnosticSet : public WrapBase<DiagnosticSe
     struct State
     {
         Napi::Env env;
-        Napi::ObjectReference tu;
         CXDiagnosticSet data {};
         bool dispose = false;
 

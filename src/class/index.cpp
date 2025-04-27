@@ -5,7 +5,7 @@
 
 #include "class/instance.h"
 #include "class/translation_unit.h"
-#include "loader/clang.h"
+#include "class/types.h"
 
 IndexOptions::IndexOptions(const Napi::CallbackInfo& info)
     : WrapBase<IndexOptions>(info)
@@ -161,24 +161,25 @@ std::optional<ConvertReturn<TranslationUnit>> Index::createTranslationUnitFromSo
 
     auto [state, obj] = TranslationUnit::construct(Env());
     state->data = tu;
+    instance().translationUnits[tu] = Napi::Weak(obj);
     return ConvertReturn<TranslationUnit> { obj };
 }
 
-std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>>
-    Index::createTranslationUnit(std::string ast_filename)
+Either<ConvertReturn<TranslationUnit>, int> Index::createTranslationUnit(std::string ast_filename)
 {
     CXTranslationUnit tu = nullptr;
     auto err = library()->createTranslationUnit2(state->data, ast_filename.c_str(), &tu);
     if (err != CXError_Success) {
-        return std::tuple<ConvertNull, int>({}, err);
+        return EitherFailed<int> { {}, err };
     }
 
     auto [state, obj] = TranslationUnit::construct(Env());
     state->data = tu;
-    return std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>({ obj }, {});
+    instance().translationUnits[tu] = Napi::Weak(obj);
+    return EitherSuccess<ConvertReturn<TranslationUnit>> { { obj }, {} };
 }
 
-std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>> Index::parseTranslationUnit(
+Either<ConvertReturn<TranslationUnit>, int> Index::parseTranslationUnit(
     std::string source_filename,
     std::vector<std::string> clang_command_line_args,
     std::vector<UnsavedFile> unsaved_files,
@@ -211,15 +212,16 @@ std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple
         options,
         &tu);
     if (!tu) {
-        return std::tuple<ConvertNull, int>({}, err);
+        return EitherFailed<int> { {}, err };
     }
 
     auto [state, obj] = TranslationUnit::construct(Env());
     state->data = tu;
-    return std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>({ obj }, {});
+    instance().translationUnits[tu] = Napi::Weak(obj);
+    return EitherSuccess<ConvertReturn<TranslationUnit>> { { obj }, {} };
 }
 
-std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>> Index::parseTranslationUnitFullArgv(
+Either<ConvertReturn<TranslationUnit>, int> Index::parseTranslationUnitFullArgv(
     std::string source_filename,
     std::vector<std::string> clang_command_line_args,
     std::vector<UnsavedFile> unsaved_files,
@@ -252,12 +254,13 @@ std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple
         options,
         &tu);
     if (!tu) {
-        return std::tuple<ConvertNull, int>({}, err);
+        return EitherFailed<int> { {}, err };
     }
 
     auto [state, obj] = TranslationUnit::construct(Env());
     state->data = tu;
-    return std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>({ obj }, {});
+    instance().translationUnits[tu] = Napi::Weak(obj);
+    return EitherSuccess<ConvertReturn<TranslationUnit>> { { obj }, {} };
 }
 
 std::string Index::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect)

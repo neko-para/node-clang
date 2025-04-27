@@ -23,7 +23,6 @@ struct [[clang::annotate("class")]] Type : public WrapBase<Type>
 
     struct State
     {
-        Napi::ObjectReference tu;
         CXType data {};
     };
 

@@ -4,8 +4,6 @@
 
 #include "class/file.h"
 #include "class/instance.h"
-#include "class/utils.h"
-#include "loader/clang.h"
 
 SourceLocation::SourceLocation(const Napi::CallbackInfo& info)
     : WrapBase<SourceLocation>(info)
@@ -47,7 +45,6 @@ std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> Sou
     library()->getExpansionLocation(state->data, &file, &line, &column, &offset);
     if (file) {
         auto [fstate, obj] = File::construct(Env());
-        fstate->tu = tryPersist(state->tu);
         fstate->data = file;
         return { ConvertReturn<File> { obj }, line, column, offset };
     }
@@ -71,7 +68,6 @@ std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> Sou
     library()->getSpellingLocation(state->data, &file, &line, &column, &offset);
     if (file) {
         auto [fstate, obj] = File::construct(Env());
-        fstate->tu = tryPersist(state->tu);
         fstate->data = file;
         return { ConvertReturn<File> { obj }, line, column, offset };
     }
@@ -87,7 +83,6 @@ std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> Sou
     library()->getFileLocation(state->data, &file, &line, &column, &offset);
     if (file) {
         auto [fstate, obj] = File::construct(Env());
-        fstate->tu = tryPersist(state->tu);
         fstate->data = file;
         return { ConvertReturn<File> { obj }, line, column, offset };
     }
@@ -134,7 +129,6 @@ bool SourceRange::isNull()
 ConvertReturn<SourceLocation> SourceRange::getStart()
 {
     auto [sstate, obj] = SourceLocation::construct(Env());
-    sstate->tu = tryPersist(state->tu);
     sstate->data = library()->getRangeStart(state->data);
     return { obj };
 }
@@ -142,7 +136,6 @@ ConvertReturn<SourceLocation> SourceRange::getStart()
 ConvertReturn<SourceLocation> SourceRange::getEnd()
 {
     auto [sstate, obj] = SourceLocation::construct(Env());
-    sstate->tu = tryPersist(state->tu);
     sstate->data = library()->getRangeEnd(state->data);
     return { obj };
 }

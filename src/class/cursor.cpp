@@ -76,16 +76,23 @@ std::string Cursor::getSpelling()
 
 std::optional<ConvertReturn<TranslationUnit>> Cursor::getTranslateUnit()
 {
-    if (state->tu.IsEmpty()) {
+    auto tu = library()->Cursor_getTranslationUnit(state->data);
+    auto it = instance().translationUnits.find(tu);
+    if (it == instance().translationUnits.end()) {
         return std::nullopt;
     }
-    return ConvertReturn<TranslationUnit> { state->tu.Value() };
+    const auto& objref = it->second;
+    try {
+        return ConvertReturn<TranslationUnit> { objref.Value() };
+    }
+    catch (const Napi::Error& err) {
+        return std::nullopt;
+    }
 }
 
 ConvertReturn<Type> Cursor::getType()
 {
     auto [tstate, obj] = Type::construct(Env());
-    tstate->tu = tryPersist(state->tu);
     tstate->data = library()->getCursorType(state->data);
     return { obj };
 }
@@ -93,7 +100,6 @@ ConvertReturn<Type> Cursor::getType()
 ConvertReturn<Cursor> Cursor::getLexicalParent()
 {
     auto [cstate, obj] = Cursor::construct(Env());
-    cstate->tu = tryPersist(state->tu);
     cstate->data = library()->getCursorLexicalParent(state->data);
     return { obj };
 }
@@ -101,7 +107,6 @@ ConvertReturn<Cursor> Cursor::getLexicalParent()
 ConvertReturn<Cursor> Cursor::getSemanticParent()
 {
     auto [cstate, obj] = Cursor::construct(Env());
-    cstate->tu = tryPersist(state->tu);
     cstate->data = library()->getCursorSemanticParent(state->data);
     return { obj };
 }
@@ -109,7 +114,6 @@ ConvertReturn<Cursor> Cursor::getSemanticParent()
 ConvertReturn<SourceLocation> Cursor::getLocation()
 {
     auto [sstate, obj] = SourceLocation::construct(Env());
-    sstate->tu = tryPersist(state->tu);
     sstate->data = library()->getCursorLocation(state->data);
     return { obj };
 }
@@ -123,10 +127,8 @@ bool Cursor::visitChildren(Napi::Function visitor)
 {
     struct VisitCtx
     {
-        Napi::Object tu;
         Napi::Function visitor;
     } ctx = {
-        state->tu.Value(),
         visitor,
     };
 
@@ -137,11 +139,9 @@ bool Cursor::visitChildren(Napi::Function visitor)
             auto env = ctx->visitor.Env();
 
             auto [cstate, cobj] = Cursor::construct(env);
-            cstate->tu = Napi::Persistent(ctx->tu);
             cstate->data = cursor;
 
             auto [pstate, pobj] = Cursor::construct(env);
-            pstate->tu = Napi::Persistent(ctx->tu);
             pstate->data = parent;
 
             auto res = ctx->visitor.Call({ cobj, pobj });

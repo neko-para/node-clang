@@ -3,6 +3,7 @@
 #include <cstring>
 
 #include "class/instance.h"
+#include "class/types.h"
 #include "class/utils.h"
 
 VirtualFileOverlay::VirtualFileOverlay(const Napi::CallbackInfo& info)
@@ -33,18 +34,18 @@ void VirtualFileOverlay::setCaseSensitivity(bool caseSensitive)
     throwErrorCode(Env(), err);
 }
 
-Napi::ArrayBuffer VirtualFileOverlay::writeToBuffer()
+Either<Napi::ArrayBuffer, int> VirtualFileOverlay::writeToBuffer()
 {
     char* buffer;
     unsigned size;
     auto err = library()->VirtualFileOverlay_writeToBuffer(state->data, 0, &buffer, &size);
-    if (throwErrorCode(Env(), err)) {
-        return Napi::ArrayBuffer::New(Env(), 0);
+    if (err != CXError_Success) {
+        return EitherFailed<int> { {}, err };
     }
     auto res = Napi::ArrayBuffer::New(Env(), size);
     std::memcpy(res.Data(), buffer, size);
     library()->free(buffer);
-    return res;
+    return EitherSuccess<Napi::ArrayBuffer> { res, {} };
 }
 
 VirtualFileOverlay::State::~State()
@@ -83,18 +84,18 @@ void ModuleMapDescriptor::setUmbrellaHeader(std::string name)
     throwErrorCode(Env(), err);
 }
 
-Napi::ArrayBuffer ModuleMapDescriptor::writeToBuffer()
+Either<Napi::ArrayBuffer, int> ModuleMapDescriptor::writeToBuffer()
 {
     char* buffer;
     unsigned size;
     auto err = library()->ModuleMapDescriptor_writeToBuffer(state->data, 0, &buffer, &size);
-    if (throwErrorCode(Env(), err)) {
-        return Napi::ArrayBuffer::New(Env(), 0);
+    if (err != CXError_Success) {
+        return EitherFailed<int> { {}, err };
     }
     auto res = Napi::ArrayBuffer::New(Env(), size);
     std::memcpy(res.Data(), buffer, size);
     library()->free(buffer);
-    return res;
+    return EitherSuccess<Napi::ArrayBuffer> { res, {} };
 }
 
 ModuleMapDescriptor::State::~State()

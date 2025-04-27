@@ -9,7 +9,6 @@
 #include "class/convert.h"
 #include "class/instance.h"
 #include "class/translation_unit.h"
-#include "class/types.h"
 
 struct [[clang::annotate("class")]] IndexOptions : public WrapBase<IndexOptions>
 {
@@ -73,20 +72,17 @@ struct [[clang::annotate("class")]] Index : public WrapBase<Index>
         std::string source_filename,
         std::vector<std::string> clang_command_line_args,
         std::vector<UnsavedFile> unsaved_files);
-    [[clang::annotate("method")]] std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>>
-        createTranslationUnit(std::string ast_filename);
-    [[clang::annotate("method")]] std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>>
-        parseTranslationUnit(
-            std::string source_filename,
-            std::vector<std::string> clang_command_line_args,
-            std::vector<UnsavedFile> unsaved_files,
-            unsigned options);
-    [[clang::annotate("method")]] std::variant<std::tuple<ConvertReturn<TranslationUnit>, ConvertNull>, std::tuple<ConvertNull, int>>
-        parseTranslationUnitFullArgv(
-            std::string source_filename,
-            std::vector<std::string> clang_command_line_args,
-            std::vector<UnsavedFile> unsaved_files,
-            unsigned options);
+    [[clang::annotate("method")]] Either<ConvertReturn<TranslationUnit>, int> createTranslationUnit(std::string ast_filename);
+    [[clang::annotate("method")]] Either<ConvertReturn<TranslationUnit>, int> parseTranslationUnit(
+        std::string source_filename,
+        std::vector<std::string> clang_command_line_args,
+        std::vector<UnsavedFile> unsaved_files,
+        unsigned options);
+    [[clang::annotate("method")]] Either<ConvertReturn<TranslationUnit>, int> parseTranslationUnitFullArgv(
+        std::string source_filename,
+        std::vector<std::string> clang_command_line_args,
+        std::vector<UnsavedFile> unsaved_files,
+        unsigned options);
 
     [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 

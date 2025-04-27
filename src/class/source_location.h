@@ -31,7 +31,6 @@ struct [[clang::annotate("class")]] SourceLocation : public WrapBase<SourceLocat
 
     struct State
     {
-        Napi::ObjectReference tu;
         CXSourceLocation data {};
     };
 
@@ -60,7 +59,6 @@ struct [[clang::annotate("class")]] SourceRange : public WrapBase<SourceRange>
 
     struct State
     {
-        Napi::ObjectReference tu;
         CXSourceRange data {};
     };
 

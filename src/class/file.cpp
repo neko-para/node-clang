@@ -3,8 +3,7 @@
 #include <memory>
 
 #include "class/instance.h"
-#include "translation_unit.h"
-#include "clang-c/CXFile.h"
+#include "class/translation_unit.h"
 
 File::File(const Napi::CallbackInfo& info)
     : WrapBase<File>(info)
@@ -43,23 +42,37 @@ std::string File::getRealPathName()
     return getStr(library()->File_tryGetRealPathName(state->data));
 }
 
-bool File::isMultipleIncludeGuarded()
+bool File::isMultipleIncludeGuarded(ConvertRef<TranslationUnit> tu)
 {
-    auto tu = Napi::ObjectWrap<TranslationUnit>::Unwrap(state->tu.Value());
-    return library()->isFileMultipleIncludeGuarded(tu->state->data, state->data);
+    return library()->isFileMultipleIncludeGuarded(tu.data->state->data, state->data);
 }
 
-std::optional<std::string> File::getFileContents()
+std::optional<std::string> File::getFileContents(ConvertRef<TranslationUnit> tu)
 {
-    auto tu = Napi::ObjectWrap<TranslationUnit>::Unwrap(state->tu.Value());
     size_t len = 0;
-    auto str = library()->getFileContents(tu->state->data, state->data, &len);
+    auto str = library()->getFileContents(tu.data->state->data, state->data, &len);
     if (str) {
         return std::string(str, len);
     }
     else {
         return std::nullopt;
     }
+}
+
+ConvertReturn<SourceLocation> File::getLocation(ConvertRef<TranslationUnit> tu, unsigned line, unsigned column)
+{
+    auto data = library()->getLocation(tu.data->state->data, state->data, line, column);
+    auto [sstate, obj] = SourceLocation::construct(Env());
+    sstate->data = data;
+    return { obj };
+}
+
+ConvertReturn<SourceLocation> File::getLocationForOffset(ConvertRef<TranslationUnit> tu, unsigned offset)
+{
+    auto data = library()->getLocationForOffset(tu.data->state->data, state->data, offset);
+    auto [sstate, obj] = SourceLocation::construct(Env());
+    sstate->data = data;
+    return { obj };
 }
 
 std::string File::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect)

@@ -5,17 +5,21 @@ import type {
     CXDiagnosticSeverity,
     CXErrorCode,
     CXLoadDiag_Error,
+    CXSaveError,
     CXTypeKind
 } from './enum'
 
-export type CUnsavedFile = [Filename: string, Contents: string, Length: ulong]
+export type CUnsavedFile = [filename: string, contents: string, length: ulong]
 
 export class CGlobal {
     static buildSessionTimestamp(): ulonglong
 }
 
 export class CIndex {
-    static create(excludeDeclarationsFromPCH: boolean, displayDiagnostics: boolean): CIndex | null
+    static create(
+        exclude_declarations_from_pch: boolean,
+        display_diagnostics: boolean
+    ): CIndex | null
     static create(options: CIndexOptions): CIndex | null
     get globalOptions(): unsigned
     createTranslationUnitFromSourceFile(
@@ -59,7 +63,17 @@ export class CIndexOptions {
 
 export class CTranslationUnit {
     getFile(file_name: string): CFile | null
+    getSkippedRanges(file: CFile): CSourceRange[]
+    get allSkippedRanges(): CSourceRange[]
+    get numDiagnostics(): unsigned
+    getDiagnostic(index: unsigned): CDiagnostic | null
+    get diagnosticSet(): CDiagnosticSet | null
     get spelling(): string
+    static defaultEditingOptions(): unsigned
+    get defaultSaveOptions(): unsigned
+    save(file_name: string, options: unsigned): CXSaveError
+    suspend(): boolean
+    get defaultReparseOptions(): unsigned
     reparse(unsaved_files: CUnsavedFile[], options: unsigned): CXErrorCode
     get cursor(): CCursor
 }
@@ -98,22 +112,24 @@ export class CFile {
     get fileUniqueID(): [ulonglong, ulonglong, ulonglong] | null
     equal(file: CFile): boolean
     get realPathName(): string
-    get isMultipleIncludeGuarded(): boolean
-    get fileContents(): string | null
+    isMultipleIncludeGuarded(tu: CTranslationUnit): boolean
+    getFileContents(tu: CTranslationUnit): string | null
+    getLocation(tu: CTranslationUnit, line: unsigned, column: unsigned): CSourceLocation
+    getLocation(tu: CTranslationUnit, offset: unsigned): CSourceLocation
 }
 
 export class CVirtualFileOverlay {
     static create(): CVirtualFileOverlay | null
     addFileMapping(virtualPath: string, realPath: string): CXErrorCode
     set caseSensitivity(value: boolean) // throw CXErrorCode
-    writeToBuffer(): ArrayBuffer // throw CXErrorCode
+    writeToBuffer(): [ArrayBuffer, null] | [null, CXErrorCode]
 }
 
 export class CModuleMapDescriptor {
     static create(): CModuleMapDescriptor | null
     set frameworkModuleName(value: string) // throw CXErrorCode
     set umbrellaHeader(value: string) // throw CXErrorCode
-    writeToBuffer(): ArrayBuffer // throw CXErrorCode
+    writeToBuffer(): [ArrayBuffer, null] | [null, CXErrorCode]
 }
 
 export class CSourceLocation {
@@ -151,6 +167,11 @@ export class CDiagnostic {
     get spelling(): string
     get option(): [enable: string, disable: string]
     get category(): unsigned
+    get categoryText(): string
+    get numRanges(): unsigned
+    getRange(index: unsigned): CSourceRange
+    get numFixIts(): unsigned
+    getFixIt(index: unsigned): [text: string, range: CSourceRange]
 }
 
 export class CDiagnosticSet {
@@ -158,5 +179,5 @@ export class CDiagnosticSet {
     getDiagnostic(index: unsigned): CDiagnostic | null
     static load(
         file: string
-    ): [CDiagnosticSet, null] | [null, [error: CXLoadDiag_Error, errorString: string]]
+    ): [CDiagnosticSet, null] | [null, [error: CXLoadDiag_Error, error_string: string]]
 }

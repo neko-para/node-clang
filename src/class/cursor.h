@@ -42,7 +42,6 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
 
     struct State
     {
-        Napi::ObjectReference tu;
         CXCursor data {};
     };
 

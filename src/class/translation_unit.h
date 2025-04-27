@@ -19,7 +19,17 @@ struct [[clang::annotate("class")]] TranslationUnit : public WrapBase<Translatio
     TranslationUnit(const Napi::CallbackInfo& info);
 
     [[clang::annotate("method")]] std::optional<ConvertReturn<File>> getFile(std::string file_name);
+    [[clang::annotate("method")]] std::vector<ConvertReturn<SourceRange>> getSkippedRanges(ConvertRef<File> file);
+    [[clang::annotate("getter")]] std::vector<ConvertReturn<SourceRange>> getAllSkippedRanges();
+    [[clang::annotate("getter")]] unsigned getNumDiagnostics();
+    [[clang::annotate("method")]] std::optional<ConvertReturn<Diagnostic>> getDiagnostic(unsigned index);
+    [[clang::annotate("getter")]] std::optional<ConvertReturn<DiagnosticSet>> getDiagnosticSet();
     [[clang::annotate("getter")]] std::string getSpelling();
+    [[clang::annotate("method")]] static unsigned defaultEditingOptions(Napi::Env env);
+    [[clang::annotate("getter")]] unsigned getDefaultSaveOptions();
+    [[clang::annotate("method")]] int save(std::string file_name, unsigned options);
+    [[clang::annotate("method")]] bool suspend();
+    [[clang::annotate("getter")]] unsigned getDefaultReparseOptions();
     [[clang::annotate("method")]] int reparse(std::vector<UnsavedFile> unsaved_files, unsigned options);
     [[clang::annotate("getter")]] ConvertReturn<Cursor> getCursor();
 

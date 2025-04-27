@@ -5,8 +5,6 @@
 #include "class/convert.h"
 #include "class/instance.h"
 #include "class/source_location.h"
-#include "class/utils.h"
-#include "clang-c/CXDiagnostic.h"
 
 Diagnostic::Diagnostic(const Napi::CallbackInfo& info)
     : WrapBase<Diagnostic>(info)
@@ -43,7 +41,6 @@ int Diagnostic::getSeverity()
 ConvertReturn<SourceLocation> Diagnostic::getLocation()
 {
     auto [sstate, obj] = SourceLocation::construct(Env());
-    sstate->tu = tryPersist(state->tu);
     sstate->data = library()->getDiagnosticLocation(state->data);
     return { obj };
 }
@@ -66,6 +63,37 @@ std::tuple<std::string, std::string> Diagnostic::getOption()
 unsigned Diagnostic::getCategory()
 {
     return library()->getDiagnosticCategory(state->data);
+}
+
+std::string Diagnostic::getCategoryText()
+{
+    return getStr(library()->getDiagnosticCategoryText(state->data));
+}
+
+unsigned Diagnostic::getNumRanges()
+{
+    return library()->getDiagnosticNumRanges(state->data);
+}
+
+ConvertReturn<SourceRange> Diagnostic::getRange(unsigned index)
+{
+    auto [sstate, obj] = SourceRange::construct(Env());
+    sstate->data = library()->getDiagnosticRange(state->data, index);
+    return { obj };
+}
+
+unsigned Diagnostic::getNumFixIts()
+{
+    return library()->getDiagnosticNumFixIts(state->data);
+}
+
+std::tuple<std::string, ConvertReturn<SourceRange>> Diagnostic::getFixIt(unsigned index)
+{
+    CXSourceRange replacement;
+    auto text = getStr(library()->getDiagnosticFixIt(state->data, index, &replacement));
+    auto [sstate, obj] = SourceRange::construct(Env());
+    sstate->data = replacement;
+    return { text, { obj } };
 }
 
 std::string Diagnostic::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect)
@@ -98,7 +126,6 @@ std::optional<ConvertReturn<Diagnostic>> DiagnosticSet::getDiagnostic(unsigned i
         return std::nullopt;
     }
     auto [dstate, obj] = Diagnostic::construct(Env());
-    dstate->tu = tryPersist(state->tu);
     dstate->data = diag;
     return ConvertReturn<Diagnostic> { obj };
 }
@@ -116,7 +143,6 @@ std::variant<std::tuple<ConvertReturn<DiagnosticSet>, ConvertNull>, std::tuple<C
         };
     }
     auto [state, obj] = DiagnosticSet::construct(env);
-    // TODO: how to get tu?
     state->data = data;
     state->dispose = true;
     return std::tuple<ConvertReturn<DiagnosticSet>, ConvertNull> {
