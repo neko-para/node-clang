@@ -28,6 +28,11 @@ Napi::Function Cursor::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "CXXManglings",
+                &Cursor::dispatcher<"get CXXManglings", &Cursor::getCXXManglings>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "CXXMethod_isStatic",
                 &Cursor::dispatcher<"get CXXMethod_isStatic", &Cursor::CXXMethod_isStatic>,
                 nullptr
@@ -90,6 +95,16 @@ Napi::Function Cursor::Init(Napi::Env env)
             InstanceAccessor(
                 "location",
                 &Cursor::dispatcher<"get location", &Cursor::getLocation>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "mangling",
+                &Cursor::dispatcher<"get mangling", &Cursor::getMangling>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "ObjCManglings",
+                &Cursor::dispatcher<"get ObjCManglings", &Cursor::getObjCManglings>,
                 nullptr
             ),
             InstanceAccessor(

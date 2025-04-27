@@ -3,11 +3,11 @@
 libclang wrapper written by napi.
 Dynamic load libclang.dll/so/dylib.
 
-## Progress ![](https://progress-bar.xyz/36?prefix=125%20/%20351%20=%20&width=200)
+## Progress ![](https://progress-bar.xyz/37?prefix=129%20/%20351%20=%20&width=200)
 
 - [x] clang_getCString
 - [x] clang_disposeString
-- [ ] clang_disposeStringSet
+- [x] clang_disposeStringSet
 - [x] clang_getBuildSessionTimestamp
 - [x] clang_VirtualFileOverlay_create
 - [x] clang_VirtualFileOverlay_addFileMapping
@@ -247,9 +247,9 @@ Dynamic load libclang.dll/so/dylib.
 - [ ] clang_Cursor_getCommentRange
 - [ ] clang_Cursor_getRawCommentText
 - [ ] clang_Cursor_getBriefCommentText
-- [ ] clang_Cursor_getMangling
-- [ ] clang_Cursor_getCXXManglings
-- [ ] clang_Cursor_getObjCManglings
+- [x] clang_Cursor_getMangling
+- [x] clang_Cursor_getCXXManglings
+- [x] clang_Cursor_getObjCManglings
 - [ ] clang_Cursor_getModule
 - [ ] clang_getModuleForFile
 - [ ] clang_Module_getASTFile

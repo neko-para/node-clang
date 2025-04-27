@@ -138,6 +138,9 @@ export class CCursor {
     get location(): CSourceLocation
     get enumConstantDeclValue(): longlong
     visitChildren(visitor: (cursor: CCursor, parent: CCursor) => CXChildVisitResult): boolean
+    get mangling(): string
+    get CXXManglings(): string[]
+    get ObjCManglings(): string[]
     get CXXMethod_isStatic(): boolean
 
     __dump(): string

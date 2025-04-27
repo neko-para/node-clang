@@ -307,6 +307,35 @@ bool Cursor::visitChildren(Napi::Function visitor)
         &ctx);
 }
 
+std::string Cursor::getMangling()
+{
+    return getStr(library()->Cursor_getMangling(state->data));
+}
+
+std::vector<std::string> Cursor::getCXXManglings()
+{
+    auto lst = library()->Cursor_getCXXManglings(state->data);
+    std::vector<std::string> result;
+    result.reserve(lst->Count);
+    std::transform(lst->Strings, lst->Strings + lst->Count, std::back_insert_iterator(result), [&](const CXString& str) -> std::string {
+        return getStr(str, false);
+    });
+    library()->disposeStringSet(lst);
+    return result;
+}
+
+std::vector<std::string> Cursor::getObjCManglings()
+{
+    auto lst = library()->Cursor_getObjCManglings(state->data);
+    std::vector<std::string> result;
+    result.reserve(lst->Count);
+    std::transform(lst->Strings, lst->Strings + lst->Count, std::back_insert_iterator(result), [&](const CXString& str) -> std::string {
+        return getStr(str, false);
+    });
+    library()->disposeStringSet(lst);
+    return result;
+}
+
 bool Cursor::CXXMethod_isStatic()
 {
     return library()->CXXMethod_isStatic(state->data);

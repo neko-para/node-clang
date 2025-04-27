@@ -56,6 +56,10 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
 
     [[clang::annotate("method")]] bool visitChildren(Napi::Function visitor);
 
+    [[clang::annotate("getter")]] std::string getMangling();
+    [[clang::annotate("getter:CXXManglings")]] std::vector<std::string> getCXXManglings();
+    [[clang::annotate("getter:ObjCManglings")]] std::vector<std::string> getObjCManglings();
+
     [[clang::annotate("getter")]] bool CXXMethod_isStatic();
 
     [[clang::annotate("method")]] std::string __dump();
