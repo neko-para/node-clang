@@ -31,6 +31,9 @@ struct [[clang::annotate("class")]] TranslationUnit : public WrapBase<Translatio
     [[clang::annotate("method")]] bool suspend();
     [[clang::annotate("getter")]] unsigned getDefaultReparseOptions();
     [[clang::annotate("method")]] int reparse(std::vector<UnsavedFile> unsaved_files, unsigned options);
+    [[clang::annotate("getter")]] std::vector<std::tuple<int, std::string, unsigned long>> getResourceUsage();
+    [[clang::annotate("getter")]] std::tuple<std::optional<std::string>, std::optional<int>> getTargetInfo();
+
     [[clang::annotate("getter")]] ConvertReturn<Cursor> getCursor();
 
     [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);

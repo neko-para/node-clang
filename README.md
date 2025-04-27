@@ -3,7 +3,7 @@
 libclang wrapper written by napi.
 Dynamic load libclang.dll/so/dylib.
 
-## Progress ![](https://progress-bar.xyz/27?prefix=96%20/%20351%20=%20&width=200)
+## Progress ![](https://progress-bar.xyz/29?prefix=103%20/%20351%20=%20&width=200)
 
 - [x] clang_getCString
 - [x] clang_disposeString
@@ -90,13 +90,13 @@ Dynamic load libclang.dll/so/dylib.
 - [x] clang_disposeTranslationUnit
 - [x] clang_defaultReparseOptions
 - [x] clang_reparseTranslationUnit
-- [ ] clang_getTUResourceUsageName
-- [ ] clang_getCXTUResourceUsage
-- [ ] clang_disposeCXTUResourceUsage
-- [ ] clang_getTranslationUnitTargetInfo
-- [ ] clang_TargetInfo_dispose
-- [ ] clang_TargetInfo_getTriple
-- [ ] clang_TargetInfo_getPointerWidth
+- [x] clang_getTUResourceUsageName
+- [x] clang_getCXTUResourceUsage
+- [x] clang_disposeCXTUResourceUsage
+- [x] clang_getTranslationUnitTargetInfo
+- [x] clang_TargetInfo_dispose
+- [x] clang_TargetInfo_getTriple
+- [x] clang_TargetInfo_getPointerWidth
 - [x] clang_getNullCursor
 - [x] clang_getTranslationUnitCursor
 - [x] clang_equalCursors

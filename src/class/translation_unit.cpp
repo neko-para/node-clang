@@ -1,11 +1,13 @@
 #include "class/translation_unit.h"
 
+#include <algorithm>
 #include <iterator>
 #include <memory>
 
 #include "class/diagnostic.h"
 #include "class/file.h"
 #include "class/instance.h"
+#include "clang-c/Index.h"
 
 TranslationUnit::TranslationUnit(const Napi::CallbackInfo& info)
     : WrapBase<TranslationUnit>(info)
@@ -131,6 +133,46 @@ int TranslationUnit::reparse(std::vector<UnsavedFile> unsaved_files, unsigned op
             });
     }
     return library()->reparseTranslationUnit(state->data, unsaves.size(), unsaves.data(), options);
+}
+
+std::vector<std::tuple<int, std::string, unsigned long>> TranslationUnit::getResourceUsage()
+{
+    std::vector<std::tuple<int, std::string, unsigned long>> result;
+    auto usage = library()->getCXTUResourceUsage(state->data);
+    result.reserve(usage.numEntries);
+    std::transform(
+        usage.entries,
+        usage.entries + usage.numEntries,
+        std::back_insert_iterator(result),
+        [&](const CXTUResourceUsageEntry& entry) -> std::tuple<int, std::string, unsigned long> {
+            return {
+                entry.kind,
+                library()->getTUResourceUsageName(entry.kind),
+                entry.amount,
+            };
+        });
+    library()->disposeCXTUResourceUsage(usage);
+    return result;
+}
+
+std::tuple<std::optional<std::string>, std::optional<int>> TranslationUnit::getTargetInfo()
+{
+    auto info = library()->getTranslationUnitTargetInfo(state->data);
+
+    std::optional<std::string> triple = getStr(library()->TargetInfo_getTriple(info));
+    if (triple->empty()) {
+        triple = std::nullopt;
+    }
+
+    std::optional<int> pointer_width = library()->TargetInfo_getPointerWidth(info);
+    if (*pointer_width == -1) {
+        pointer_width = std::nullopt;
+    }
+
+    return {
+        triple,
+        pointer_width,
+    };
 }
 
 ConvertReturn<Cursor> TranslationUnit::getCursor()

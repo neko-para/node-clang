@@ -664,8 +664,18 @@ Napi::Function TranslationUnit::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "resourceUsage",
+                &TranslationUnit::dispatcher<"get resourceUsage", &TranslationUnit::getResourceUsage>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "spelling",
                 &TranslationUnit::dispatcher<"get spelling", &TranslationUnit::getSpelling>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "targetInfo",
+                &TranslationUnit::dispatcher<"get targetInfo", &TranslationUnit::getTargetInfo>,
                 nullptr
             ),
             InstanceMethod(

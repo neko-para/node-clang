@@ -1,4 +1,4 @@
-import type { longlong, ulong, ulonglong, unsigned } from './base'
+import type { int, longlong, ulong, ulonglong, unsigned } from './base'
 import type {
     CXChildVisitResult,
     CXCursorKind,
@@ -6,6 +6,7 @@ import type {
     CXErrorCode,
     CXLoadDiag_Error,
     CXSaveError,
+    CXTUResourceUsageKind,
     CXTypeKind
 } from './enum'
 
@@ -75,6 +76,8 @@ export class CTranslationUnit {
     suspend(): boolean
     get defaultReparseOptions(): unsigned
     reparse(unsaved_files: CUnsavedFile[], options: unsigned): CXErrorCode
+    get resourceUsage(): [kind: CXTUResourceUsageKind, name: string, amount: ulong][]
+    get targetInfo(): [triple: string | null, pointer_width: int | null]
     get cursor(): CCursor
 }
 
