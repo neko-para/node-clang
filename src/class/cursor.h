@@ -40,9 +40,14 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
     [[clang::annotate("getter")]] int getAvailability();
     [[clang::annotate("getter")]] std::tuple<bool, std::string, bool, std::string, std::vector<PlatformAvailability>>
         getPlatformAvailability();
+    [[clang::annotate("getter")]] ConvertReturn<Cursor> getVarDeclInitializer();
+    [[clang::annotate("getter")]] int hasVarDeclGlobalStorage();
+    [[clang::annotate("getter")]] int hasVarDeclExternalStorage();
+    [[clang::annotate("getter")]] int getCursorLanguage();
+    [[clang::annotate("getter:TLSKind")]] int getTLSKind();
+    [[clang::annotate("getter")]] std::optional<ConvertReturn<TranslationUnit>> getTranslateUnit();
 
     [[clang::annotate("getter")]] std::string getSpelling();
-    [[clang::annotate("getter")]] std::optional<ConvertReturn<TranslationUnit>> getTranslateUnit();
     [[clang::annotate("getter")]] ConvertReturn<Type> getType();
     [[clang::annotate("getter")]] ConvertReturn<Cursor> getLexicalParent();
     [[clang::annotate("getter")]] ConvertReturn<Cursor> getSemanticParent();

@@ -23,6 +23,11 @@ Napi::Function Cursor::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "cursorLanguage",
+                &Cursor::dispatcher<"get cursorLanguage", &Cursor::getCursorLanguage>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "CXXMethod_isStatic",
                 &Cursor::dispatcher<"get CXXMethod_isStatic", &Cursor::CXXMethod_isStatic>,
                 nullptr
@@ -40,6 +45,16 @@ Napi::Function Cursor::Init(Napi::Env env)
             InstanceAccessor(
                 "hash",
                 &Cursor::dispatcher<"get hash", &Cursor::getHash>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "hasVarDeclExternalStorage",
+                &Cursor::dispatcher<"get hasVarDeclExternalStorage", &Cursor::hasVarDeclExternalStorage>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "hasVarDeclGlobalStorage",
+                &Cursor::dispatcher<"get hasVarDeclGlobalStorage", &Cursor::hasVarDeclGlobalStorage>,
                 nullptr
             ),
             InstanceAccessor(
@@ -93,6 +108,11 @@ Napi::Function Cursor::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "TLSKind",
+                &Cursor::dispatcher<"get TLSKind", &Cursor::getTLSKind>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "translateUnit",
                 &Cursor::dispatcher<"get translateUnit", &Cursor::getTranslateUnit>,
                 nullptr
@@ -100,6 +120,11 @@ Napi::Function Cursor::Init(Napi::Env env)
             InstanceAccessor(
                 "type",
                 &Cursor::dispatcher<"get type", &Cursor::getType>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "varDeclInitializer",
+                &Cursor::dispatcher<"get varDeclInitializer", &Cursor::getVarDeclInitializer>,
                 nullptr
             ),
             InstanceAccessor(

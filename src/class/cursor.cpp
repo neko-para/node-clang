@@ -193,9 +193,31 @@ std::tuple<bool, std::string, bool, std::string, std::vector<PlatformAvailabilit
     };
 }
 
-std::string Cursor::getSpelling()
+ConvertReturn<Cursor> Cursor::getVarDeclInitializer()
 {
-    return getStr(library()->getCursorSpelling(state->data));
+    auto [cstate, obj] = Cursor::construct(Env());
+    cstate->data = library()->Cursor_getVarDeclInitializer(state->data);
+    return { obj };
+}
+
+int Cursor::hasVarDeclGlobalStorage()
+{
+    return library()->Cursor_hasVarDeclGlobalStorage(state->data);
+}
+
+int Cursor::hasVarDeclExternalStorage()
+{
+    return library()->Cursor_hasVarDeclExternalStorage(state->data);
+}
+
+int Cursor::getCursorLanguage()
+{
+    return library()->getCursorLanguage(state->data);
+}
+
+int Cursor::getTLSKind()
+{
+    return library()->getCursorTLSKind(state->data);
 }
 
 std::optional<ConvertReturn<TranslationUnit>> Cursor::getTranslateUnit()
@@ -212,6 +234,11 @@ std::optional<ConvertReturn<TranslationUnit>> Cursor::getTranslateUnit()
     catch (const Napi::Error& err) {
         return std::nullopt;
     }
+}
+
+std::string Cursor::getSpelling()
+{
+    return getStr(library()->getCursorSpelling(state->data));
 }
 
 ConvertReturn<Type> Cursor::getType()

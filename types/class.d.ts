@@ -5,9 +5,11 @@ import type {
     CXCursorKind,
     CXDiagnosticSeverity,
     CXErrorCode,
+    CXLanguageKind,
     CXLinkageKind,
     CXLoadDiag_Error,
     CXSaveError,
+    CXTLSKind,
     CXTUResourceUsageKind,
     CXTypeKind,
     CXVisibilityKind
@@ -122,9 +124,14 @@ export class CCursor {
         unavailable_message: string,
         availability: CPlatformAvailability[]
     ]
+    get varDeclInitializer(): CCursor
+    get hasVarDeclGlobalStorage(): 1 | 0 | -1
+    get hasVarDeclExternalStorage(): 1 | 0 | -1
+    get language(): CXLanguageKind
+    get TLSKind(): CXTLSKind
+    get translationUnit(): CTranslationUnit | null
 
     get spelling(): string
-    get translationUnit(): CTranslationUnit | null
     get type(): CType
     get lexicalParent(): CCursor
     get semanticParent(): CCursor

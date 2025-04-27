@@ -3,7 +3,7 @@
 libclang wrapper written by napi.
 Dynamic load libclang.dll/so/dylib.
 
-## Progress ![](https://progress-bar.xyz/34?prefix=120%20/%20351%20=%20&width=200)
+## Progress ![](https://progress-bar.xyz/36?prefix=125%20/%20351%20=%20&width=200)
 
 - [x] clang_getCString
 - [x] clang_disposeString
@@ -119,11 +119,11 @@ Dynamic load libclang.dll/so/dylib.
 - [x] clang_getCursorAvailability
 - [x] clang_getCursorPlatformAvailability
 - [x] clang_disposeCXPlatformAvailability
-- [ ] clang_Cursor_getVarDeclInitializer
-- [ ] clang_Cursor_hasVarDeclGlobalStorage
-- [ ] clang_Cursor_hasVarDeclExternalStorage
-- [ ] clang_getCursorLanguage
-- [ ] clang_getCursorTLSKind
+- [x] clang_Cursor_getVarDeclInitializer
+- [x] clang_Cursor_hasVarDeclGlobalStorage
+- [x] clang_Cursor_hasVarDeclExternalStorage
+- [x] clang_getCursorLanguage
+- [x] clang_getCursorTLSKind
 - [x] clang_Cursor_getTranslationUnit
 - [ ] clang_createCXCursorSet
 - [ ] clang_disposeCXCursorSet
