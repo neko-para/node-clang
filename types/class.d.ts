@@ -1,16 +1,28 @@
 import type { int, longlong, ulong, ulonglong, unsigned } from './base'
 import type {
+    CXAvailabilityKind,
     CXChildVisitResult,
     CXCursorKind,
     CXDiagnosticSeverity,
     CXErrorCode,
+    CXLinkageKind,
     CXLoadDiag_Error,
     CXSaveError,
     CXTUResourceUsageKind,
-    CXTypeKind
+    CXTypeKind,
+    CXVisibilityKind
 } from './enum'
 
 export type CUnsavedFile = [filename: string, contents: string, length: ulong]
+export type CVersion = [major: int, minor: int, subminor: int]
+export type CPlatformAvailability = [
+    platform: 'ios' | 'macos',
+    introduced: CVersion,
+    deprecated: CVersion,
+    obsoleted: CVersion,
+    unavailable: boolean,
+    message: string
+]
 
 export class CGlobal {
     static buildSessionTimestamp(): ulonglong
@@ -89,6 +101,28 @@ export class CCursor {
     get hash(): unsigned
     get kind(): CXCursorKind
     get kindStr(): string
+    static isDeclaration(kind: CXCursorKind): boolean
+    get isInvalidDeclaration(): boolean
+    static isReference(kind: CXCursorKind): boolean
+    static isExpression(kind: CXCursorKind): boolean
+    static isStatement(kind: CXCursorKind): boolean
+    static isAttribute(kind: CXCursorKind): boolean
+    get hasAttrs(): boolean
+    static isInvalid(kind: CXCursorKind): boolean
+    static isTranslationUnit(kind: CXCursorKind): boolean
+    static isPreprocessing(kind: CXCursorKind): boolean
+    static isUnexposed(kind: CXCursorKind): boolean
+    get linkage(): CXLinkageKind
+    get visibility(): CXVisibilityKind
+    get availability(): CXAvailabilityKind
+    get platformAvailability(): [
+        always_deprecated: boolean,
+        deprecated_message: string,
+        always_unavailable: boolean,
+        unavailable_message: string,
+        availability: CPlatformAvailability[]
+    ]
+
     get spelling(): string
     get translationUnit(): CTranslationUnit | null
     get type(): CType

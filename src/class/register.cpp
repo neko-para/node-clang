@@ -18,6 +18,11 @@ Napi::Function Cursor::Init(Napi::Env env)
         "CCursor",
         {
             InstanceAccessor(
+                "availability",
+                &Cursor::dispatcher<"get availability", &Cursor::getAvailability>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "CXXMethod_isStatic",
                 &Cursor::dispatcher<"get CXXMethod_isStatic", &Cursor::CXXMethod_isStatic>,
                 nullptr
@@ -28,8 +33,18 @@ Napi::Function Cursor::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "hasAttrs",
+                &Cursor::dispatcher<"get hasAttrs", &Cursor::hasAttrs>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "hash",
                 &Cursor::dispatcher<"get hash", &Cursor::getHash>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "isInvalidDeclaration",
+                &Cursor::dispatcher<"get isInvalidDeclaration", &Cursor::isInvalidDeclaration>,
                 nullptr
             ),
             InstanceAccessor(
@@ -53,8 +68,18 @@ Napi::Function Cursor::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "linkage",
+                &Cursor::dispatcher<"get linkage", &Cursor::getLinkage>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "location",
                 &Cursor::dispatcher<"get location", &Cursor::getLocation>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "platformAvailability",
+                &Cursor::dispatcher<"get platformAvailability", &Cursor::getPlatformAvailability>,
                 nullptr
             ),
             InstanceAccessor(
@@ -77,6 +102,11 @@ Napi::Function Cursor::Init(Napi::Env env)
                 &Cursor::dispatcher<"get type", &Cursor::getType>,
                 nullptr
             ),
+            InstanceAccessor(
+                "visibility",
+                &Cursor::dispatcher<"get visibility", &Cursor::getVisibility>,
+                nullptr
+            ),
             InstanceMethod(
                 "__dump",
                 &Cursor::dispatcher<
@@ -97,6 +127,69 @@ Napi::Function Cursor::Init(Napi::Env env)
                 &Cursor::dispatcher<
                     "visitChildren",
                     &Cursor::visitChildren
+                >
+            ),
+            StaticMethod(
+                "isAttribute",
+                &Cursor::dispatcherStatic<
+                    "isAttribute",
+                    &Cursor::isAttribute
+                >
+            ),
+            StaticMethod(
+                "isDeclaration",
+                &Cursor::dispatcherStatic<
+                    "isDeclaration",
+                    &Cursor::isDeclaration
+                >
+            ),
+            StaticMethod(
+                "isExpression",
+                &Cursor::dispatcherStatic<
+                    "isExpression",
+                    &Cursor::isExpression
+                >
+            ),
+            StaticMethod(
+                "isInvalid",
+                &Cursor::dispatcherStatic<
+                    "isInvalid",
+                    &Cursor::isInvalid
+                >
+            ),
+            StaticMethod(
+                "isPreprocessing",
+                &Cursor::dispatcherStatic<
+                    "isPreprocessing",
+                    &Cursor::isPreprocessing
+                >
+            ),
+            StaticMethod(
+                "isReference",
+                &Cursor::dispatcherStatic<
+                    "isReference",
+                    &Cursor::isReference
+                >
+            ),
+            StaticMethod(
+                "isStatement",
+                &Cursor::dispatcherStatic<
+                    "isStatement",
+                    &Cursor::isStatement
+                >
+            ),
+            StaticMethod(
+                "isTranslationUnit",
+                &Cursor::dispatcherStatic<
+                    "isTranslationUnit",
+                    &Cursor::isTranslationUnit
+                >
+            ),
+            StaticMethod(
+                "isUnexposed",
+                &Cursor::dispatcherStatic<
+                    "isUnexposed",
+                    &Cursor::isUnexposed
                 >
             ),
             StaticMethod(

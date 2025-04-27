@@ -124,17 +124,21 @@ struct WrapBase : Napi::ObjectWrap<Type>
         }
     }
 
-    std::string getStr(CXString str)
+    std::string getStr(CXString str, bool dispose = true)
     {
         std::string res = library()->getCString(str);
-        library()->disposeString(str);
+        if (dispose) {
+            library()->disposeString(str);
+        }
         return res;
     }
 
-    static std::string getStr(Napi::Env env, CXString str)
+    static std::string getStr(Napi::Env env, CXString str, bool dispose = true)
     {
         std::string res = Instance::get(env).library->getCString(str);
-        Instance::get(env).library->disposeString(str);
+        if (dispose) {
+            Instance::get(env).library->disposeString(str);
+        }
         return res;
     }
 };

@@ -3,7 +3,7 @@
 libclang wrapper written by napi.
 Dynamic load libclang.dll/so/dylib.
 
-## Progress ![](https://progress-bar.xyz/29?prefix=103%20/%20351%20=%20&width=200)
+## Progress ![](https://progress-bar.xyz/34?prefix=120%20/%20351%20=%20&width=200)
 
 - [x] clang_getCString
 - [x] clang_disposeString
@@ -103,22 +103,22 @@ Dynamic load libclang.dll/so/dylib.
 - [x] clang_Cursor_isNull
 - [x] clang_hashCursor
 - [x] clang_getCursorKind
-- [ ] clang_isDeclaration
-- [ ] clang_isInvalidDeclaration
-- [ ] clang_isReference
-- [ ] clang_isExpression
-- [ ] clang_isStatement
-- [ ] clang_isAttribute
-- [ ] clang_Cursor_hasAttrs
-- [ ] clang_isInvalid
-- [ ] clang_isTranslationUnit
-- [ ] clang_isPreprocessing
-- [ ] clang_isUnexposed
-- [ ] clang_getCursorLinkage
-- [ ] clang_getCursorVisibility
-- [ ] clang_getCursorAvailability
-- [ ] clang_getCursorPlatformAvailability
-- [ ] clang_disposeCXPlatformAvailability
+- [x] clang_isDeclaration
+- [x] clang_isInvalidDeclaration
+- [x] clang_isReference
+- [x] clang_isExpression
+- [x] clang_isStatement
+- [x] clang_isAttribute
+- [x] clang_Cursor_hasAttrs
+- [x] clang_isInvalid
+- [x] clang_isTranslationUnit
+- [x] clang_isPreprocessing
+- [x] clang_isUnexposed
+- [x] clang_getCursorLinkage
+- [x] clang_getCursorVisibility
+- [x] clang_getCursorAvailability
+- [x] clang_getCursorPlatformAvailability
+- [x] clang_disposeCXPlatformAvailability
 - [ ] clang_Cursor_getVarDeclInitializer
 - [ ] clang_Cursor_hasVarDeclGlobalStorage
 - [ ] clang_Cursor_hasVarDeclExternalStorage
@@ -221,7 +221,7 @@ Dynamic load libclang.dll/so/dylib.
 - [ ] clang_constructUSR_ObjCIvar
 - [ ] clang_constructUSR_ObjCMethod
 - [ ] clang_constructUSR_ObjCProperty
-- [ ] clang_getCursorSpelling
+- [x] clang_getCursorSpelling
 - [ ] clang_Cursor_getSpellingNameRange
 - [ ] clang_PrintingPolicy_getProperty
 - [ ] clang_PrintingPolicy_setProperty

@@ -1,5 +1,7 @@
 #include "class/cursor.h"
 
+#include <algorithm>
+#include <iterator>
 #include <memory>
 
 #include "class/convert.h"
@@ -7,6 +9,7 @@
 #include "class/source_location.h"
 #include "class/type.h"
 #include "enum.h"
+#include "clang-c/Index.h"
 
 Cursor::Cursor(const Napi::CallbackInfo& info)
     : WrapBase<Cursor>(info)
@@ -67,6 +70,127 @@ std::string Cursor::getKindStr()
     auto kind = getKind();
     auto iter = cursorKind_enum2str.find(static_cast<CXCursorKind>(kind));
     return iter == cursorKind_enum2str.end() ? std::to_string(kind) : iter->second;
+}
+
+bool Cursor::isDeclaration(Napi::Env env, int kind)
+{
+    return Instance::get(env).library->isDeclaration(static_cast<CXCursorKind>(kind));
+}
+
+bool Cursor::isInvalidDeclaration()
+{
+    return library()->isInvalidDeclaration(state->data);
+}
+
+bool Cursor::isReference(Napi::Env env, int kind)
+{
+    return Instance::get(env).library->isReference(static_cast<CXCursorKind>(kind));
+}
+
+bool Cursor::isExpression(Napi::Env env, int kind)
+{
+    return Instance::get(env).library->isExpression(static_cast<CXCursorKind>(kind));
+}
+
+bool Cursor::isStatement(Napi::Env env, int kind)
+{
+    return Instance::get(env).library->isStatement(static_cast<CXCursorKind>(kind));
+}
+
+bool Cursor::isAttribute(Napi::Env env, int kind)
+{
+    return Instance::get(env).library->isAttribute(static_cast<CXCursorKind>(kind));
+}
+
+bool Cursor::hasAttrs()
+{
+    return library()->Cursor_hasAttrs(state->data);
+}
+
+bool Cursor::isInvalid(Napi::Env env, int kind)
+{
+    return Instance::get(env).library->isInvalid(static_cast<CXCursorKind>(kind));
+}
+
+bool Cursor::isTranslationUnit(Napi::Env env, int kind)
+{
+    return Instance::get(env).library->isTranslationUnit(static_cast<CXCursorKind>(kind));
+}
+
+bool Cursor::isPreprocessing(Napi::Env env, int kind)
+{
+    return Instance::get(env).library->isPreprocessing(static_cast<CXCursorKind>(kind));
+}
+
+bool Cursor::isUnexposed(Napi::Env env, int kind)
+{
+    return Instance::get(env).library->isUnexposed(static_cast<CXCursorKind>(kind));
+}
+
+int Cursor::getLinkage()
+{
+    return library()->getCursorLinkage(state->data);
+}
+
+int Cursor::getVisibility()
+{
+    return library()->getCursorVisibility(state->data);
+}
+
+int Cursor::getAvailability()
+{
+    return library()->getCursorAvailability(state->data);
+}
+
+std::tuple<bool, std::string, bool, std::string, std::vector<PlatformAvailability>> Cursor::getPlatformAvailability()
+{
+    auto size = library()->getCursorPlatformAvailability(state->data, nullptr, nullptr, nullptr, nullptr, nullptr, 0);
+    std::vector<CXPlatformAvailability> data(size);
+    int always_deprecated;
+    CXString deprecated_msg;
+    int always_unavailable;
+    CXString unavailable_msg;
+    library()->getCursorPlatformAvailability(
+        state->data,
+        &always_deprecated,
+        &deprecated_msg,
+        &always_unavailable,
+        &unavailable_msg,
+        size ? data.data() : nullptr,
+        size);
+    std::vector<PlatformAvailability> availability_info;
+    availability_info.reserve(size);
+    std::transform(
+        data.begin(),
+        data.end(),
+        std::back_insert_iterator(availability_info),
+        [&](CXPlatformAvailability& info) -> PlatformAvailability {
+            PlatformAvailability result = {
+                getStr(info.Platform, false),
+                {
+                    info.Introduced.Major,
+                    info.Introduced.Minor,
+                    info.Introduced.Subminor,
+                },
+                {
+                    info.Deprecated.Major,
+                    info.Deprecated.Minor,
+                    info.Deprecated.Subminor,
+                },
+                {
+                    info.Obsoleted.Major,
+                    info.Obsoleted.Minor,
+                    info.Obsoleted.Subminor,
+                },
+                (bool)info.Unavailable,
+                getStr(info.Message, false),
+            };
+            library()->disposeCXPlatformAvailability(&info);
+            return result;
+        });
+    return {
+        (bool)always_deprecated, getStr(deprecated_msg), (bool)always_unavailable, getStr(unavailable_msg), availability_info,
+    };
 }
 
 std::string Cursor::getSpelling()

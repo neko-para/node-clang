@@ -9,6 +9,7 @@
 #include "class/instance.h"
 #include "class/source_location.h"
 #include "class/type.h"
+#include "class/types.h"
 
 struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
 {
@@ -23,10 +24,26 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
     [[clang::annotate("getter")]] unsigned getHash();
     [[clang::annotate("getter")]] int getKind();
     [[clang::annotate("getter")]] std::string getKindStr();
+    [[clang::annotate("method")]] static bool isDeclaration(Napi::Env env, int kind);
+    [[clang::annotate("getter")]] bool isInvalidDeclaration();
+    [[clang::annotate("method")]] static bool isReference(Napi::Env env, int kind);
+    [[clang::annotate("method")]] static bool isExpression(Napi::Env env, int kind);
+    [[clang::annotate("method")]] static bool isStatement(Napi::Env env, int kind);
+    [[clang::annotate("method")]] static bool isAttribute(Napi::Env env, int kind);
+    [[clang::annotate("getter")]] bool hasAttrs();
+    [[clang::annotate("method")]] static bool isInvalid(Napi::Env env, int kind);
+    [[clang::annotate("method")]] static bool isTranslationUnit(Napi::Env env, int kind);
+    [[clang::annotate("method")]] static bool isPreprocessing(Napi::Env env, int kind);
+    [[clang::annotate("method")]] static bool isUnexposed(Napi::Env env, int kind);
+    [[clang::annotate("getter")]] int getLinkage();
+    [[clang::annotate("getter")]] int getVisibility();
+    [[clang::annotate("getter")]] int getAvailability();
+    [[clang::annotate("getter")]] std::tuple<bool, std::string, bool, std::string, std::vector<PlatformAvailability>>
+        getPlatformAvailability();
+
     [[clang::annotate("getter")]] std::string getSpelling();
     [[clang::annotate("getter")]] std::optional<ConvertReturn<TranslationUnit>> getTranslateUnit();
     [[clang::annotate("getter")]] ConvertReturn<Type> getType();
-
     [[clang::annotate("getter")]] ConvertReturn<Cursor> getLexicalParent();
     [[clang::annotate("getter")]] ConvertReturn<Cursor> getSemanticParent();
     [[clang::annotate("getter")]] ConvertReturn<SourceLocation> getLocation();
