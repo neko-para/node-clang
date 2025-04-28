@@ -11,6 +11,7 @@ import type {
     CXSaveError,
     CXTLSKind,
     CXTUResourceUsageKind,
+    CXTemplateArgumentKind,
     CXTypeKind,
     CXVisibilityKind
 } from './enum'
@@ -138,8 +139,20 @@ export class CCursor {
     get location(): CSourceLocation
     get extent(): CSourceRange
     get type(): CType
-
+    get typedefDeclUnderlyingType(): CType
+    get enumDeclIntegerType(): CType
     get enumConstantDeclValue(): longlong
+    get enumConstantDeclUnsignedValue(): ulonglong
+    get isBitField(): boolean
+    get fieldDeclBitWidth(): int
+    get numArguments(): int
+    getArgument(index: unsigned): CCursor
+    get numTemplateArguments(): int
+    getTemplateArgumentKind(index: unsigned): CXTemplateArgumentKind
+    getTemplateArgumentType(index: unsigned): CType
+    getTemplateArgumentValue(index: unsigned): longlong
+    getTemplateArgumentUnsignedValue(index: unsigned): ulonglong
+
     get spelling(): string
     visitChildren(visitor: (cursor: CCursor, parent: CCursor) => CXChildVisitResult): boolean
     get mangling(): string

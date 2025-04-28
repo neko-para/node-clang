@@ -38,13 +38,28 @@ Napi::Function Cursor::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "enumConstantDeclUnsignedValue",
+                &Cursor::dispatcher<"get enumConstantDeclUnsignedValue", &Cursor::getEnumConstantDeclUnsignedValue>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "enumConstantDeclValue",
                 &Cursor::dispatcher<"get enumConstantDeclValue", &Cursor::getEnumConstantDeclValue>,
                 nullptr
             ),
             InstanceAccessor(
+                "enumDeclIntegerType",
+                &Cursor::dispatcher<"get enumDeclIntegerType", &Cursor::getEnumDeclIntegerType>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "extent",
                 &Cursor::dispatcher<"get extent", &Cursor::getExtent>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "fieldDeclBitWidth",
+                &Cursor::dispatcher<"get fieldDeclBitWidth", &Cursor::getFieldDeclBitWidth>,
                 nullptr
             ),
             InstanceAccessor(
@@ -70,6 +85,11 @@ Napi::Function Cursor::Init(Napi::Env env)
             InstanceAccessor(
                 "includedFile",
                 &Cursor::dispatcher<"get includedFile", &Cursor::getIncludedFile>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "isBitField",
+                &Cursor::dispatcher<"get isBitField", &Cursor::isBitField>,
                 nullptr
             ),
             InstanceAccessor(
@@ -113,6 +133,16 @@ Napi::Function Cursor::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "numArguments",
+                &Cursor::dispatcher<"get numArguments", &Cursor::getNumArguments>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "numTemplateArguments",
+                &Cursor::dispatcher<"get numTemplateArguments", &Cursor::getNumTemplateArguments>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "ObjCManglings",
                 &Cursor::dispatcher<"get ObjCManglings", &Cursor::getObjCManglings>,
                 nullptr
@@ -153,6 +183,11 @@ Napi::Function Cursor::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "typedefDeclUnderlyingType",
+                &Cursor::dispatcher<"get typedefDeclUnderlyingType", &Cursor::getTypedefDeclUnderlyingType>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "varDeclInitializer",
                 &Cursor::dispatcher<"get varDeclInitializer", &Cursor::getVarDeclInitializer>,
                 nullptr
@@ -167,6 +202,41 @@ Napi::Function Cursor::Init(Napi::Env env)
                 &Cursor::dispatcher<
                     "__dump",
                     &Cursor::__dump
+                >
+            ),
+            InstanceMethod(
+                "getArgument",
+                &Cursor::dispatcher<
+                    "getArgument",
+                    &Cursor::getArgument
+                >
+            ),
+            InstanceMethod(
+                "getTemplateArgumentKind",
+                &Cursor::dispatcher<
+                    "getTemplateArgumentKind",
+                    &Cursor::getTemplateArgumentKind
+                >
+            ),
+            InstanceMethod(
+                "getTemplateArgumentType",
+                &Cursor::dispatcher<
+                    "getTemplateArgumentType",
+                    &Cursor::getTemplateArgumentType
+                >
+            ),
+            InstanceMethod(
+                "getTemplateArgumentUnsignedValue",
+                &Cursor::dispatcher<
+                    "getTemplateArgumentUnsignedValue",
+                    &Cursor::getTemplateArgumentUnsignedValue
+                >
+            ),
+            InstanceMethod(
+                "getTemplateArgumentValue",
+                &Cursor::dispatcher<
+                    "getTemplateArgumentValue",
+                    &Cursor::getTemplateArgumentValue
                 >
             ),
             InstanceMethod(

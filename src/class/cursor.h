@@ -53,7 +53,19 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
     [[clang::annotate("getter")]] ConvertReturn<SourceLocation> getLocation();
     [[clang::annotate("getter")]] ConvertReturn<SourceRange> getExtent();
     [[clang::annotate("getter")]] ConvertReturn<Type> getType();
+    [[clang::annotate("getter")]] ConvertReturn<Type> getTypedefDeclUnderlyingType();
+    [[clang::annotate("getter")]] ConvertReturn<Type> getEnumDeclIntegerType();
     [[clang::annotate("getter")]] long long getEnumConstantDeclValue();
+    [[clang::annotate("getter")]] unsigned long long getEnumConstantDeclUnsignedValue();
+    [[clang::annotate("getter")]] bool isBitField();
+    [[clang::annotate("getter")]] int getFieldDeclBitWidth();
+    [[clang::annotate("getter")]] int getNumArguments();
+    [[clang::annotate("method")]] ConvertReturn<Cursor> getArgument(unsigned index);
+    [[clang::annotate("getter")]] int getNumTemplateArguments();
+    [[clang::annotate("method")]] int getTemplateArgumentKind(unsigned index);
+    [[clang::annotate("method")]] ConvertReturn<Type> getTemplateArgumentType(unsigned index);
+    [[clang::annotate("method")]] long long getTemplateArgumentValue(unsigned index);
+    [[clang::annotate("method")]] unsigned long long getTemplateArgumentUnsignedValue(unsigned index);
 
     [[clang::annotate("getter")]] std::string getSpelling();
     [[clang::annotate("method")]] bool visitChildren(Napi::Function visitor);

@@ -9,7 +9,6 @@
 #include "class/source_location.h"
 #include "class/type.h"
 #include "enum.h"
-#include "clang-c/Index.h"
 
 Cursor::Cursor(const Napi::CallbackInfo& info)
     : WrapBase<Cursor>(info)
@@ -301,9 +300,77 @@ ConvertReturn<Type> Cursor::getType()
     return { obj };
 }
 
+ConvertReturn<Type> Cursor::getTypedefDeclUnderlyingType()
+{
+    auto [tstate, obj] = Type::construct(Env());
+    tstate->data = library()->getTypedefDeclUnderlyingType(state->data);
+    return { obj };
+}
+
+ConvertReturn<Type> Cursor::getEnumDeclIntegerType()
+{
+    auto [tstate, obj] = Type::construct(Env());
+    tstate->data = library()->getEnumDeclIntegerType(state->data);
+    return { obj };
+}
+
 long long Cursor::getEnumConstantDeclValue()
 {
     return library()->getEnumConstantDeclValue(state->data);
+}
+
+unsigned long long Cursor::getEnumConstantDeclUnsignedValue()
+{
+    return library()->getEnumConstantDeclUnsignedValue(state->data);
+}
+
+bool Cursor::isBitField()
+{
+    return library()->Cursor_isBitField(state->data);
+}
+
+int Cursor::getFieldDeclBitWidth()
+{
+    return library()->getFieldDeclBitWidth(state->data);
+}
+
+int Cursor::getNumArguments()
+{
+    return library()->Cursor_getNumArguments(state->data);
+}
+
+ConvertReturn<Cursor> Cursor::getArgument(unsigned index)
+{
+    auto [cstate, obj] = Cursor::construct(Env());
+    cstate->data = library()->Cursor_getArgument(state->data, index);
+    return { obj };
+}
+
+int Cursor::getNumTemplateArguments()
+{
+    return library()->Cursor_getNumTemplateArguments(state->data);
+}
+
+int Cursor::getTemplateArgumentKind(unsigned index)
+{
+    return library()->Cursor_getTemplateArgumentKind(state->data, index);
+}
+
+ConvertReturn<Type> Cursor::getTemplateArgumentType(unsigned index)
+{
+    auto [tstate, obj] = Type::construct(Env());
+    tstate->data = library()->Cursor_getTemplateArgumentType(state->data, index);
+    return { obj };
+}
+
+long long Cursor::getTemplateArgumentValue(unsigned index)
+{
+    return library()->Cursor_getTemplateArgumentValue(state->data, index);
+}
+
+unsigned long long Cursor::getTemplateArgumentUnsignedValue(unsigned index)
+{
+    return library()->Cursor_getTemplateArgumentUnsignedValue(state->data, index);
 }
 
 std::string Cursor::getSpelling()

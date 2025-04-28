@@ -3,7 +3,7 @@
 libclang wrapper written by napi.
 Dynamic load libclang.dll/so/dylib.
 
-## Progress ![](https://progress-bar.xyz/40?prefix=140%20/%20351%20=%20&width=200)
+## Progress ![](https://progress-bar.xyz/43?prefix=152%20/%20351%20=%20&width=200)
 
 - [x] clang_getCString
 - [x] clang_disposeString
@@ -139,19 +139,19 @@ Dynamic load libclang.dll/so/dylib.
 - [x] clang_getCursorExtent
 - [x] clang_getCursorType
 - [x] clang_getTypeSpelling
-- [ ] clang_getTypedefDeclUnderlyingType
-- [ ] clang_getEnumDeclIntegerType
+- [x] clang_getTypedefDeclUnderlyingType
+- [x] clang_getEnumDeclIntegerType
 - [x] clang_getEnumConstantDeclValue
-- [ ] clang_getEnumConstantDeclUnsignedValue
-- [ ] clang_Cursor_isBitField
-- [ ] clang_getFieldDeclBitWidth
-- [ ] clang_Cursor_getNumArguments
-- [ ] clang_Cursor_getArgument
-- [ ] clang_Cursor_getNumTemplateArguments
-- [ ] clang_Cursor_getTemplateArgumentKind
-- [ ] clang_Cursor_getTemplateArgumentType
-- [ ] clang_Cursor_getTemplateArgumentValue
-- [ ] clang_Cursor_getTemplateArgumentUnsignedValue
+- [x] clang_getEnumConstantDeclUnsignedValue
+- [x] clang_Cursor_isBitField
+- [x] clang_getFieldDeclBitWidth
+- [x] clang_Cursor_getNumArguments
+- [x] clang_Cursor_getArgument
+- [x] clang_Cursor_getNumTemplateArguments
+- [x] clang_Cursor_getTemplateArgumentKind
+- [x] clang_Cursor_getTemplateArgumentType
+- [x] clang_Cursor_getTemplateArgumentValue
+- [x] clang_Cursor_getTemplateArgumentUnsignedValue
 - [x] clang_equalTypes
 - [ ] clang_getCanonicalType
 - [ ] clang_isConstQualifiedType
