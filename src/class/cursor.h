@@ -66,6 +66,10 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
     [[clang::annotate("method")]] ConvertReturn<Type> getTemplateArgumentType(unsigned index);
     [[clang::annotate("method")]] long long getTemplateArgumentValue(unsigned index);
     [[clang::annotate("method")]] unsigned long long getTemplateArgumentUnsignedValue(unsigned index);
+    [[clang::annotate("getter")]] bool isMacroFunctionLike();
+    [[clang::annotate("getter")]] bool isMacroBuiltin();
+    [[clang::annotate("getter")]] bool isFunctionInlined();
+    [[clang::annotate("getter")]] std::string getDeclObjCTypeEncoding();
 
     [[clang::annotate("getter")]] std::string getSpelling();
     [[clang::annotate("method")]] bool visitChildren(Napi::Function visitor);

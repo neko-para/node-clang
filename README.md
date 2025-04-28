@@ -3,7 +3,7 @@
 libclang wrapper written by napi.
 Dynamic load libclang.dll/so/dylib.
 
-## Progress ![](https://progress-bar.xyz/43?prefix=152%20/%20351%20=%20&width=200)
+## Progress ![](https://progress-bar.xyz/47?prefix=164%20/%20351%20=%20&width=200)
 
 - [x] clang_getCString
 - [x] clang_disposeString
@@ -153,25 +153,25 @@ Dynamic load libclang.dll/so/dylib.
 - [x] clang_Cursor_getTemplateArgumentValue
 - [x] clang_Cursor_getTemplateArgumentUnsignedValue
 - [x] clang_equalTypes
-- [ ] clang_getCanonicalType
-- [ ] clang_isConstQualifiedType
-- [ ] clang_Cursor_isMacroFunctionLike
-- [ ] clang_Cursor_isMacroBuiltin
-- [ ] clang_Cursor_isFunctionInlined
-- [ ] clang_isVolatileQualifiedType
-- [ ] clang_isRestrictQualifiedType
-- [ ] clang_getAddressSpace
-- [ ] clang_getTypedefName
-- [ ] clang_getPointeeType
-- [ ] clang_getUnqualifiedType
-- [ ] clang_getNonReferenceType
-- [ ] clang_getTypeDeclaration
-- [ ] clang_getDeclObjCTypeEncoding
-- [ ] clang_Type_getObjCEncoding
-- [ ] clang_getTypeKindSpelling
-- [ ] clang_getFunctionTypeCallingConv
-- [ ] clang_getResultType
-- [ ] clang_getExceptionSpecificationType
+- [x] clang_getCanonicalType
+- [x] clang_isConstQualifiedType
+- [x] clang_Cursor_isMacroFunctionLike
+- [x] clang_Cursor_isMacroBuiltin
+- [x] clang_Cursor_isFunctionInlined
+- [x] clang_isVolatileQualifiedType
+- [x] clang_isRestrictQualifiedType
+- [x] clang_getAddressSpace
+- [x] clang_getTypedefName
+- [x] clang_getPointeeType
+- [x] clang_getUnqualifiedType
+- [x] clang_getNonReferenceType
+- [x] clang_getTypeDeclaration
+- [x] clang_getDeclObjCTypeEncoding
+- [x] clang_Type_getObjCEncoding
+- [x] clang_getTypeKindSpelling
+- [x] clang_getFunctionTypeCallingConv
+- [x] clang_getResultType
+- [x] clang_getExceptionSpecificationType
 - [ ] clang_getNumArgTypes
 - [ ] clang_getArgType
 - [ ] clang_Type_getObjCObjectBaseType

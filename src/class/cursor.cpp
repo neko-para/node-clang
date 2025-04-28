@@ -373,6 +373,26 @@ unsigned long long Cursor::getTemplateArgumentUnsignedValue(unsigned index)
     return library()->Cursor_getTemplateArgumentUnsignedValue(state->data, index);
 }
 
+bool Cursor::isMacroFunctionLike()
+{
+    return library()->Cursor_isMacroFunctionLike(state->data);
+}
+
+bool Cursor::isMacroBuiltin()
+{
+    return library()->Cursor_isMacroBuiltin(state->data);
+}
+
+bool Cursor::isFunctionInlined()
+{
+    return library()->Cursor_isFunctionInlined(state->data);
+}
+
+std::string Cursor::getDeclObjCTypeEncoding()
+{
+    return getStr(library()->getDeclObjCTypeEncoding(state->data));
+}
+
 std::string Cursor::getSpelling()
 {
     return getStr(library()->getCursorSpelling(state->data));

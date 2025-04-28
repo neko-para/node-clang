@@ -38,6 +38,11 @@ Napi::Function Cursor::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "declObjCTypeEncoding",
+                &Cursor::dispatcher<"get declObjCTypeEncoding", &Cursor::getDeclObjCTypeEncoding>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "enumConstantDeclUnsignedValue",
                 &Cursor::dispatcher<"get enumConstantDeclUnsignedValue", &Cursor::getEnumConstantDeclUnsignedValue>,
                 nullptr
@@ -93,8 +98,23 @@ Napi::Function Cursor::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "isFunctionInlined",
+                &Cursor::dispatcher<"get isFunctionInlined", &Cursor::isFunctionInlined>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "isInvalidDeclaration",
                 &Cursor::dispatcher<"get isInvalidDeclaration", &Cursor::isInvalidDeclaration>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "isMacroBuiltin",
+                &Cursor::dispatcher<"get isMacroBuiltin", &Cursor::isMacroBuiltin>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "isMacroFunctionLike",
+                &Cursor::dispatcher<"get isMacroFunctionLike", &Cursor::isMacroFunctionLike>,
                 nullptr
             ),
             InstanceAccessor(
@@ -1013,13 +1033,68 @@ Napi::Function Type::Init(Napi::Env env)
         "CType",
         {
             InstanceAccessor(
+                "addressSpace",
+                &Type::dispatcher<"get addressSpace", &Type::getAddressSpace>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "canonicalType",
+                &Type::dispatcher<"get canonicalType", &Type::canonicalType>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "exceptionSpecificationType",
+                &Type::dispatcher<"get exceptionSpecificationType", &Type::getExceptionSpecificationType>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "functionTypeCallingConv",
+                &Type::dispatcher<"get functionTypeCallingConv", &Type::getFunctionTypeCallingConv>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "isConstQualifiedType",
+                &Type::dispatcher<"get isConstQualifiedType", &Type::isConstQualifiedType>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "isRestrictQualifiedType",
+                &Type::dispatcher<"get isRestrictQualifiedType", &Type::isRestrictQualifiedType>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "isVolatileQualifiedType",
+                &Type::dispatcher<"get isVolatileQualifiedType", &Type::isVolatileQualifiedType>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "kind",
                 &Type::dispatcher<"get kind", &Type::getKind>,
                 nullptr
             ),
             InstanceAccessor(
-                "kindStr",
-                &Type::dispatcher<"get kindStr", &Type::getKindStr>,
+                "kindSpelling",
+                &Type::dispatcher<"get kindSpelling", &Type::getKindSpellingImpl>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "nonReferenceType",
+                &Type::dispatcher<"get nonReferenceType", &Type::getNonReferenceType>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "ObjCEncoding",
+                &Type::dispatcher<"get ObjCEncoding", &Type::getObjCEncoding>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "pointeeType",
+                &Type::dispatcher<"get pointeeType", &Type::getPointeeType>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "resultType",
+                &Type::dispatcher<"get resultType", &Type::getResultType>,
                 nullptr
             ),
             InstanceAccessor(
@@ -1027,11 +1102,33 @@ Napi::Function Type::Init(Napi::Env env)
                 &Type::dispatcher<"get spelling", &Type::getSpelling>,
                 nullptr
             ),
+            InstanceAccessor(
+                "typeDeclaration",
+                &Type::dispatcher<"get typeDeclaration", &Type::getTypeDeclaration>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "typedefName",
+                &Type::dispatcher<"get typedefName", &Type::getTypedefName>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "unqualifiedType",
+                &Type::dispatcher<"get unqualifiedType", &Type::getUnqualifiedType>,
+                nullptr
+            ),
             InstanceMethod(
                 "isEqual",
                 &Type::dispatcher<
                     "isEqual",
                     &Type::isEqual
+                >
+            ),
+            StaticMethod(
+                "getKindSpelling",
+                &Type::dispatcherStatic<
+                    "getKindSpelling",
+                    &Type::getKindSpelling
                 >
             ),
             InstanceMethod(

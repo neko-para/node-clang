@@ -1,8 +1,10 @@
 import type { int, longlong, ulong, ulonglong, unsigned } from './base'
 import type {
     CXAvailabilityKind,
+    CXCallingConv,
     CXChildVisitResult,
     CXCursorKind,
+    CXCursor_ExceptionSpecificationKind,
     CXDiagnosticSeverity,
     CXErrorCode,
     CXLanguageKind,
@@ -152,6 +154,10 @@ export class CCursor {
     getTemplateArgumentType(index: unsigned): CType
     getTemplateArgumentValue(index: unsigned): longlong
     getTemplateArgumentUnsignedValue(index: unsigned): ulonglong
+    get isMacroFunctionLike(): boolean
+    get isMacroBuiltin(): boolean
+    get isFunctionInlined(): boolean
+    get declObjCTypeEncoding(): string
 
     get spelling(): string
     visitChildren(visitor: (cursor: CCursor, parent: CCursor) => CXChildVisitResult): boolean
@@ -172,8 +178,23 @@ export class CCursorSet {
 export class CType {
     isEqual(type: CType): boolean
     get kind(): CXTypeKind
-    get kindStr(): string
+    get kindSpelling(): string
     get spelling(): string
+    get canonicalType(): CType
+    get isConstQualifiedType(): boolean
+    get isVolatileQualifiedType(): boolean
+    get isRestrictQualifiedType(): boolean
+    get addressSpace(): unsigned
+    get typedefName(): string
+    get pointeeType(): CType
+    get unqualifiedType(): CType
+    get nonReferenceType(): CType
+    get typeDeclaration(): CCursor
+    get ObjCEncoding(): string
+    static getKindSpelling(kind: CXTypeKind): string
+    get functionTypeCallingConv(): CXCallingConv
+    get resultType(): CType
+    get exceptionSpecificationType(): CXCursor_ExceptionSpecificationKind | -1
 }
 
 export class CFile {
