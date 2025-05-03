@@ -118,6 +118,53 @@ int Type::getExceptionSpecificationType()
     return library()->getExceptionSpecificationType(state->data);
 }
 
+std::optional<unsigned> Type::getNumArgTypes()
+{
+    auto res = library()->getNumArgTypes(state->data);
+    if (res == -1) {
+        return std::nullopt;
+    }
+    return res;
+}
+
+ConvertReturn<Type> Type::getArgType(unsigned index)
+{
+    auto [tstate, obj] = Type::construct(Env());
+    tstate->data = library()->getArgType(state->data, index);
+    return { obj };
+}
+
+ConvertReturn<Type> Type::getObjCObjectBaseType()
+{
+    auto [tstate, obj] = Type::construct(Env());
+    tstate->data = library()->Type_getObjCObjectBaseType(state->data);
+    return { obj };
+}
+
+unsigned Type::getNumObjCProtocolRefs()
+{
+    return library()->Type_getNumObjCProtocolRefs(state->data);
+}
+
+ConvertReturn<Cursor> Type::getObjCProtocolDecl(unsigned index)
+{
+    auto [cstate, obj] = Cursor::construct(Env());
+    cstate->data = library()->Type_getObjCProtocolDecl(state->data, index);
+    return { obj };
+}
+
+unsigned Type::getNumObjCTypeArgs()
+{
+    return library()->Type_getNumObjCTypeArgs(state->data);
+}
+
+ConvertReturn<Type> Type::getObjCTypeArg(unsigned index)
+{
+    auto [tstate, obj] = Type::construct(Env());
+    tstate->data = library()->Type_getObjCTypeArg(state->data, index);
+    return { obj };
+}
+
 std::string Type::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect)
 {
     auto kind = getKind();

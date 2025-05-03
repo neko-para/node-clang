@@ -195,6 +195,13 @@ export class CType {
     get functionTypeCallingConv(): CXCallingConv
     get resultType(): CType
     get exceptionSpecificationType(): CXCursor_ExceptionSpecificationKind | -1
+    get numArgTypes(): int | null
+    getArgType(index: unsigned): CType
+    get ObjCObjectBaseType(): CType
+    get numObjCProtocolRefs(): unsigned
+    getObjCProtocolDecl(index: unsigned): CCursor
+    get numObjCTypeArgs(): unsigned
+    getObjCTypeArg(index: unsigned): CType
 }
 
 export class CFile {

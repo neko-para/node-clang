@@ -1083,8 +1083,28 @@ Napi::Function Type::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "numArgTypes",
+                &Type::dispatcher<"get numArgTypes", &Type::getNumArgTypes>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "numObjCProtocolRefs",
+                &Type::dispatcher<"get numObjCProtocolRefs", &Type::getNumObjCProtocolRefs>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "numObjCTypeArgs",
+                &Type::dispatcher<"get numObjCTypeArgs", &Type::getNumObjCTypeArgs>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "ObjCEncoding",
                 &Type::dispatcher<"get ObjCEncoding", &Type::getObjCEncoding>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "ObjCObjectBaseType",
+                &Type::dispatcher<"get ObjCObjectBaseType", &Type::getObjCObjectBaseType>,
                 nullptr
             ),
             InstanceAccessor(
@@ -1116,6 +1136,27 @@ Napi::Function Type::Init(Napi::Env env)
                 "unqualifiedType",
                 &Type::dispatcher<"get unqualifiedType", &Type::getUnqualifiedType>,
                 nullptr
+            ),
+            InstanceMethod(
+                "getArgType",
+                &Type::dispatcher<
+                    "getArgType",
+                    &Type::getArgType
+                >
+            ),
+            InstanceMethod(
+                "getObjCProtocolDecl",
+                &Type::dispatcher<
+                    "getObjCProtocolDecl",
+                    &Type::getObjCProtocolDecl
+                >
+            ),
+            InstanceMethod(
+                "getObjCTypeArg",
+                &Type::dispatcher<
+                    "getObjCTypeArg",
+                    &Type::getObjCTypeArg
+                >
             ),
             InstanceMethod(
                 "isEqual",

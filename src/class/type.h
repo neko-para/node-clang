@@ -33,6 +33,13 @@ struct [[clang::annotate("class")]] Type : public WrapBase<Type>
     [[clang::annotate("getter")]] int getFunctionTypeCallingConv();
     [[clang::annotate("getter")]] ConvertReturn<Type> getResultType();
     [[clang::annotate("getter")]] int getExceptionSpecificationType();
+    [[clang::annotate("getter")]] std::optional<unsigned> getNumArgTypes();
+    [[clang::annotate("method")]] ConvertReturn<Type> getArgType(unsigned index);
+    [[clang::annotate("getter:ObjCObjectBaseType")]] ConvertReturn<Type> getObjCObjectBaseType();
+    [[clang::annotate("getter")]] unsigned getNumObjCProtocolRefs();
+    [[clang::annotate("method")]] ConvertReturn<Cursor> getObjCProtocolDecl(unsigned index);
+    [[clang::annotate("getter")]] unsigned getNumObjCTypeArgs();
+    [[clang::annotate("method")]] ConvertReturn<Type> getObjCTypeArg(unsigned index);
 
     [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
