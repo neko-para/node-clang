@@ -17,72 +17,72 @@ struct [[clang::annotate("class")]] Cursor : public WrapBase<Cursor>
 
     Cursor(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("method")]] static ConvertReturn<Cursor> null(Napi::Env env);
-    [[clang::annotate("method")]] bool isEqual(ConvertRef<Cursor> cursor);
-    [[clang::annotate("method:isEqual")]] bool isEqualRelax(ConvertRef<Cursor> cursor, bool relax);
-    [[clang::annotate("getter")]] bool isNull();
-    [[clang::annotate("getter")]] unsigned getHash();
-    [[clang::annotate("getter")]] int getKind();
-    [[clang::annotate("getter")]] std::string getKindStr();
-    [[clang::annotate("method")]] static bool isDeclaration(Napi::Env env, int kind);
-    [[clang::annotate("getter")]] bool isInvalidDeclaration();
-    [[clang::annotate("method")]] static bool isReference(Napi::Env env, int kind);
-    [[clang::annotate("method")]] static bool isExpression(Napi::Env env, int kind);
-    [[clang::annotate("method")]] static bool isStatement(Napi::Env env, int kind);
-    [[clang::annotate("method")]] static bool isAttribute(Napi::Env env, int kind);
-    [[clang::annotate("getter")]] bool hasAttrs();
-    [[clang::annotate("method")]] static bool isInvalid(Napi::Env env, int kind);
-    [[clang::annotate("method")]] static bool isTranslationUnit(Napi::Env env, int kind);
-    [[clang::annotate("method")]] static bool isPreprocessing(Napi::Env env, int kind);
-    [[clang::annotate("method")]] static bool isUnexposed(Napi::Env env, int kind);
-    [[clang::annotate("getter")]] int getLinkage();
-    [[clang::annotate("getter")]] int getVisibility();
-    [[clang::annotate("getter")]] int getAvailability();
-    [[clang::annotate("getter")]] std::tuple<bool, std::string, bool, std::string, std::vector<PlatformAvailability>>
-        getPlatformAvailability();
-    [[clang::annotate("getter")]] ConvertReturn<Cursor> getVarDeclInitializer();
-    [[clang::annotate("getter")]] int hasVarDeclGlobalStorage();
-    [[clang::annotate("getter")]] int hasVarDeclExternalStorage();
-    [[clang::annotate("getter")]] int getCursorLanguage();
-    [[clang::annotate("getter:TLSKind")]] int getTLSKind();
-    [[clang::annotate("getter")]] std::optional<ConvertReturn<TranslationUnit>> getTranslateUnit();
-    [[clang::annotate("getter")]] ConvertReturn<Cursor> getLexicalParent();
-    [[clang::annotate("getter")]] ConvertReturn<Cursor> getSemanticParent();
-    [[clang::annotate("getter")]] std::optional<std::vector<ConvertReturn<Cursor>>> getOverriddenCursors();
-    [[clang::annotate("getter")]] std::optional<ConvertReturn<File>> getIncludedFile();
-    [[clang::annotate("getter")]] ConvertReturn<SourceLocation> getLocation();
-    [[clang::annotate("getter")]] ConvertReturn<SourceRange> getExtent();
-    [[clang::annotate("getter")]] ConvertReturn<Type> getType();
-    [[clang::annotate("getter")]] ConvertReturn<Type> getTypedefDeclUnderlyingType();
-    [[clang::annotate("getter")]] ConvertReturn<Type> getEnumDeclIntegerType();
-    [[clang::annotate("getter")]] long long getEnumConstantDeclValue();
-    [[clang::annotate("getter")]] unsigned long long getEnumConstantDeclUnsignedValue();
-    [[clang::annotate("getter")]] bool isBitField();
-    [[clang::annotate("getter")]] int getFieldDeclBitWidth();
-    [[clang::annotate("getter")]] int getNumArguments();
-    [[clang::annotate("method")]] ConvertReturn<Cursor> getArgument(unsigned index);
-    [[clang::annotate("getter")]] int getNumTemplateArguments();
-    [[clang::annotate("method")]] int getTemplateArgumentKind(unsigned index);
-    [[clang::annotate("method")]] ConvertReturn<Type> getTemplateArgumentType(unsigned index);
-    [[clang::annotate("method")]] long long getTemplateArgumentValue(unsigned index);
-    [[clang::annotate("method")]] unsigned long long getTemplateArgumentUnsignedValue(unsigned index);
-    [[clang::annotate("getter")]] bool isMacroFunctionLike();
-    [[clang::annotate("getter")]] bool isMacroBuiltin();
-    [[clang::annotate("getter")]] bool isFunctionInlined();
-    [[clang::annotate("getter")]] std::string getDeclObjCTypeEncoding();
+    nc_method static ConvertReturn<Cursor> null(Napi::Env env);
+    nc_method bool isEqual(ConvertRef<Cursor> cursor);
+    nc_method_as(isEqual) bool isEqualRelax(ConvertRef<Cursor> cursor, bool relax);
+    nc_getter bool isNull();
+    nc_getter unsigned getHash();
+    nc_getter int getKind();
+    nc_getter std::string getKindStr();
+    nc_method static bool isDeclaration(Napi::Env env, int kind);
+    nc_getter bool isInvalidDeclaration();
+    nc_method static bool isReference(Napi::Env env, int kind);
+    nc_method static bool isExpression(Napi::Env env, int kind);
+    nc_method static bool isStatement(Napi::Env env, int kind);
+    nc_method static bool isAttribute(Napi::Env env, int kind);
+    nc_getter bool hasAttrs();
+    nc_method static bool isInvalid(Napi::Env env, int kind);
+    nc_method static bool isTranslationUnit(Napi::Env env, int kind);
+    nc_method static bool isPreprocessing(Napi::Env env, int kind);
+    nc_method static bool isUnexposed(Napi::Env env, int kind);
+    nc_getter int getLinkage();
+    nc_getter int getVisibility();
+    nc_getter int getAvailability();
+    nc_getter std::tuple<bool, std::string, bool, std::string, std::vector<PlatformAvailability>> getPlatformAvailability();
+    nc_getter ConvertReturn<Cursor> getVarDeclInitializer();
+    nc_getter int hasVarDeclGlobalStorage();
+    nc_getter int hasVarDeclExternalStorage();
+    nc_getter int getCursorLanguage();
+    nc_getter_as(TLSKind) int getTLSKind();
+    nc_getter std::optional<ConvertReturn<TranslationUnit>> getTranslateUnit();
+    nc_getter ConvertReturn<Cursor> getLexicalParent();
+    nc_getter ConvertReturn<Cursor> getSemanticParent();
+    nc_getter std::optional<std::vector<ConvertReturn<Cursor>>> getOverriddenCursors();
+    nc_getter std::optional<ConvertReturn<File>> getIncludedFile();
+    nc_getter ConvertReturn<SourceLocation> getLocation();
+    nc_getter ConvertReturn<SourceRange> getExtent();
+    nc_getter ConvertReturn<Type> getType();
+    nc_getter ConvertReturn<Type> getTypedefDeclUnderlyingType();
+    nc_getter ConvertReturn<Type> getEnumDeclIntegerType();
+    nc_getter long long getEnumConstantDeclValue();
+    nc_getter unsigned long long getEnumConstantDeclUnsignedValue();
+    nc_getter bool isBitField();
+    nc_getter int getFieldDeclBitWidth();
+    nc_getter int getNumArguments();
+    nc_method ConvertReturn<Cursor> getArgument(unsigned index);
+    nc_getter int getNumTemplateArguments();
+    nc_method int getTemplateArgumentKind(unsigned index);
+    nc_method ConvertReturn<Type> getTemplateArgumentType(unsigned index);
+    nc_method long long getTemplateArgumentValue(unsigned index);
+    nc_method unsigned long long getTemplateArgumentUnsignedValue(unsigned index);
+    nc_getter bool isMacroFunctionLike();
+    nc_getter bool isMacroBuiltin();
+    nc_getter bool isFunctionInlined();
+    nc_getter std::string getDeclObjCTypeEncoding();
+    nc_getter ConvertReturn<Type> getCursorResultType();
 
-    [[clang::annotate("getter")]] std::string getSpelling();
-    [[clang::annotate("method")]] bool visitChildren(Napi::Function visitor);
+    nc_getter std::string getSpelling();
+    nc_method bool visitChildren(Napi::Function visitor);
 
-    [[clang::annotate("getter")]] std::string getMangling();
-    [[clang::annotate("getter:CXXManglings")]] std::vector<std::string> getCXXManglings();
-    [[clang::annotate("getter:ObjCManglings")]] std::vector<std::string> getObjCManglings();
+    nc_getter std::string getMangling();
+    nc_getter_as(CXXManglings) std::vector<std::string> getCXXManglings();
+    nc_getter_as(ObjCManglings) std::vector<std::string> getObjCManglings();
 
-    [[clang::annotate("getter")]] bool CXXMethod_isStatic();
+    nc_getter bool CXXMethod_isStatic();
 
-    [[clang::annotate("method")]] std::string __dump();
+    nc_method std::string __dump();
 
-    [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
+    nc_inspect std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {
@@ -100,9 +100,9 @@ struct [[clang::annotate("class")]] CursorSet : public WrapBase<CursorSet>
 
     CursorSet(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("method")]] static ConvertReturn<CursorSet> create(Napi::Env env);
-    [[clang::annotate("method")]] bool contains(ConvertRef<Cursor> cursor);
-    [[clang::annotate("method")]] bool insert(ConvertRef<Cursor> cursor);
+    nc_method static ConvertReturn<CursorSet> create(Napi::Env env);
+    nc_method bool contains(ConvertRef<Cursor> cursor);
+    nc_method bool insert(ConvertRef<Cursor> cursor);
 
     struct State
     {

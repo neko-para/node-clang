@@ -3,7 +3,7 @@
 libclang wrapper written by napi.
 Dynamic load libclang.dll/so/dylib.
 
-## Progress ![](https://progress-bar.xyz/51?prefix=178%20/%20351%20=%20&width=200)
+## Progress ![](https://progress-bar.xyz/51?prefix=180%20/%20351%20=%20&width=200)
 
 - [x] clang_getCString
 - [x] clang_disposeString
@@ -179,8 +179,8 @@ Dynamic load libclang.dll/so/dylib.
 - [x] clang_Type_getObjCProtocolDecl
 - [x] clang_Type_getNumObjCTypeArgs
 - [x] clang_Type_getObjCTypeArg
-- [ ] clang_isFunctionTypeVariadic
-- [ ] clang_getCursorResultType
+- [x] clang_isFunctionTypeVariadic
+- [x] clang_getCursorResultType
 - [ ] clang_getCursorExceptionSpecificationType
 - [ ] clang_isPODType
 - [ ] clang_getElementType

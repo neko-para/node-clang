@@ -13,5 +13,5 @@ struct [[clang::annotate("class")]] Global : public WrapBase<Global>
 
     using WrapBase::WrapBase;
 
-    [[clang::annotate("method")]] static unsigned long long buildSessionTimestamp(Napi::Env env);
+    nc_method static unsigned long long buildSessionTimestamp(Napi::Env env);
 };

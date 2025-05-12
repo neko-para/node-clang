@@ -15,19 +15,19 @@ struct [[clang::annotate("class")]] SourceLocation : public WrapBase<SourceLocat
 
     SourceLocation(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("method")]] static ConvertReturn<SourceLocation> null(Napi::Env env);
+    nc_method static ConvertReturn<SourceLocation> null(Napi::Env env);
 
-    [[clang::annotate("method")]] bool isEqual(ConvertRef<SourceLocation> loc);
-    [[clang::annotate("method")]] bool isBefore(ConvertRef<SourceLocation> loc);
-    [[clang::annotate("getter")]] bool isInSystemHeader();
-    [[clang::annotate("getter")]] bool isFromMainFile();
+    nc_method bool isEqual(ConvertRef<SourceLocation> loc);
+    nc_method bool isBefore(ConvertRef<SourceLocation> loc);
+    nc_getter bool isInSystemHeader();
+    nc_getter bool isFromMainFile();
 
-    [[clang::annotate("getter")]] std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> getExpansionLocation();
-    [[clang::annotate("getter")]] std::tuple<std::string, unsigned, unsigned> getPresumedLocation();
-    [[clang::annotate("getter")]] std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> getSpellingLocation();
-    [[clang::annotate("getter")]] std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> getFileLocation();
+    nc_getter std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> getExpansionLocation();
+    nc_getter std::tuple<std::string, unsigned, unsigned> getPresumedLocation();
+    nc_getter std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> getSpellingLocation();
+    nc_getter std::tuple<std::optional<ConvertReturn<File>>, unsigned, unsigned, unsigned> getFileLocation();
 
-    [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
+    nc_inspect std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {
@@ -45,17 +45,16 @@ struct [[clang::annotate("class")]] SourceRange : public WrapBase<SourceRange>
 
     SourceRange(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("method")]] static ConvertReturn<SourceRange> null(Napi::Env env);
-    [[clang::annotate("method")]] static ConvertReturn<SourceRange>
-        create(Napi::Env env, ConvertRef<SourceLocation> begin, ConvertRef<SourceLocation> end);
+    nc_method static ConvertReturn<SourceRange> null(Napi::Env env);
+    nc_method static ConvertReturn<SourceRange> create(Napi::Env env, ConvertRef<SourceLocation> begin, ConvertRef<SourceLocation> end);
 
-    [[clang::annotate("method")]] bool isEqual(ConvertRef<SourceRange> rng);
-    [[clang::annotate("getter")]] bool isNull();
+    nc_method bool isEqual(ConvertRef<SourceRange> rng);
+    nc_getter bool isNull();
 
-    [[clang::annotate("getter")]] ConvertReturn<SourceLocation> getStart();
-    [[clang::annotate("getter")]] ConvertReturn<SourceLocation> getEnd();
+    nc_getter ConvertReturn<SourceLocation> getStart();
+    nc_getter ConvertReturn<SourceLocation> getEnd();
 
-    [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
+    nc_inspect std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {

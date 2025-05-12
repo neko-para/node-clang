@@ -393,6 +393,13 @@ std::string Cursor::getDeclObjCTypeEncoding()
     return getStr(library()->getDeclObjCTypeEncoding(state->data));
 }
 
+ConvertReturn<Type> Cursor::getCursorResultType()
+{
+    auto [tstate, obj] = Type::construct(Env());
+    tstate->data = library()->getCursorResultType(state->data);
+    return { obj };
+}
+
 std::string Cursor::getSpelling()
 {
     return getStr(library()->getCursorSpelling(state->data));

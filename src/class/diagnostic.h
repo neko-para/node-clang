@@ -8,6 +8,7 @@
 
 #include "class/convert.h"
 #include "class/instance.h"
+#include "class/types.h"
 
 struct [[clang::annotate("class")]] Diagnostic : public WrapBase<Diagnostic>
 {
@@ -15,22 +16,22 @@ struct [[clang::annotate("class")]] Diagnostic : public WrapBase<Diagnostic>
 
     Diagnostic(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("getter")]] std::optional<ConvertReturn<DiagnosticSet>> getChildDiagnostics();
+    nc_getter std::optional<ConvertReturn<DiagnosticSet>> getChildDiagnostics();
 
-    [[clang::annotate("method")]] std::string format(unsigned option);
-    [[clang::annotate("method")]] static unsigned defaultDisplayOptions(Napi::Env env);
-    [[clang::annotate("getter")]] int getSeverity();
-    [[clang::annotate("getter")]] ConvertReturn<SourceLocation> getLocation();
-    [[clang::annotate("getter")]] std::string getSpelling();
-    [[clang::annotate("getter")]] std::tuple<std::string, std::string> getOption();
-    [[clang::annotate("getter")]] unsigned getCategory();
-    [[clang::annotate("getter")]] std::string getCategoryText();
-    [[clang::annotate("getter")]] unsigned getNumRanges();
-    [[clang::annotate("method")]] ConvertReturn<SourceRange> getRange(unsigned index);
-    [[clang::annotate("getter")]] unsigned getNumFixIts();
-    [[clang::annotate("method")]] std::tuple<std::string, ConvertReturn<SourceRange>> getFixIt(unsigned index);
+    nc_method std::string format(unsigned option);
+    nc_method static unsigned defaultDisplayOptions(Napi::Env env);
+    nc_getter int getSeverity();
+    nc_getter ConvertReturn<SourceLocation> getLocation();
+    nc_getter std::string getSpelling();
+    nc_getter std::tuple<std::string, std::string> getOption();
+    nc_getter unsigned getCategory();
+    nc_getter std::string getCategoryText();
+    nc_getter unsigned getNumRanges();
+    nc_method ConvertReturn<SourceRange> getRange(unsigned index);
+    nc_getter unsigned getNumFixIts();
+    nc_method std::tuple<std::string, ConvertReturn<SourceRange>> getFixIt(unsigned index);
 
-    [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
+    nc_inspect std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {
@@ -53,14 +54,12 @@ struct [[clang::annotate("class")]] DiagnosticSet : public WrapBase<DiagnosticSe
 
     DiagnosticSet(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("getter")]] unsigned getLength();
-    [[clang::annotate("method")]] std::optional<ConvertReturn<Diagnostic>> getDiagnostic(unsigned index);
+    nc_getter unsigned getLength();
+    nc_method std::optional<ConvertReturn<Diagnostic>> getDiagnostic(unsigned index);
 
-    [[clang::annotate("method")]] static std::
-        variant<std::tuple<ConvertReturn<DiagnosticSet>, ConvertNull>, std::tuple<ConvertNull, std::tuple<int, std::string>>>
-        load(Napi::Env env, std::string file);
+    nc_method static Either<ConvertReturn<DiagnosticSet>, std::tuple<int, std::string>> load(Napi::Env env, std::string file);
 
-    [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
+    nc_inspect std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {

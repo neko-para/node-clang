@@ -158,6 +158,7 @@ export class CCursor {
     get isMacroBuiltin(): boolean
     get isFunctionInlined(): boolean
     get declObjCTypeEncoding(): string
+    get cursorResultType(): CType
 
     get spelling(): string
     visitChildren(visitor: (cursor: CCursor, parent: CCursor) => CXChildVisitResult): boolean
@@ -202,6 +203,7 @@ export class CType {
     getObjCProtocolDecl(index: unsigned): CCursor
     get numObjCTypeArgs(): unsigned
     getObjCTypeArg(index: unsigned): CType
+    get isFunctionTypeVariadic(): boolean
 }
 
 export class CFile {

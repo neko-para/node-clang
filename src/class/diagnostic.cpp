@@ -5,6 +5,7 @@
 #include "class/convert.h"
 #include "class/instance.h"
 #include "class/source_location.h"
+#include "class/types.h"
 
 Diagnostic::Diagnostic(const Napi::CallbackInfo& info)
     : WrapBase<Diagnostic>(info)
@@ -130,14 +131,13 @@ std::optional<ConvertReturn<Diagnostic>> DiagnosticSet::getDiagnostic(unsigned i
     return ConvertReturn<Diagnostic> { obj };
 }
 
-std::variant<std::tuple<ConvertReturn<DiagnosticSet>, ConvertNull>, std::tuple<ConvertNull, std::tuple<int, std::string>>>
-    DiagnosticSet::load(Napi::Env env, std::string file)
+Either<ConvertReturn<DiagnosticSet>, std::tuple<int, std::string>> DiagnosticSet::load(Napi::Env env, std::string file)
 {
     CXLoadDiag_Error err;
     CXString errStr;
     auto data = Instance::get(env).library->loadDiagnostics(file.c_str(), &err, &errStr);
     if (!data) {
-        return std::tuple<ConvertNull, std::tuple<int, std::string>> {
+        return EitherFailed<std::tuple<int, std::string>> {
             {},
             { err, getStr(env, errStr) },
         };
@@ -145,7 +145,7 @@ std::variant<std::tuple<ConvertReturn<DiagnosticSet>, ConvertNull>, std::tuple<C
     auto [state, obj] = DiagnosticSet::construct(env);
     state->data = data;
     state->dispose = true;
-    return std::tuple<ConvertReturn<DiagnosticSet>, ConvertNull> {
+    return EitherSuccess<ConvertReturn<DiagnosticSet>> {
         { obj },
         {},
     };

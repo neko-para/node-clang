@@ -14,34 +14,35 @@ struct [[clang::annotate("class")]] Type : public WrapBase<Type>
 
     Type(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("method")]] bool isEqual(ConvertRef<Type> cursor);
-    [[clang::annotate("getter")]] int getKind();
-    [[clang::annotate("getter:kindSpelling")]] std::string getKindSpellingImpl();
-    [[clang::annotate("getter")]] std::string getSpelling();
-    [[clang::annotate("getter")]] ConvertReturn<Type> canonicalType();
-    [[clang::annotate("getter")]] bool isConstQualifiedType();
-    [[clang::annotate("getter")]] bool isVolatileQualifiedType();
-    [[clang::annotate("getter")]] bool isRestrictQualifiedType();
-    [[clang::annotate("getter")]] unsigned getAddressSpace();
-    [[clang::annotate("getter")]] std::string getTypedefName();
-    [[clang::annotate("getter")]] ConvertReturn<Type> getPointeeType();
-    [[clang::annotate("getter")]] ConvertReturn<Type> getUnqualifiedType();
-    [[clang::annotate("getter")]] ConvertReturn<Type> getNonReferenceType();
-    [[clang::annotate("getter")]] ConvertReturn<Cursor> getTypeDeclaration();
-    [[clang::annotate("getter:ObjCEncoding")]] std::string getObjCEncoding();
-    [[clang::annotate("method")]] static std::string getKindSpelling(Napi::Env env, int kind);
-    [[clang::annotate("getter")]] int getFunctionTypeCallingConv();
-    [[clang::annotate("getter")]] ConvertReturn<Type> getResultType();
-    [[clang::annotate("getter")]] int getExceptionSpecificationType();
-    [[clang::annotate("getter")]] std::optional<unsigned> getNumArgTypes();
-    [[clang::annotate("method")]] ConvertReturn<Type> getArgType(unsigned index);
-    [[clang::annotate("getter:ObjCObjectBaseType")]] ConvertReturn<Type> getObjCObjectBaseType();
-    [[clang::annotate("getter")]] unsigned getNumObjCProtocolRefs();
-    [[clang::annotate("method")]] ConvertReturn<Cursor> getObjCProtocolDecl(unsigned index);
-    [[clang::annotate("getter")]] unsigned getNumObjCTypeArgs();
-    [[clang::annotate("method")]] ConvertReturn<Type> getObjCTypeArg(unsigned index);
+    nc_method bool isEqual(ConvertRef<Type> cursor);
+    nc_getter int getKind();
+    nc_getter_as(kindSpelling) std::string getKindSpellingImpl();
+    nc_getter std::string getSpelling();
+    nc_getter ConvertReturn<Type> canonicalType();
+    nc_getter bool isConstQualifiedType();
+    nc_getter bool isVolatileQualifiedType();
+    nc_getter bool isRestrictQualifiedType();
+    nc_getter unsigned getAddressSpace();
+    nc_getter std::string getTypedefName();
+    nc_getter ConvertReturn<Type> getPointeeType();
+    nc_getter ConvertReturn<Type> getUnqualifiedType();
+    nc_getter ConvertReturn<Type> getNonReferenceType();
+    nc_getter ConvertReturn<Cursor> getTypeDeclaration();
+    nc_getter_as(ObjCEncoding) std::string getObjCEncoding();
+    nc_method static std::string getKindSpelling(Napi::Env env, int kind);
+    nc_getter int getFunctionTypeCallingConv();
+    nc_getter ConvertReturn<Type> getResultType();
+    nc_getter int getExceptionSpecificationType();
+    nc_getter std::optional<unsigned> getNumArgTypes();
+    nc_method ConvertReturn<Type> getArgType(unsigned index);
+    nc_getter_as(ObjCObjectBaseType) ConvertReturn<Type> getObjCObjectBaseType();
+    nc_getter unsigned getNumObjCProtocolRefs();
+    nc_method ConvertReturn<Cursor> getObjCProtocolDecl(unsigned index);
+    nc_getter unsigned getNumObjCTypeArgs();
+    nc_method ConvertReturn<Type> getObjCTypeArg(unsigned index);
+    nc_getter bool isFunctionTypeVariadic();
 
-    [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
+    nc_inspect std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {

@@ -15,10 +15,10 @@ struct [[clang::annotate("class")]] VirtualFileOverlay : public WrapBase<Virtual
 
     VirtualFileOverlay(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("method")]] static std::optional<ConvertReturn<VirtualFileOverlay>> create(Napi::Env env);
-    [[clang::annotate("method")]] int addFileMapping(std::string virtualPath, std::string realPath);
-    [[clang::annotate("setter")]] void setCaseSensitivity(bool caseSensitive);
-    [[clang::annotate("method")]] Either<Napi::ArrayBuffer, int> writeToBuffer();
+    nc_method static std::optional<ConvertReturn<VirtualFileOverlay>> create(Napi::Env env);
+    nc_method int addFileMapping(std::string virtualPath, std::string realPath);
+    nc_setter void setCaseSensitivity(bool caseSensitive);
+    nc_method Either<Napi::ArrayBuffer, int> writeToBuffer();
 
     struct State
     {
@@ -41,10 +41,10 @@ struct [[clang::annotate("class")]] ModuleMapDescriptor : public WrapBase<Module
 
     ModuleMapDescriptor(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("method")]] static std::optional<ConvertReturn<ModuleMapDescriptor>> create(Napi::Env env);
-    [[clang::annotate("setter")]] void setFrameworkModuleName(std::string name);
-    [[clang::annotate("setter")]] void setUmbrellaHeader(std::string name);
-    [[clang::annotate("method")]] Either<Napi::ArrayBuffer, int> writeToBuffer();
+    nc_method static std::optional<ConvertReturn<ModuleMapDescriptor>> create(Napi::Env env);
+    nc_setter void setFrameworkModuleName(std::string name);
+    nc_setter void setUmbrellaHeader(std::string name);
+    nc_method Either<Napi::ArrayBuffer, int> writeToBuffer();
 
     struct State
     {

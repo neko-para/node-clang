@@ -9,6 +9,16 @@
 #include "class/utils.h"
 #include "loader/clang.h"
 
+#define nc_anno(desc) [[clang::annotate(desc)]]
+
+#define nc_inspect nc_anno("inspect")
+#define nc_method nc_anno("method")
+#define nc_method_as(name) nc_anno("method:" #name)
+#define nc_getter nc_anno("getter")
+#define nc_getter_as(name) nc_anno("getter:" #name)
+#define nc_setter nc_anno("setter")
+#define nc_setter_as(name) nc_anno("setter:" #name)
+
 struct IndexOptions;
 struct Index;
 struct TranslationUnit;

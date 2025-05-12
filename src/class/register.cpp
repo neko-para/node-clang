@@ -28,6 +28,11 @@ Napi::Function Cursor::Init(Napi::Env env)
                 nullptr
             ),
             InstanceAccessor(
+                "cursorResultType",
+                &Cursor::dispatcher<"get cursorResultType", &Cursor::getCursorResultType>,
+                nullptr
+            ),
+            InstanceAccessor(
                 "CXXManglings",
                 &Cursor::dispatcher<"get CXXManglings", &Cursor::getCXXManglings>,
                 nullptr
@@ -1055,6 +1060,11 @@ Napi::Function Type::Init(Napi::Env env)
             InstanceAccessor(
                 "isConstQualifiedType",
                 &Type::dispatcher<"get isConstQualifiedType", &Type::isConstQualifiedType>,
+                nullptr
+            ),
+            InstanceAccessor(
+                "isFunctionTypeVariadic",
+                &Type::dispatcher<"get isFunctionTypeVariadic", &Type::isFunctionTypeVariadic>,
                 nullptr
             ),
             InstanceAccessor(

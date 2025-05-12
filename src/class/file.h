@@ -14,19 +14,18 @@ struct [[clang::annotate("class")]] File : public WrapBase<File>
 
     File(const Napi::CallbackInfo& info);
 
-    [[clang::annotate("getter")]] std::string getFileName();
-    [[clang::annotate("getter")]] Napi::Date getFileTime();
-    [[clang::annotate("getter")]] std::optional<std::array<unsigned long long, 3>> getFileUniqueID();
-    [[clang::annotate("method")]] bool equal(ConvertRef<File> file);
-    [[clang::annotate("getter")]] std::string getRealPathName();
+    nc_getter std::string getFileName();
+    nc_getter Napi::Date getFileTime();
+    nc_getter std::optional<std::array<unsigned long long, 3>> getFileUniqueID();
+    nc_method bool equal(ConvertRef<File> file);
+    nc_getter std::string getRealPathName();
 
-    [[clang::annotate("method")]] bool isMultipleIncludeGuarded(ConvertRef<TranslationUnit> tu);
-    [[clang::annotate("method")]] std::optional<std::string> getFileContents(ConvertRef<TranslationUnit> tu);
-    [[clang::annotate("method")]] ConvertReturn<SourceLocation> getLocation(ConvertRef<TranslationUnit> tu, unsigned line, unsigned column);
-    [[clang::annotate("method:getLocation")]] ConvertReturn<SourceLocation>
-        getLocationForOffset(ConvertRef<TranslationUnit> tu, unsigned offset);
+    nc_method bool isMultipleIncludeGuarded(ConvertRef<TranslationUnit> tu);
+    nc_method std::optional<std::string> getFileContents(ConvertRef<TranslationUnit> tu);
+    nc_method ConvertReturn<SourceLocation> getLocation(ConvertRef<TranslationUnit> tu, unsigned line, unsigned column);
+    nc_method_as(getLocation) ConvertReturn<SourceLocation> getLocationForOffset(ConvertRef<TranslationUnit> tu, unsigned offset);
 
-    [[clang::annotate("inspect")]] std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
+    nc_inspect std::string nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect);
 
     struct State
     {

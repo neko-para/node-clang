@@ -165,6 +165,11 @@ ConvertReturn<Type> Type::getObjCTypeArg(unsigned index)
     return { obj };
 }
 
+bool Type::isFunctionTypeVariadic()
+{
+    return library()->isFunctionTypeVariadic(state->data);
+}
+
 std::string Type::nodejsInspect(ConvertAny depth, ConvertAny opts, ConvertAny inspect)
 {
     auto kind = getKind();
